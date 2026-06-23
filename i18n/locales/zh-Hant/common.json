@@ -1,0 +1,58 @@
+{
+	"appName": "事實序",
+	"tagline": "新聞事件過濾與可信度",
+	"overview": {
+		"heading": "核心議題",
+		"subtitle": "由焦點向外擴散",
+		"interval": "時間區間",
+		"domain": "領域",
+		"region": "地區",
+		"mapHint": "hover 議題卡片 → 高亮相關地區",
+		"empty": "目前沒有符合條件的核心議題"
+	},
+	"interval": {
+		"all": "全部",
+		"TODAY": "今日",
+		"WEEK": "本週",
+		"MONTH": "本月",
+		"ONGOING": "進行中"
+	},
+	"domain": {
+		"all": "全部",
+		"INTL": "國際",
+		"POLITICS": "政治",
+		"BIZ": "財經",
+		"TECH": "科技",
+		"DISASTER": "災害",
+		"SOCIETY": "社會",
+		"OTHER": "其他"
+	},
+	"reliability": {
+		"VERIFIED": "已證實",
+		"DEVELOPING": "發展中",
+		"DISPUTED": "眾說紛紜",
+		"UNVERIFIED": "未經證實"
+	},
+	"tier": {
+		"OFFICIAL": "官方",
+		"HIGH": "高",
+		"MEDIUM": "中",
+		"LOW": "低",
+		"UNVERIFIED": "待查證"
+	},
+	"stats": { "events": "事件", "sources": "來源", "languages": "語系" },
+	"topic": { "spread": "旗下事件沿時間擴散", "backToOverview": "返回焦點總覽" },
+	"event": {
+		"background": "來龍去脈",
+		"timeline": "時間序列",
+		"sources": "來源可信度排名",
+		"why": "為什麼？",
+		"viewEvent": "查看事件",
+		"conflicting": "說法分歧",
+		"official": "官方/權威",
+		"methodology": "方法論",
+		"appeal": "提出更正",
+		"disclaimer": "可信度為依公開方法論所作之評估意見",
+		"backToTopic": "返回議題"
+	}
+}

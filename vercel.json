@@ -1,0 +1,7 @@
+{
+	"crons": [
+		{ "path": "/api/cron/ingest", "schedule": "*/20 * * * *" },
+		{ "path": "/api/cron/cluster", "schedule": "*/30 * * * *" },
+		{ "path": "/api/cron/research", "schedule": "*/30 * * * *" }
+	]
+}

@@ -1,0 +1,75 @@
+import { prisma } from '@/lib/prisma'
+import { getT } from '@/i18n'
+import { REGION_LABELS } from '@/lib/regions'
+import { OverviewClient, type TopicCardData } from './_components/OverviewClient'
+
+export const dynamic = 'force-dynamic'
+
+const INTERVAL_KEYS = ['TODAY', 'WEEK', 'MONTH', 'ONGOING']
+
+export default async function OverviewPage({ params }: { params: Promise<{ lng: string }> }) {
+	const { lng } = await params
+	const { t } = await getT(lng)
+	const isZh = lng.startsWith('zh')
+
+	const topics = await prisma.topic.findMany({ orderBy: { updatedAt: 'desc' } })
+
+	const cards: TopicCardData[] = topics.map((tp) => ({
+		slug: tp.slug,
+		title: isZh ? tp.titleZh : tp.titleEn,
+		domain: tp.domain,
+		interval: tp.interval,
+		regions: tp.regions,
+		reliability: tp.overallReliability,
+		reliabilityLabel: t(`reliability.${tp.overallReliability}`),
+		domainLabel: t(`domain.${tp.domain}`),
+		regionLabels: tp.regions.map((r) => (isZh ? REGION_LABELS[r].zh : REGION_LABELS[r].en)),
+		eventCount: tp.eventCount,
+		sourceCount: tp.sourceCount,
+		languageCount: tp.languageCount,
+	}))
+
+	const intervalOptions = [
+		{ value: 'all', label: t('interval.all') },
+		...INTERVAL_KEYS.map((k) => ({ value: k, label: t(`interval.${k}`) })),
+	]
+	const domainsPresent = Array.from(new Set(topics.map((tp) => tp.domain)))
+	const domainOptions = [
+		{ value: 'all', label: t('domain.all') },
+		...domainsPresent.map((d) => ({ value: d, label: t(`domain.${d}`) })),
+	]
+	const regionsPresent = Array.from(new Set(topics.flatMap((tp) => tp.regions)))
+	const regionOptions = [
+		{ value: 'all', label: t('interval.all') },
+		...regionsPresent.map((r) => ({
+			value: r,
+			label: isZh ? REGION_LABELS[r].zh : REGION_LABELS[r].en,
+		})),
+	]
+
+	const labels = {
+		heading: t('overview.heading'),
+		subtitle: t('overview.subtitle'),
+		interval: t('overview.interval'),
+		domain: t('overview.domain'),
+		region: t('overview.region'),
+		mapHint: t('overview.mapHint'),
+		empty: t('overview.empty'),
+		stats: {
+			events: t('stats.events'),
+			sources: t('stats.sources'),
+			languages: t('stats.languages'),
+		},
+	}
+
+	return (
+		<OverviewClient
+			lng={lng}
+			topics={cards}
+			intervalOptions={intervalOptions}
+			domainOptions={domainOptions}
+			regionOptions={regionOptions}
+			labels={labels}
+		/>
+	)
+}

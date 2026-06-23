@@ -1,0 +1,88 @@
+/**
+ * 宏觀區域定義（與 Prisma `Region` enum 字串值一致）。
+ * 本檔不可 import Prisma client，需同時供 client 元件（地圖）使用。
+ */
+export const REGIONS = [
+	'MIDEAST',
+	'EAST_ASIA',
+	'SE_ASIA',
+	'SOUTH_ASIA',
+	'CENTRAL_ASIA',
+	'EUROPE',
+	'NORTH_AMERICA',
+	'SOUTH_AMERICA',
+	'AFRICA',
+	'OCEANIA',
+	'GLOBAL',
+] as const
+
+export type RegionKey = (typeof REGIONS)[number]
+
+export const REGION_LABELS: Record<RegionKey, { zh: string; en: string }> = {
+	MIDEAST: { zh: '中東', en: 'Middle East' },
+	EAST_ASIA: { zh: '東亞', en: 'East Asia' },
+	SE_ASIA: { zh: '東南亞', en: 'SE Asia' },
+	SOUTH_ASIA: { zh: '南亞', en: 'South Asia' },
+	CENTRAL_ASIA: { zh: '中亞', en: 'Central Asia' },
+	EUROPE: { zh: '歐洲', en: 'Europe' },
+	NORTH_AMERICA: { zh: '北美', en: 'North America' },
+	SOUTH_AMERICA: { zh: '南美', en: 'South America' },
+	AFRICA: { zh: '非洲', en: 'Africa' },
+	OCEANIA: { zh: '大洋洲', en: 'Oceania' },
+	GLOBAL: { zh: '全球', en: 'Global' },
+}
+
+/**
+ * ISO 3166-1 numeric（去前導零的字串）→ 宏觀區域。
+ * 對照 world-atlas countries-110m 的 feature id。未列入者地圖以中性色呈現。
+ */
+export const COUNTRY_NUMERIC_TO_REGION: Record<string, RegionKey> = {
+	// Middle East
+	'364': 'MIDEAST', '376': 'MIDEAST', '368': 'MIDEAST', '682': 'MIDEAST',
+	'760': 'MIDEAST', '792': 'MIDEAST', '887': 'MIDEAST', '784': 'MIDEAST',
+	'400': 'MIDEAST', '422': 'MIDEAST', '634': 'MIDEAST', '414': 'MIDEAST',
+	'512': 'MIDEAST', '48': 'MIDEAST', '275': 'MIDEAST',
+	// East Asia
+	'156': 'EAST_ASIA', '392': 'EAST_ASIA', '410': 'EAST_ASIA', '408': 'EAST_ASIA',
+	'158': 'EAST_ASIA', '496': 'EAST_ASIA',
+	// Southeast Asia
+	'360': 'SE_ASIA', '608': 'SE_ASIA', '704': 'SE_ASIA', '764': 'SE_ASIA',
+	'458': 'SE_ASIA', '104': 'SE_ASIA', '116': 'SE_ASIA', '418': 'SE_ASIA',
+	'702': 'SE_ASIA', '626': 'SE_ASIA',
+	// South Asia
+	'356': 'SOUTH_ASIA', '586': 'SOUTH_ASIA', '50': 'SOUTH_ASIA', '144': 'SOUTH_ASIA',
+	'524': 'SOUTH_ASIA', '4': 'SOUTH_ASIA', '64': 'SOUTH_ASIA', '462': 'SOUTH_ASIA',
+	// Central Asia
+	'398': 'CENTRAL_ASIA', '860': 'CENTRAL_ASIA', '795': 'CENTRAL_ASIA',
+	'417': 'CENTRAL_ASIA', '762': 'CENTRAL_ASIA',
+	// Europe (Russia grouped here)
+	'826': 'EUROPE', '250': 'EUROPE', '276': 'EUROPE', '380': 'EUROPE', '724': 'EUROPE',
+	'804': 'EUROPE', '643': 'EUROPE', '616': 'EUROPE', '528': 'EUROPE', '56': 'EUROPE',
+	'752': 'EUROPE', '578': 'EUROPE', '246': 'EUROPE', '208': 'EUROPE', '372': 'EUROPE',
+	'620': 'EUROPE', '300': 'EUROPE', '756': 'EUROPE', '40': 'EUROPE', '203': 'EUROPE',
+	'642': 'EUROPE', '348': 'EUROPE', '688': 'EUROPE', '191': 'EUROPE', '100': 'EUROPE',
+	'703': 'EUROPE', '112': 'EUROPE', '440': 'EUROPE', '428': 'EUROPE', '233': 'EUROPE',
+	'352': 'EUROPE',
+	// North America (incl. Central America & Caribbean)
+	'840': 'NORTH_AMERICA', '124': 'NORTH_AMERICA', '484': 'NORTH_AMERICA',
+	'320': 'NORTH_AMERICA', '192': 'NORTH_AMERICA', '591': 'NORTH_AMERICA',
+	'188': 'NORTH_AMERICA', '340': 'NORTH_AMERICA', '558': 'NORTH_AMERICA',
+	'214': 'NORTH_AMERICA', '332': 'NORTH_AMERICA', '388': 'NORTH_AMERICA',
+	// South America
+	'76': 'SOUTH_AMERICA', '32': 'SOUTH_AMERICA', '152': 'SOUTH_AMERICA',
+	'170': 'SOUTH_AMERICA', '604': 'SOUTH_AMERICA', '862': 'SOUTH_AMERICA',
+	'218': 'SOUTH_AMERICA', '68': 'SOUTH_AMERICA', '600': 'SOUTH_AMERICA',
+	'858': 'SOUTH_AMERICA',
+	// Africa
+	'818': 'AFRICA', '566': 'AFRICA', '710': 'AFRICA', '404': 'AFRICA', '231': 'AFRICA',
+	'504': 'AFRICA', '12': 'AFRICA', '788': 'AFRICA', '434': 'AFRICA', '729': 'AFRICA',
+	'288': 'AFRICA', '834': 'AFRICA', '800': 'AFRICA', '180': 'AFRICA', '24': 'AFRICA',
+	'508': 'AFRICA', '716': 'AFRICA', '120': 'AFRICA', '384': 'AFRICA', '466': 'AFRICA',
+	'706': 'AFRICA', '686': 'AFRICA',
+	// Oceania
+	'36': 'OCEANIA', '554': 'OCEANIA', '598': 'OCEANIA', '242': 'OCEANIA',
+}
+
+export function regionLabel(region: RegionKey, lng: string) {
+	return lng.startsWith('zh') ? REGION_LABELS[region].zh : REGION_LABELS[region].en
+}

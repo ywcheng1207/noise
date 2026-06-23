@@ -1,0 +1,58 @@
+{
+	"appName": "FactLine",
+	"tagline": "News event filtering & credibility",
+	"overview": {
+		"heading": "Core topics",
+		"subtitle": "Radiating from the focus",
+		"interval": "Time",
+		"domain": "Domain",
+		"region": "Region",
+		"mapHint": "hover a topic → highlight its regions",
+		"empty": "No core topics match the current filters"
+	},
+	"interval": {
+		"all": "All",
+		"TODAY": "Today",
+		"WEEK": "This week",
+		"MONTH": "This month",
+		"ONGOING": "Ongoing"
+	},
+	"domain": {
+		"all": "All",
+		"INTL": "World",
+		"POLITICS": "Politics",
+		"BIZ": "Business",
+		"TECH": "Tech",
+		"DISASTER": "Disaster",
+		"SOCIETY": "Society",
+		"OTHER": "Other"
+	},
+	"reliability": {
+		"VERIFIED": "Verified",
+		"DEVELOPING": "Developing",
+		"DISPUTED": "Disputed",
+		"UNVERIFIED": "Unverified"
+	},
+	"tier": {
+		"OFFICIAL": "Official",
+		"HIGH": "High",
+		"MEDIUM": "Medium",
+		"LOW": "Low",
+		"UNVERIFIED": "Unverified"
+	},
+	"stats": { "events": "events", "sources": "sources", "languages": "languages" },
+	"topic": { "spread": "Events radiate over time", "backToOverview": "Back to overview" },
+	"event": {
+		"background": "Background",
+		"timeline": "Timeline",
+		"sources": "Sources by credibility",
+		"why": "Why?",
+		"viewEvent": "View event",
+		"conflicting": "Conflicting",
+		"official": "Official / authoritative",
+		"methodology": "Methodology",
+		"appeal": "Request correction",
+		"disclaimer": "Credibility ratings are assessments based on a public methodology",
+		"backToTopic": "Back to topic"
+	}
+}

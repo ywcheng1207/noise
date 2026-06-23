@@ -1,0 +1,240 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SourceType {
+  RSS
+  NEWS_API
+  CRAWLER
+}
+
+enum ArticleStatus {
+  NEW
+  CLUSTERED
+  SKIPPED
+}
+
+enum EventStatus {
+  CANDIDATE
+  PENDING_RESEARCH
+  RESEARCHED
+  UPDATING
+}
+
+enum Reliability {
+  VERIFIED
+  DEVELOPING
+  DISPUTED
+  UNVERIFIED
+}
+
+enum CredibilityTier {
+  OFFICIAL
+  HIGH
+  MEDIUM
+  LOW
+  UNVERIFIED
+}
+
+enum Domain {
+  INTL
+  POLITICS
+  BIZ
+  TECH
+  DISASTER
+  SOCIETY
+  OTHER
+}
+
+enum TimeInterval {
+  TODAY
+  WEEK
+  MONTH
+  ONGOING
+}
+
+enum Region {
+  MIDEAST
+  EAST_ASIA
+  SE_ASIA
+  SOUTH_ASIA
+  CENTRAL_ASIA
+  EUROPE
+  NORTH_AMERICA
+  SOUTH_AMERICA
+  AFRICA
+  OCEANIA
+  GLOBAL
+}
+
+enum AppealStatus {
+  OPEN
+  REVIEWING
+  RESOLVED
+}
+
+enum PipelineStage {
+  CLUSTER
+  RESEARCH
+  SCORE
+}
+
+model Source {
+  id                  String        @id @default(uuid()) @db.Uuid
+  name                String
+  type                SourceType    @default(RSS)
+  url                 String        @unique
+  language            String?
+  baselineCredibility Float?
+  enabled             Boolean       @default(true)
+  createdAt           DateTime      @default(now())
+  articles            Article[]
+  eventSources        EventSource[]
+}
+
+model Article {
+  id            String        @id @default(uuid()) @db.Uuid
+  sourceId      String?       @db.Uuid
+  source        Source?       @relation(fields: [sourceId], references: [id])
+  canonicalUrl  String        @unique
+  title         String
+  snippet       String?
+  publishedAt   DateTime?
+  language      String?
+  rawContentRef String?
+  rawExpiresAt  DateTime?
+  eventId       String?       @db.Uuid
+  event         Event?        @relation(fields: [eventId], references: [id])
+  duplicateOfId String?       @db.Uuid
+  status        ArticleStatus @default(NEW)
+  fetchedAt     DateTime      @default(now())
+
+  @@index([status])
+  @@index([eventId])
+  @@index([publishedAt])
+}
+
+model Topic {
+  id                 String       @id @default(uuid()) @db.Uuid
+  slug               String       @unique
+  titleZh            String
+  titleEn            String
+  domain             Domain       @default(OTHER)
+  interval           TimeInterval @default(ONGOING)
+  regions            Region[]     @default([])
+  overallReliability Reliability  @default(DEVELOPING)
+  eventCount         Int          @default(0)
+  sourceCount        Int          @default(0)
+  languageCount      Int          @default(0)
+  spanStart          DateTime?
+  spanEnd            DateTime?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  events             Event[]
+
+  @@index([interval])
+  @@index([domain])
+}
+
+model Event {
+  id                 String          @id @default(uuid()) @db.Uuid
+  slug               String          @unique
+  topicId            String?         @db.Uuid
+  topic              Topic?          @relation(fields: [topicId], references: [id])
+  titleZh            String
+  titleEn            String
+  domain             Domain          @default(OTHER)
+  regions            Region[]        @default([])
+  importanceScore    Float           @default(0)
+  overallReliability Reliability     @default(DEVELOPING)
+  narrativeZh        String?
+  narrativeEn        String?
+  rubricVersion      String?
+  status             EventStatus     @default(CANDIDATE)
+  firstSeenAt        DateTime        @default(now())
+  lastUpdatedAt      DateTime        @updatedAt
+  articles           Article[]
+  timeline           EventTimeline[]
+  sources            EventSource[]
+
+  @@index([status])
+  @@index([topicId])
+  @@index([importanceScore])
+}
+
+model EventTimeline {
+  id            String   @id @default(uuid()) @db.Uuid
+  eventId       String   @db.Uuid
+  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  occurredAt    DateTime?
+  occurredLabel String?
+  descZh        String
+  descEn        String
+  sourceUrl     String?
+  sourceLabel   String?
+  isConflicting Boolean  @default(false)
+  rank          Int      @default(0)
+  createdAt     DateTime @default(now())
+
+  @@index([eventId])
+}
+
+model EventSource {
+  id              String          @id @default(uuid()) @db.Uuid
+  eventId         String          @db.Uuid
+  event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  articleId       String?         @db.Uuid
+  sourceId        String?         @db.Uuid
+  source          Source?         @relation(fields: [sourceId], references: [id])
+  sourceName      String
+  externalUrl     String?
+  credibilityScore Float?
+  credibilityTier CredibilityTier @default(UNVERIFIED)
+  isAuthoritative Boolean         @default(false)
+  reasoningZh     String?
+  reasoningEn     String?
+  rubricVersion   String?
+  rank            Int             @default(0)
+  createdAt       DateTime        @default(now())
+
+  @@index([eventId])
+}
+
+model RubricVersion {
+  version   String   @id
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Appeal {
+  id            String       @id @default(uuid()) @db.Uuid
+  eventId       String?      @db.Uuid
+  eventSourceId String?      @db.Uuid
+  submitter     String?
+  claim         String
+  status        AppealStatus @default(OPEN)
+  createdAt     DateTime     @default(now())
+  resolvedAt    DateTime?
+}
+
+model AiRun {
+  id              String        @id @default(uuid()) @db.Uuid
+  eventId         String?       @db.Uuid
+  stage           PipelineStage
+  model           String
+  inputTokens     Int           @default(0)
+  outputTokens    Int           @default(0)
+  cacheReadTokens Int           @default(0)
+  webSearches     Int           @default(0)
+  costUsd         Float         @default(0)
+  batchId         String?
+  createdAt       DateTime      @default(now())
+
+  @@index([createdAt])
+}
