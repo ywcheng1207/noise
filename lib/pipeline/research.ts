@@ -1,12 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import {
-	getAnthropic,
-	MODEL,
-	logAiRun,
-	extractText,
-	parseJsonObject,
-	countWebSearches,
-} from '@/lib/anthropic'
+import { MODEL, logAiRun, generateJsonWithSearch } from '@/lib/gemini'
 import { normalizeReliability, normalizeTier } from '@/lib/enums'
 
 interface ResearchResult {
@@ -31,36 +24,22 @@ interface ResearchResult {
 	}>
 }
 
-/** 對單一事件跑 agentic 研究（web_search + web_fetch），寫入敘事/時序/來源。 */
+/** 對單一事件用 Gemini + Google Search 接地研究，寫入敘事/時序/來源。 */
 export async function researchEvent(eventId: string) {
 	const event = await prisma.event.findUnique({ where: { id: eventId }, include: { articles: true } })
 	if (!event) throw new Error('event not found')
 
 	const seeds = event.articles.map((a) => `- ${a.title} (${a.canonicalUrl})`).join('\n') || '(無種子)'
 	const system =
-		'你是新聞事件研究員。針對事件跨來源查證（可用 web_search / web_fetch，不限語系），排出時間序列、講清來龍去脈、依可信度排名來源並標出官方/最高可信來源。評分針對單篇報導或單一主張，不對媒體機構作人格評價。每個主張都要有來源。'
-	const prompt = `事件：${event.titleZh} / ${event.titleEn}\n種子報導：\n${seeds}\n\n查證後只回 JSON（不要其他文字）：\n{"narrativeZh":"","narrativeEn":"","overallReliability":"VERIFIED|DEVELOPING|DISPUTED|UNVERIFIED","timeline":[{"occurredLabel":"6/18","descZh":"","descEn":"","sourceLabel":"","sourceUrl":"","isConflicting":false}],"sources":[{"sourceName":"","externalUrl":"","credibilityTier":"OFFICIAL|HIGH|MEDIUM|LOW|UNVERIFIED","isAuthoritative":false,"reasoningZh":"","reasoningEn":""}]}`
+		'你是新聞事件研究員。針對事件跨來源查證（用 Google 搜尋，不限語系），排出時間序列、講清來龍去脈、依可信度排名來源並標出官方/最高可信來源。評分針對單篇報導或單一主張，不對媒體機構作人格評價。每個主張都要有來源。'
+	const prompt = `事件：${event.titleZh} / ${event.titleEn}\n種子報導：\n${seeds}\n\n查證後只回 JSON（不要其他文字、不要 markdown）：\n{"narrativeZh":"","narrativeEn":"","overallReliability":"VERIFIED|DEVELOPING|DISPUTED|UNVERIFIED","timeline":[{"occurredLabel":"6/18","descZh":"","descEn":"","sourceLabel":"","sourceUrl":"","isConflicting":false}],"sources":[{"sourceName":"","externalUrl":"","credibilityTier":"OFFICIAL|HIGH|MEDIUM|LOW|UNVERIFIED","isAuthoritative":false,"reasoningZh":"","reasoningEn":""}]}`
 
-	const message = await getAnthropic().messages.create({
+	const { data: parsed, usage, searches } = await generateJsonWithSearch<ResearchResult>({
 		model: MODEL.RESEARCH,
-		max_tokens: 8000,
 		system,
-		tools: [
-			{ type: 'web_search_20260209', name: 'web_search' },
-			{ type: 'web_fetch_20260209', name: 'web_fetch' },
-		],
-		messages: [{ role: 'user', content: prompt }],
+		prompt,
 	})
-
-	await logAiRun({
-		eventId,
-		stage: 'RESEARCH',
-		model: MODEL.RESEARCH,
-		usage: message.usage,
-		webSearches: countWebSearches(message),
-	})
-
-	const parsed = parseJsonObject<ResearchResult>(extractText(message))
+	await logAiRun({ eventId, stage: 'RESEARCH', model: MODEL.RESEARCH, usage, searches })
 
 	await prisma.eventTimeline.deleteMany({ where: { eventId } })
 	await prisma.eventSource.deleteMany({ where: { eventId } })

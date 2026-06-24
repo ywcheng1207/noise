@@ -2,7 +2,7 @@
 
 以「核心議題 / 事件」為單位，自動偵測重點時事、跨來源（不限語系）研究、排出時序、講清來龍去脈、依可信度排名來源。三層資訊架構：**焦點總覽 → 核心議題頁 → 事件檔案頁**。
 
-技術堆疊（比照 trace）：Next.js 15（App Router）+ React 19 + TypeScript + Prisma + PostgreSQL + Tailwind v4 + shadcn(radix) + i18next + Redux Toolkit + React Query + Zod + react-hook-form。AI 用 Anthropic Claude（`@anthropic-ai/sdk`）。pnpm。部署 Vercel。
+技術堆疊（比照 trace）：Next.js 15（App Router）+ React 19 + TypeScript + Prisma + PostgreSQL + Tailwind v4 + shadcn(radix) + i18next + Redux Toolkit + React Query + Zod + react-hook-form。AI 用 Google Gemini（`@google/genai`）。pnpm。部署 Vercel。
 
 ---
 
@@ -56,7 +56,7 @@ git:   (想法)   開 branch +        在 branch        編輯 specs/     git mv
 - 效能優化、bundle 分析、SSR/RSC 調整 → @.claude/skills/vercel-react-best-practices/SKILL.md
 - UI 設計選型、配色、字型 → @.claude/skills/ui-ux-pro-max/SKILL.md（產出的顏色仍須遵循 styling-conventions 的 Theme Token 規則）
 - 寫 API 錯誤處理、處理用戶輸入、Code Review 涉及認證/授權/敏感資料的程式碼 → @.claude/skills/security-conventions/SKILL.md
-- **任何呼叫 Claude / Anthropic API 的程式（摘要、分群、研究、評分、web_search）** → 參照 claude-api skill
+- **任何呼叫 Gemini API 的程式（摘要、分群、研究、評分、Google Search 接地）** → 用官方 `@google/genai`，統一走 `lib/gemini.ts`
 
 ---
 
@@ -84,11 +84,10 @@ git:   (想法)   開 branch +        在 branch        編輯 specs/     git mv
 - Redux 禁止儲存 Server State（DB 資料）
 - Server State 一律用 React Query（`@tanstack/react-query`），禁止用 SWR
 
-### AI / Claude（本專案核心）
-- 一律用官方 `@anthropic-ai/sdk`；模型 ID 僅用 `claude-haiku-4-5`（分群/triage）、`claude-sonnet-4-6`（事件研究＋可信度評分）、`claude-opus-4-8`（最難時序/查證推理，可選）；**勿加日期後綴**
-- 用 adaptive thinking；輸出結構化資料用 structured outputs（`output_config.format`）
-- 可批次的步驟（分群/triage）走 **Batch API**（5 折）；評分 rubric 放 **Prompt Caching** 前綴
-- 事件研究用 server-side `web_search` / `web_fetch` 工具，agentic loop 設 task budget 上限
+### AI / Gemini（本專案核心）
+- 一律用官方 `@google/genai`；模型 ID 用 `gemini-2.5-flash-lite`（分群）、`gemini-2.5-flash`（事件研究＋接地）、`gemini-2.5-pro`（最難推理，可選）
+- 結構化輸出用 `responseMimeType: 'application/json'`；事件研究用 Google Search 接地（`tools: [{ googleSearch: {} }]`，不可與 responseMimeType 並用，靠 prompt 指示 + 解析）
+- 統一走 `lib/gemini.ts` 的 `generateJson` / `generateJsonWithSearch`，禁止在各處直接 new client
 - 每次呼叫的 token/搜尋/成本寫入 `AiRun`
 
 ### 地圖（Hard Rule）

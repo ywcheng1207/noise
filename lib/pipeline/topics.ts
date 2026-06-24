@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { getAnthropic, MODEL, logAiRun, extractText, parseJsonObject } from '@/lib/anthropic'
+import { MODEL, logAiRun, generateJson } from '@/lib/gemini'
 import { normalizeDomain, normalizeRegions } from '@/lib/enums'
 import { slugify } from '@/lib/utils'
 
@@ -16,7 +16,7 @@ const RELIABILITY_RANK: Record<string, number> = {
 	UNVERIFIED: 3,
 }
 
-/** 用 Haiku 把事件歸入既有或新建的核心議題，並更新議題統計。 */
+/** 用 Gemini 把事件歸入既有或新建的核心議題，並更新議題統計。 */
 export async function assignEventToTopic(eventId: string) {
 	const event = await prisma.event.findUnique({ where: { id: eventId } })
 	if (!event) throw new Error('event not found')
@@ -27,15 +27,13 @@ export async function assignEventToTopic(eventId: string) {
 	const system = '你把單一新聞事件歸入一個跨時間的「核心議題」。符合既有議題就沿用它的 slug，否則建立新議題。'
 	const prompt = `事件：${event.titleZh} / ${event.titleEn}\n既有核心議題（slug: 標題）：\n${known}\n\n只回 JSON：{"topicSlug":"kebab-slug","topicTitleZh":"","topicTitleEn":""}`
 
-	const message = await getAnthropic().messages.create({
+	const { data: assignment, usage } = await generateJson<TopicAssignment>({
 		model: MODEL.CLUSTER,
-		max_tokens: 500,
 		system,
-		messages: [{ role: 'user', content: prompt }],
+		prompt,
 	})
-	await logAiRun({ eventId, stage: 'CLUSTER', model: MODEL.CLUSTER, usage: message.usage })
+	await logAiRun({ eventId, stage: 'CLUSTER', model: MODEL.CLUSTER, usage })
 
-	const assignment = parseJsonObject<TopicAssignment>(extractText(message))
 	const slug = slugify(assignment.topicSlug || assignment.topicTitleEn) || 'topic'
 
 	const topic = await prisma.topic.upsert({
