@@ -117,6 +117,7 @@ export async function generateJsonWithSearch<T>(opts: { model: string; system: s
 				systemInstruction: opts.system,
 				tools: [{ googleSearch: {} }],
 				temperature: 0.3,
+				maxOutputTokens: 2800,
 			},
 		}),
 	)

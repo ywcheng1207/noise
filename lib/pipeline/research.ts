@@ -32,7 +32,7 @@ export async function researchEvent(eventId: string) {
 	const seeds = event.articles.map((a) => `- ${a.title} (${a.canonicalUrl})`).join('\n') || '(無種子)'
 	const system =
 		'你是新聞事件研究員。針對事件跨來源查證（用 Google 搜尋，不限語系），排出時間序列、講清來龍去脈、依可信度排名來源並標出官方/最高可信來源。評分針對單篇報導或單一主張，不對媒體機構作人格評價。每個主張都要有來源。'
-	const prompt = `事件：${event.titleZh} / ${event.titleEn}\n種子報導：\n${seeds}\n\n查證後只回 JSON（不要其他文字、不要 markdown）：\n{"narrativeZh":"","narrativeEn":"","overallReliability":"VERIFIED|DEVELOPING|DISPUTED|UNVERIFIED","timeline":[{"occurredLabel":"6/18","descZh":"","descEn":"","sourceLabel":"","sourceUrl":"","isConflicting":false}],"sources":[{"sourceName":"","externalUrl":"","credibilityTier":"OFFICIAL|HIGH|MEDIUM|LOW|UNVERIFIED","isAuthoritative":false,"reasoningZh":"","reasoningEn":""}]}`
+	const prompt = `事件：${event.titleZh} / ${event.titleEn}\n種子報導：\n${seeds}\n\n查證後只回 JSON（不要其他文字、不要 markdown；narrativeZh/En 各 2–3 句、timeline 最多 4 節點、sources 最多 4 個，力求精簡以加快回應）：\n{"narrativeZh":"","narrativeEn":"","overallReliability":"VERIFIED|DEVELOPING|DISPUTED|UNVERIFIED","timeline":[{"occurredLabel":"6/18","descZh":"","descEn":"","sourceLabel":"","sourceUrl":"","isConflicting":false}],"sources":[{"sourceName":"","externalUrl":"","credibilityTier":"OFFICIAL|HIGH|MEDIUM|LOW|UNVERIFIED","isAuthoritative":false,"reasoningZh":"","reasoningEn":""}]}`
 
 	const { data: parsed, usage, searches } = await generateJsonWithSearch<ResearchResult>({
 		model: MODEL.RESEARCH,
