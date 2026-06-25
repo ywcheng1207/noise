@@ -10,15 +10,26 @@ export const maxDuration = 60
 
 export const GET = apiHandler(async (req) => {
 	requireCron(req)
-	const pending = await prisma.event.findMany({ where: { status: 'PENDING_RESEARCH' }, take: 1 })
-	const processed: string[] = []
+	const pending = await prisma.event.findMany({
+		where: { status: 'PENDING_RESEARCH' },
+		orderBy: { importanceScore: 'desc' },
+		take: 1,
+	})
+	let processed = 0
+	let failed = 0
 	for (const event of pending) {
-		await researchEvent(event.id)
-		await scoreEvent(event.id)
-		await assignEventToTopic(event.id)
-		processed.push(event.id)
+		try {
+			await researchEvent(event.id)
+			await scoreEvent(event.id)
+			await assignEventToTopic(event.id)
+			processed++
+		} catch (error) {
+			// 單一事件失敗（如 Gemini 接地回空）不應讓整個 cron 500；保留 PENDING_RESEARCH 下次重試。
+			console.error('[cron/research] event failed', event.id, error)
+			failed++
+		}
 	}
-	return { pending: pending.length, processed: processed.length }
+	return { pending: pending.length, processed, failed }
 })
 
 export const POST = GET

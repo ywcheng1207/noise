@@ -72,7 +72,9 @@ export async function logAiRun(params: {
 
 function isRetryable(err: unknown) {
 	const msg = err instanceof Error ? err.message : JSON.stringify(err)
-	return /\b(503|429)\b|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overloaded|deadline/i.test(msg)
+	return /\b(503|429)\b|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overloaded|deadline|EMPTY_MODEL_RESPONSE/i.test(
+		msg,
+	)
 }
 
 /** Gemini 免費層常回 503/429，包一層重試 + 指數退避（在 60s 函式預算內）。 */
@@ -109,18 +111,23 @@ export async function generateJson<T>(opts: { model: string; system: string; pro
 
 /** 產生 JSON（含 Google Search 接地）：不能用 responseMimeType，靠 prompt 指示 + 解析。 */
 export async function generateJsonWithSearch<T>(opts: { model: string; system: string; prompt: string }) {
-	const res = await withRetry(() =>
-		getGemini().models.generateContent({
+	const res = await withRetry(async () => {
+		const r = await getGemini().models.generateContent({
 			model: opts.model,
 			contents: opts.prompt,
 			config: {
 				systemInstruction: opts.system,
 				tools: [{ googleSearch: {} }],
 				temperature: 0.3,
-				maxOutputTokens: 8000,
+				// thinking tokens 也計入 maxOutputTokens；上限拉高並限制 thinking，
+				// 避免 thinking 吃光預算導致 res.text 為空（grounding 路徑常見）。
+				maxOutputTokens: 12000,
+				thinkingConfig: { thinkingBudget: 3000 },
 			},
-		}),
-	)
+		})
+		if (!r.text || r.text.trim() === '') throw new Error('EMPTY_MODEL_RESPONSE')
+		return r
+	})
 	const usage: UsageLike = res.usageMetadata ?? {}
 	const searches = res.candidates?.[0]?.groundingMetadata?.groundingChunks?.length ?? 0
 	return { data: parseJsonObject<T>(res.text ?? ''), usage, searches }
