@@ -16,8 +16,9 @@ interface ClusterResult {
 
 const IMPORTANCE_THRESHOLD = 0.5
 
-/** 用 Gemini flash-lite 把 NEW 文章分群為事件；達門檻者標記 PENDING_RESEARCH。 */
-export async function runCluster(limit = 80) {
+/** 用 Gemini flash-lite 把 NEW 文章分群為事件；達門檻者標記 PENDING_RESEARCH。
+ *  單批控制在 ~50 篇，讓 Gemini 一次呼叫穩定落在 Hobby 60s 函式上限內；剩餘留待下輪 cron。 */
+export async function runCluster(limit = 50) {
 	const articles = await prisma.article.findMany({
 		where: { status: 'NEW' },
 		take: limit,
