@@ -57,7 +57,6 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 		interval: t('overview.interval'),
 		domain: t('overview.domain'),
 		region: t('overview.region'),
-		mapHint: t('overview.mapHint'),
 		empty: t('overview.empty'),
 		stats: {
 			events: t('stats.events'),

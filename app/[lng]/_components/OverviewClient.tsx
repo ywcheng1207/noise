@@ -28,15 +28,20 @@ export interface TopicCardData {
 	languageCount: number
 }
 
+interface OverviewStats {
+	events: string
+	sources: string
+	languages: string
+}
+
 interface OverviewLabels {
 	heading: string
 	subtitle: string
 	interval: string
 	domain: string
 	region: string
-	mapHint: string
 	empty: string
-	stats: { events: string; sources: string; languages: string }
+	stats: OverviewStats
 }
 
 interface OverviewClientProps {
@@ -59,7 +64,6 @@ export function OverviewClient({
 	const [interval, setInterval] = useState('all')
 	const [domain, setDomain] = useState('all')
 	const [region, setRegion] = useState('all')
-	const [hovered, setHovered] = useState<RegionKey[]>([])
 
 	const filtered = useMemo(
 		() =>
@@ -85,51 +89,62 @@ export function OverviewClient({
 				<FacetRow label={labels.region} options={regionOptions} value={region} onChange={setRegion} />
 			</div>
 
-			<div className='rounded-lg border border-border bg-secondary/40 p-2'>
-				<WorldMap activeRegions={hovered} />
-				<p className='px-1 pt-1 text-xs text-muted-foreground'>{labels.mapHint}</p>
-			</div>
-
 			{filtered.length === 0 ? (
 				<p className='py-8 text-center text-sm text-muted-foreground'>{labels.empty}</p>
 			) : (
 				<div className='flex flex-col gap-3'>
 					{filtered.map((tpc) => (
-						<Link
-							key={tpc.slug}
-							href={`/${lng}/topic/${tpc.slug}`}
-							onMouseEnter={() => setHovered(tpc.regions)}
-							onMouseLeave={() => setHovered([])}
-							className='rounded-xl border border-border p-4 transition-colors hover:border-foreground/30'
-						>
-							<div className='flex items-start justify-between gap-2'>
-								<span className='font-medium'>{tpc.title}</span>
-								<Badge variant={RELIABILITY_VARIANT[tpc.reliability] ?? 'muted'}>
-									{tpc.reliabilityLabel}
-								</Badge>
-							</div>
-							<div className='mt-2 flex flex-wrap gap-1.5'>
-								<span className='rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground'>
-									{tpc.domainLabel}
-								</span>
-								{tpc.regionLabels.map((rl) => (
-									<span
-										key={rl}
-										className='rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground'
-									>
-										{rl}
-									</span>
-								))}
-							</div>
-							<div className='mt-2 text-xs text-muted-foreground'>
-								{tpc.eventCount} {labels.stats.events} · {tpc.sourceCount} {labels.stats.sources} ·{' '}
-								{tpc.languageCount} {labels.stats.languages}
-							</div>
-						</Link>
+						<TopicCard key={tpc.slug} lng={lng} topic={tpc} stats={labels.stats} />
 					))}
 				</div>
 			)}
 		</div>
+	)
+}
+
+function TopicCard({
+	lng,
+	topic,
+	stats,
+}: {
+	lng: string
+	topic: TopicCardData
+	stats: OverviewStats
+}) {
+	return (
+		<Link
+			href={`/${lng}/topic/${topic.slug}`}
+			className='rounded-xl border border-border p-4 transition-colors hover:border-foreground/30'
+		>
+			<div className='flex items-start justify-between gap-2'>
+				<span className='font-medium'>{topic.title}</span>
+				<Badge variant={RELIABILITY_VARIANT[topic.reliability] ?? 'muted'}>{topic.reliabilityLabel}</Badge>
+			</div>
+			<div className='mt-3 flex flex-col gap-3 sm:flex-row sm:items-center'>
+				<div className='flex min-w-0 flex-1 flex-col gap-2'>
+					<div className='flex flex-wrap gap-1.5'>
+						<span className='rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground'>
+							{topic.domainLabel}
+						</span>
+						{topic.regionLabels.map((rl) => (
+							<span
+								key={rl}
+								className='rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground'
+							>
+								{rl}
+							</span>
+						))}
+					</div>
+					<div className='text-xs text-muted-foreground'>
+						{topic.eventCount} {stats.events} · {topic.sourceCount} {stats.sources} ·{' '}
+						{topic.languageCount} {stats.languages}
+					</div>
+				</div>
+				<div className='w-full shrink-0 overflow-hidden rounded-lg border border-border bg-secondary/40 p-1 sm:w-72'>
+					<WorldMap activeRegions={topic.regions} />
+				</div>
+			</div>
+		</Link>
 	)
 }
 
