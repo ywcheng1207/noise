@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { MODEL, logAiRun, generateJson } from '@/lib/gemini'
-import { normalizeDomain, normalizeRegions } from '@/lib/enums'
+import { isFocusDomain, normalizeDomain, normalizeRegions } from '@/lib/enums'
 import { slugify } from '@/lib/utils'
 
 interface ClusterResult {
@@ -39,14 +39,28 @@ export async function runCluster(limit = 50) {
 	await logAiRun({ stage: 'CLUSTER', model: MODEL.CLUSTER, usage })
 
 	let events = 0
+	let skipped = 0
 	for (const cluster of parsed.clusters ?? []) {
+		const domain = normalizeDomain(cluster.domain)
+		const ids = (cluster.articleIndexes ?? [])
+			.map((i) => articles[i]?.id)
+			.filter((id): id is string => Boolean(id))
+
+		if (!isFocusDomain(domain)) {
+			if (ids.length > 0) {
+				await prisma.article.updateMany({ where: { id: { in: ids } }, data: { status: 'SKIPPED' } })
+			}
+			skipped++
+			continue
+		}
+
 		const importance = typeof cluster.importance === 'number' ? cluster.importance : 0
 		const event = await prisma.event.create({
 			data: {
 				slug: `${slugify(cluster.titleEn) || 'event'}-${Date.now().toString(36)}-${events}`,
 				titleZh: cluster.titleZh,
 				titleEn: cluster.titleEn,
-				domain: normalizeDomain(cluster.domain),
+				domain,
 				regions: normalizeRegions(cluster.regions ?? []),
 				importanceScore: importance,
 				status: importance >= IMPORTANCE_THRESHOLD ? 'PENDING_RESEARCH' : 'CANDIDATE',
@@ -54,9 +68,6 @@ export async function runCluster(limit = 50) {
 		})
 		events++
 
-		const ids = (cluster.articleIndexes ?? [])
-			.map((i) => articles[i]?.id)
-			.filter((id): id is string => Boolean(id))
 		if (ids.length > 0) {
 			await prisma.article.updateMany({
 				where: { id: { in: ids } },
@@ -65,5 +76,5 @@ export async function runCluster(limit = 50) {
 		}
 	}
 
-	return { clustered: articles.length, events }
+	return { clustered: articles.length, events, skipped }
 }

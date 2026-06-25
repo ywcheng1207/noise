@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { MODEL, logAiRun, generateJson } from '@/lib/gemini'
-import { normalizeDomain, normalizeRegions } from '@/lib/enums'
+import { normalizeDomain, normalizeRegions, normalizeReliability } from '@/lib/enums'
 import { slugify } from '@/lib/utils'
 
 interface TopicAssignment {
@@ -65,6 +65,8 @@ export async function refreshTopicStats(topicId: string) {
 	const regionSet = new Set<string>()
 	events.forEach((e) => e.regions.forEach((r) => regionSet.add(r)))
 	const sourceCount = events.reduce((sum, e) => sum + e.sources.length, 0)
+	const languageSet = new Set<string>()
+	events.forEach((e) => e.sources.forEach((s) => s.language && languageSet.add(s.language)))
 	const spanStart = events.reduce<Date | null>(
 		(min, e) => (!min || e.firstSeenAt < min ? e.firstSeenAt : min),
 		null,
@@ -86,10 +88,11 @@ export async function refreshTopicStats(topicId: string) {
 		data: {
 			eventCount: events.length,
 			sourceCount,
+			languageCount: languageSet.size,
 			regions: normalizeRegions(Array.from(regionSet)),
 			spanStart,
 			spanEnd,
-			overallReliability: overall,
+			overallReliability: normalizeReliability(overall),
 			interval: computeInterval(spanEnd),
 		},
 	})

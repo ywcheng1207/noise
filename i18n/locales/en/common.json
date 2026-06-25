@@ -1,6 +1,8 @@
 {
 	"appName": "FactLine",
 	"tagline": "News event filtering & credibility",
+	"nav": { "overview": "Overview" },
+	"source": { "video": "Video", "text": "Text", "language": "Language" },
 	"overview": {
 		"heading": "Core topics",
 		"subtitle": "Radiating from the focus",
@@ -53,6 +55,8 @@
 		"methodology": "Methodology",
 		"appeal": "Request correction",
 		"disclaimer": "Credibility ratings are assessments based on a public methodology",
-		"backToTopic": "Back to topic"
+		"backToTopic": "Back to topic",
+		"researching": "Researching",
+		"researchingHint": "This event is still being cross-checked across sources. Check back soon for the full background and ranked sources."
 	}
 }
