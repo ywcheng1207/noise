@@ -140,7 +140,7 @@ function TopicCard({
 						{topic.languageCount} {stats.languages}
 					</div>
 				</div>
-				<div className='w-full shrink-0 overflow-hidden rounded-lg border border-border bg-secondary/40 p-1 sm:w-72'>
+				<div className='w-full shrink-0 overflow-hidden rounded-lg border border-border bg-secondary/40 p-1 sm:w-80'>
 					<WorldMap activeRegions={topic.regions} />
 				</div>
 			</div>
