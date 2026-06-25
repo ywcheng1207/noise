@@ -1,6 +1,8 @@
 {
 	"appName": "事實序",
 	"tagline": "新聞事件過濾與可信度",
+	"nav": { "overview": "焦點總覽" },
+	"source": { "video": "影音", "text": "文字", "language": "語言" },
 	"overview": {
 		"heading": "核心議題",
 		"subtitle": "由焦點向外擴散",
@@ -53,6 +55,8 @@
 		"methodology": "方法論",
 		"appeal": "提出更正",
 		"disclaimer": "可信度為依公開方法論所作之評估意見",
-		"backToTopic": "返回議題"
+		"backToTopic": "返回議題",
+		"researching": "研究中",
+		"researchingHint": "此事件仍在跨來源查證，稍後再回來查看完整來龍去脈與來源排名。"
 	}
 }

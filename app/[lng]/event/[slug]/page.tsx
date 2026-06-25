@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { AlertTriangle, ArrowLeft, ExternalLink, ShieldCheck } from 'lucide-react'
+import { AlertTriangle, Clock, ExternalLink, FileText, ShieldCheck, Video } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
+import { Breadcrumb, type BreadcrumbItem } from '@/components/Breadcrumb'
 import { RELIABILITY_VARIANT, TIER_VARIANT } from '@/lib/ui'
 import { cn } from '@/lib/utils'
 
@@ -26,25 +26,37 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 
 	const title = isZh ? event.titleZh : event.titleEn
 	const narrative = isZh ? event.narrativeZh : event.narrativeEn
-	const backHref = event.topic ? `/${lng}/topic/${event.topic.slug}` : `/${lng}`
+	const isResearched = event.status === 'RESEARCHED'
+	const topicCrumb: BreadcrumbItem[] = event.topic
+		? [{ label: isZh ? event.topic.titleZh : event.topic.titleEn, href: `/${lng}/topic/${event.topic.slug}` }]
+		: []
+	const crumbs: BreadcrumbItem[] = [{ label: t('nav.overview'), href: `/${lng}` }, ...topicCrumb, { label: title }]
 
 	return (
 		<div className='flex flex-col gap-6'>
-			<Link
-				href={backHref}
-				className='inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground'
-			>
-				<ArrowLeft className='size-4' /> {event.topic ? t('event.backToTopic') : t('topic.backToOverview')}
-			</Link>
+			<Breadcrumb items={crumbs} />
 
 			<div>
 				<h1 className='text-2xl font-medium'>{title}</h1>
-				<div className='mt-2'>
+				<div className='mt-2 flex flex-wrap items-center gap-2'>
 					<Badge variant={RELIABILITY_VARIANT[event.overallReliability] ?? 'muted'}>
 						{t(`reliability.${event.overallReliability}`)}
 					</Badge>
+					{isResearched ? null : (
+						<Badge variant='info'>
+							<Clock className='size-3' />
+							{t('event.researching')}
+						</Badge>
+					)}
 				</div>
 			</div>
+
+			{isResearched ? null : (
+				<div className='flex items-center gap-2 rounded-lg border border-dashed border-info/50 bg-info/5 p-4 text-sm text-muted-foreground'>
+					<Clock className='size-4 shrink-0 animate-pulse text-info' />
+					{t('event.researchingHint')}
+				</div>
+			)}
 
 			{narrative && (
 				<section>
@@ -95,6 +107,7 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 					<ol className='flex flex-col gap-2'>
 						{event.sources.map((src) => {
 							const reasoning = isZh ? src.reasoningZh : src.reasoningEn
+							const isVideo = src.mediaType === 'VIDEO'
 							return (
 								<li
 									key={src.id}
@@ -104,9 +117,18 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 									)}
 								>
 									<div className='flex items-center justify-between gap-2'>
-										<div className='flex items-center gap-2'>
+										<div className='flex flex-wrap items-center gap-2'>
 											<span className='text-sm font-medium text-muted-foreground'>{src.rank}</span>
 											<span className='font-medium'>{src.sourceName}</span>
+											{src.language ? (
+												<span className='rounded bg-secondary px-1.5 py-0.5 text-xs uppercase text-muted-foreground'>
+													{src.language}
+												</span>
+											) : null}
+											<span className='inline-flex items-center gap-1 rounded bg-secondary px-1.5 py-0.5 text-xs text-muted-foreground'>
+												{isVideo ? <Video className='size-3' /> : <FileText className='size-3' />}
+												{isVideo ? t('source.video') : t('source.text')}
+											</span>
 										</div>
 										<div className='flex items-center gap-2'>
 											<Badge variant={TIER_VARIANT[src.credibilityTier] ?? 'muted'}>

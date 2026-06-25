@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
+import { FOCUS_DOMAINS } from '@/lib/enums'
 import { REGION_LABELS } from '@/lib/regions'
 import { OverviewClient, type TopicCardData } from './_components/OverviewClient'
 
@@ -12,7 +13,10 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 	const { t } = await getT(lng)
 	const isZh = lng.startsWith('zh')
 
-	const topics = await prisma.topic.findMany({ orderBy: { updatedAt: 'desc' } })
+	const topics = await prisma.topic.findMany({
+		where: { domain: { in: [...FOCUS_DOMAINS] } },
+		orderBy: { updatedAt: 'desc' },
+	})
 
 	const cards: TopicCardData[] = topics.map((tp) => ({
 		slug: tp.slug,
