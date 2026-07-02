@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Newspaper } from 'lucide-react'
 import { getT } from '@/i18n'
 import { languages } from '@/i18n/settings'
-import { cn } from '@/lib/utils'
+import { LanguageSwitcher } from './_components/LanguageSwitcher'
 
 export function generateStaticParams() {
 	return languages.map((lng) => ({ lng }))
@@ -26,20 +26,7 @@ export default async function LngLayout({
 					<Newspaper className='size-5 text-info' />
 					<span>{t('appName')}</span>
 				</Link>
-				<nav className='flex items-center gap-1 text-sm'>
-					{languages.map((l) => (
-						<Link
-							key={l}
-							href={`/${l}`}
-							className={cn(
-								'rounded-md px-2 py-1',
-								l === lng ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground',
-							)}
-						>
-							{l === 'zh-Hant' ? '中' : 'EN'}
-						</Link>
-					))}
-				</nav>
+				<LanguageSwitcher lng={lng} />
 			</header>
 			<main className='flex-1 py-6'>{children}</main>
 			<footer className='border-t border-border py-4 text-xs text-muted-foreground'>

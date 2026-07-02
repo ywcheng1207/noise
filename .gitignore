@@ -35,6 +35,9 @@ yarn-error.log*
 # claude code
 .claude/settings.local.json
 
+# local-only pipeline trigger (含 prod URL，secret 從 .env 讀)
+/scripts/trigger-prod.mjs
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

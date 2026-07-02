@@ -24,9 +24,11 @@ function getWorldPaths(): CountryPath[] {
 	const projection = geoNaturalEarth1().fitSize([WIDTH, HEIGHT], collection)
 	const path = geoPath(projection)
 	const computed: CountryPath[] = features.map((f) => {
-		const numericId = String(Number(f.id))
+		const numeric = Number(f.id)
+		const numericId = String(numeric)
 		return {
-			id: numericId,
+			// 少數爭議領土（Kosovo 等）無 id，改用名稱當 key，避免多筆 NaN 撞 key
+			id: Number.isNaN(numeric) ? `name-${f.properties?.name}` : numericId,
 			d: path(f) ?? '',
 			region: COUNTRY_NUMERIC_TO_REGION[numericId],
 		}

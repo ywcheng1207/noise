@@ -16,7 +16,8 @@ export function middleware(req: NextRequest) {
 	if (!lng) lng = fallbackLng
 
 	const { pathname } = req.nextUrl
-	const hasLng = languages.some((l) => pathname.startsWith(`/${l}`))
+	const firstSegment = pathname.split('/')[1]
+	const hasLng = languages.includes(firstSegment)
 
 	if (!hasLng && !pathname.startsWith('/_next')) {
 		return NextResponse.redirect(new URL(`/${lng}${pathname}`, req.url))
@@ -24,7 +25,6 @@ export function middleware(req: NextRequest) {
 
 	const response = NextResponse.next()
 	response.headers.set('x-pathname', pathname)
-	const lngInPath = languages.find((l) => pathname.startsWith(`/${l}`))
-	if (lngInPath) response.cookies.set(cookieName, lngInPath)
+	if (hasLng) response.cookies.set(cookieName, firstSegment)
 	return response
 }
