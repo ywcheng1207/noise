@@ -3,7 +3,6 @@ import { AlertTriangle, Clock, ExternalLink, FileText, ShieldCheck, Video } from
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
-import { Breadcrumb, type BreadcrumbItem } from '@/components/Breadcrumb'
 import { RELIABILITY_VARIANT, TIER_VARIANT } from '@/lib/ui'
 import { cn } from '@/lib/utils'
 
@@ -27,24 +26,9 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 	const title = isZh ? event.titleZh : event.titleEn
 	const narrative = isZh ? event.narrativeZh : event.narrativeEn
 	const isResearched = event.status === 'RESEARCHED'
-	const topicCrumb: BreadcrumbItem[] = event.topic
-		? [
-				{
-					label: isZh ? event.topic.titleZh : event.topic.titleEn,
-					href: `/${lng}/topic/${event.topic.slug}`,
-				},
-			]
-		: []
-	const crumbs: BreadcrumbItem[] = [
-		{ label: t('nav.overview'), href: `/${lng}` },
-		...topicCrumb,
-		{ label: title },
-	]
 
 	return (
 		<div className='flex flex-col gap-6'>
-			<Breadcrumb items={crumbs} />
-
 			<div>
 				<h1 className='text-2xl font-medium'>{title}</h1>
 				<div className='mt-2 flex flex-wrap items-center gap-2'>
@@ -166,8 +150,6 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 					</section>
 				)}
 			</div>
-
-			<div className='border-border text-muted-foreground border-t pt-3 text-xs'>{t('event.disclaimer')}</div>
 		</div>
 	)
 }

@@ -4,7 +4,6 @@ import { ArrowRight, Clock, MapPin } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
-import { Breadcrumb } from '@/components/Breadcrumb'
 import { RELIABILITY_VARIANT } from '@/lib/ui'
 import { REGION_LABELS } from '@/lib/regions'
 import { cn } from '@/lib/utils'
@@ -26,8 +25,6 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 
 	return (
 		<div className='mx-auto flex w-full max-w-3xl flex-col gap-5'>
-			<Breadcrumb items={[{ label: t('nav.overview'), href: `/${lng}` }, { label: title }]} />
-
 			<div>
 				<h1 className='text-2xl font-medium'>{title}</h1>
 				<div className='mt-2 flex flex-wrap items-center gap-2'>
