@@ -9,9 +9,10 @@
 		"interval": "時間區間",
 		"domain": "領域",
 		"region": "地區",
-		"mapHint": "hover 議題卡片 → 高亮相關地區",
+		"reliability": "可信度",
 		"empty": "目前沒有符合條件的核心議題"
 	},
+	"region": { "all": "全部" },
 	"interval": {
 		"all": "全部",
 		"TODAY": "今日",
@@ -30,6 +31,7 @@
 		"OTHER": "其他"
 	},
 	"reliability": {
+		"all": "全部",
 		"VERIFIED": "已證實",
 		"DEVELOPING": "發展中",
 		"DISPUTED": "眾說紛紜",

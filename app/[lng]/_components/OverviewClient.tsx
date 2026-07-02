@@ -40,6 +40,7 @@ interface OverviewLabels {
 	interval: string
 	domain: string
 	region: string
+	reliability: string
 	empty: string
 	stats: OverviewStats
 }
@@ -50,6 +51,7 @@ interface OverviewClientProps {
 	intervalOptions: FacetOption[]
 	domainOptions: FacetOption[]
 	regionOptions: FacetOption[]
+	reliabilityOptions: FacetOption[]
 	labels: OverviewLabels
 }
 
@@ -59,11 +61,13 @@ export function OverviewClient({
 	intervalOptions,
 	domainOptions,
 	regionOptions,
+	reliabilityOptions,
 	labels,
 }: OverviewClientProps) {
 	const [interval, setInterval] = useState('all')
 	const [domain, setDomain] = useState('all')
 	const [region, setRegion] = useState('all')
+	const [reliability, setReliability] = useState('all')
 
 	const filtered = useMemo(
 		() =>
@@ -71,9 +75,10 @@ export function OverviewClient({
 				(tpc) =>
 					(interval === 'all' || tpc.interval === interval) &&
 					(domain === 'all' || tpc.domain === domain) &&
-					(region === 'all' || tpc.regions.some((r) => r === region)),
+					(region === 'all' || tpc.regions.some((r) => r === region)) &&
+					(reliability === 'all' || tpc.reliability === reliability),
 			),
-		[topics, interval, domain, region],
+		[topics, interval, domain, region, reliability],
 	)
 
 	return (
@@ -93,6 +98,12 @@ export function OverviewClient({
 					/>
 					<FacetGroup label={labels.domain} options={domainOptions} value={domain} onChange={setDomain} />
 					<FacetGroup label={labels.region} options={regionOptions} value={region} onChange={setRegion} />
+					<FacetGroup
+						label={labels.reliability}
+						options={reliabilityOptions}
+						value={reliability}
+						onChange={setReliability}
+					/>
 				</aside>
 
 				{filtered.length === 0 ? (

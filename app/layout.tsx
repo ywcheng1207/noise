@@ -19,13 +19,10 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
 
 	return (
 		<html lang={lng} suppressHydrationWarning>
-			<body
-				suppressHydrationWarning
-				className={cn('min-h-screen bg-background text-foreground antialiased')}
-			>
+			<body suppressHydrationWarning className={cn('bg-background text-foreground min-h-screen antialiased')}>
 				<StoreProvider>
 					<QueryProvider>
-						<ThemeProvider attribute='class' enableSystem defaultTheme='system'>
+						<ThemeProvider attribute='class' defaultTheme='light'>
 							{children}
 						</ThemeProvider>
 					</QueryProvider>
