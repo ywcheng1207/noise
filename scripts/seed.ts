@@ -1,11 +1,25 @@
 /* 載入示範資料：來源 + 核心議題 + 事件（以色列—伊朗議題含完整時序/來源）。用法：pnpm seed */
 import { prisma } from '../lib/prisma'
+import type { SourceType } from '../lib/generated/prisma'
 
-const SOURCES = [
-	{ name: 'BBC World', url: 'https://feeds.bbci.co.uk/news/world/rss.xml', language: 'en' },
-	{ name: 'Al Jazeera', url: 'https://www.aljazeera.com/xml/rss/all.xml', language: 'en' },
-	{ name: 'NPR World', url: 'https://feeds.npr.org/1004/rss.xml', language: 'en' },
-	{ name: 'The Guardian World', url: 'https://www.theguardian.com/world/rss', language: 'en' },
+const SOURCES: Array<{ name: string; url: string; language: string; type: SourceType }> = [
+	{ name: 'BBC World', url: 'https://feeds.bbci.co.uk/news/world/rss.xml', language: 'en', type: 'RSS' },
+	{ name: 'Al Jazeera', url: 'https://www.aljazeera.com/xml/rss/all.xml', language: 'en', type: 'RSS' },
+	{ name: 'NPR World', url: 'https://feeds.npr.org/1004/rss.xml', language: 'en', type: 'RSS' },
+	{ name: 'The Guardian World', url: 'https://www.theguardian.com/world/rss', language: 'en', type: 'RSS' },
+	{ name: 'SCMP China', url: 'https://www.scmp.com/rss/4/feed', language: 'en', type: 'RSS' },
+	{
+		name: '鉅亨網',
+		url: 'https://api.cnyes.com/media/api/v1/newslist/category/headline?page=1&limit=30',
+		language: 'zh-Hant',
+		type: 'CRAWLER',
+	},
+	{
+		name: '新浪財經',
+		url: 'https://feed.mix.sina.com.cn/api/roll/get?pageid=153&lid=2516&num=30&page=1',
+		language: 'zh-Hans',
+		type: 'CRAWLER',
+	},
 ]
 
 const TOPICS = [
@@ -77,8 +91,8 @@ async function main() {
 	for (const s of SOURCES) {
 		await prisma.source.upsert({
 			where: { url: s.url },
-			create: { name: s.name, url: s.url, language: s.language, type: 'RSS' },
-			update: { name: s.name, language: s.language },
+			create: { name: s.name, url: s.url, language: s.language, type: s.type },
+			update: { name: s.name, language: s.language, type: s.type },
 		})
 	}
 
