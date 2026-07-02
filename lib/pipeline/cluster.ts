@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { MODEL, logAiRun, generateJson } from '@/lib/gemini'
 import { isFocusDomain, normalizeDomain, normalizeRegions } from '@/lib/enums'
 import { slugify } from '@/lib/utils'
+import { toTraditionalZh } from '@/lib/zh'
 
 interface ClusterResult {
 	clusters: Array<{
@@ -28,7 +29,7 @@ export async function runCluster(limit = 50) {
 
 	const list = articles.map((a, i) => `${i}. ${a.title}`).join('\n')
 	const system =
-		'你是新聞分群助手。把描述同一真實世界事件的文章分到同一群，每群給中英文標題、領域、相關地區、重要性(0~1)。'
+		'你是新聞分群助手。把描述同一真實世界事件的文章分到同一群，每群給中英文標題、領域、相關地區、重要性(0~1)。中文一律使用正體中文（臺灣用語），即使原文為簡體。'
 	const prompt = `文章清單（index. 標題）：\n${list}\n\n領域只能用：INTL, POLITICS, BIZ, TECH, DISASTER, SOCIETY, OTHER。\n地區只能用：MIDEAST, EAST_ASIA, SE_ASIA, SOUTH_ASIA, CENTRAL_ASIA, EUROPE, NORTH_AMERICA, SOUTH_AMERICA, AFRICA, OCEANIA, GLOBAL。\n只回 JSON：{"clusters":[{"titleZh":"","titleEn":"","domain":"","regions":[],"importance":0.0,"articleIndexes":[]}]}`
 
 	const { data: parsed, usage } = await generateJson<ClusterResult>({
@@ -58,7 +59,7 @@ export async function runCluster(limit = 50) {
 		const event = await prisma.event.create({
 			data: {
 				slug: `${slugify(cluster.titleEn) || 'event'}-${Date.now().toString(36)}-${events}`,
-				titleZh: cluster.titleZh,
+				titleZh: toTraditionalZh(cluster.titleZh),
 				titleEn: cluster.titleEn,
 				domain,
 				regions: normalizeRegions(cluster.regions ?? []),

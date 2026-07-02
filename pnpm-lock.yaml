@@ -50,6 +50,9 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      opencc-js:
+        specifier: ^1.4.0
+        version: 1.4.0
       react:
         specifier: ^19.2.1
         version: 19.2.7
@@ -2046,6 +2049,9 @@ packages:
 
   ohash@2.0.11:
     resolution: {integrity: sha512-RdR9FQrFwNBNXAr4GixM8YaRZRJ5PUWbKYbE5eOsrwAjJW0q2REGcf79oYPsLyskQCZG1PLN+S/K1V00joZAoQ==}
+
+  opencc-js@1.4.0:
+    resolution: {integrity: sha512-SEb4huI5+lT4CFPA4sgs+NAOOgpcmdHZ+vYxhRLR1bQWIt6VRwpFPjWgTJAWAg1MviDcXTBe5zVoUOVxVxNK8w==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -4553,6 +4559,8 @@ snapshots:
       es-object-atoms: 1.1.2
 
   ohash@2.0.11: {}
+
+  opencc-js@1.4.0: {}
 
   optionator@0.9.4:
     dependencies:

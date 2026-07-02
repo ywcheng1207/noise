@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { MODEL, logAiRun, generateJson } from '@/lib/gemini'
 import { normalizeDomain, normalizeRegions, normalizeReliability } from '@/lib/enums'
 import { slugify } from '@/lib/utils'
+import { toTraditionalZh } from '@/lib/zh'
 
 interface TopicAssignment {
 	topicSlug: string
@@ -24,7 +25,8 @@ export async function assignEventToTopic(eventId: string) {
 	const existing = await prisma.topic.findMany({ select: { slug: true, titleZh: true, titleEn: true } })
 	const known = existing.map((t) => `${t.slug}: ${t.titleZh} / ${t.titleEn}`).join('\n') || '(無)'
 
-	const system = '你把單一新聞事件歸入一個跨時間的「核心議題」。符合既有議題就沿用它的 slug，否則建立新議題。'
+	const system =
+		'你把單一新聞事件歸入一個跨時間的「核心議題」。符合既有議題就沿用它的 slug，否則建立新議題。中文一律使用正體中文（臺灣用語）。'
 	const prompt = `事件：${event.titleZh} / ${event.titleEn}\n既有核心議題（slug: 標題）：\n${known}\n\n只回 JSON：{"topicSlug":"kebab-slug","topicTitleZh":"","topicTitleEn":""}`
 
 	const { data: assignment, usage } = await generateJson<TopicAssignment>({
@@ -40,7 +42,7 @@ export async function assignEventToTopic(eventId: string) {
 		where: { slug },
 		create: {
 			slug,
-			titleZh: assignment.topicTitleZh,
+			titleZh: toTraditionalZh(assignment.topicTitleZh),
 			titleEn: assignment.topicTitleEn,
 			domain: normalizeDomain(event.domain),
 			regions: event.regions,

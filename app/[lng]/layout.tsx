@@ -28,7 +28,7 @@ export default async function LngLayout({
 				</Link>
 				<LanguageSwitcher lng={lng} />
 			</header>
-			<main className='flex-1 py-6'>{children}</main>
+			<main className='flex-1 pt-3 pb-8'>{children}</main>
 			<footer className='border-border text-muted-foreground border-t py-4 text-xs'>
 				{t('event.disclaimer')}
 			</footer>
