@@ -58,30 +58,35 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 									isResearching ? 'bg-info animate-pulse' : 'bg-warning',
 								)}
 							/>
-							<Link
-								href={`/${lng}/event/${ev.slug}`}
-								className={cn(
-									'hover:border-foreground/30 block rounded-lg border p-3 transition-colors',
-									isResearching ? 'border-info/40 bg-info/5 border-dashed' : 'border-border',
-								)}
-							>
-								<div className='flex items-center justify-between gap-2'>
-									<span className='font-medium'>{isZh ? ev.titleZh : ev.titleEn}</span>
-									{isResearching ? (
+							{isResearching ? (
+								<div className='border-info/40 bg-info/5 block rounded-lg border border-dashed p-3'>
+									<div className='flex items-center justify-between gap-2'>
+										<span className='font-medium'>{isZh ? ev.titleZh : ev.titleEn}</span>
 										<Badge variant='info'>
 											<Clock className='size-3' />
 											{t('event.researching')}
 										</Badge>
-									) : (
+									</div>
+									<span className='text-muted-foreground mt-1 block text-xs'>
+										{t('event.researchingHint')}
+									</span>
+								</div>
+							) : (
+								<Link
+									href={`/${lng}/event/${ev.slug}`}
+									className='border-border hover:border-foreground/30 block rounded-lg border p-3 transition-colors'
+								>
+									<div className='flex items-center justify-between gap-2'>
+										<span className='font-medium'>{isZh ? ev.titleZh : ev.titleEn}</span>
 										<Badge variant={RELIABILITY_VARIANT[ev.overallReliability] ?? 'muted'}>
 											{t(`reliability.${ev.overallReliability}`)}
 										</Badge>
-									)}
-								</div>
-								<span className='text-info mt-1 inline-flex items-center gap-1 text-xs'>
-									{t('event.viewEvent')} <ArrowRight className='size-3' />
-								</span>
-							</Link>
+									</div>
+									<span className='text-info mt-1 inline-flex items-center gap-1 text-xs'>
+										{t('event.viewEvent')} <ArrowRight className='size-3' />
+									</span>
+								</Link>
+							)}
 						</li>
 					)
 				})}

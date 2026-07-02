@@ -4,6 +4,7 @@ import { Newspaper } from 'lucide-react'
 import { getT } from '@/i18n'
 import { languages } from '@/i18n/settings'
 import { LanguageSwitcher } from './_components/LanguageSwitcher'
+import { ThemeToggle } from './_components/ThemeToggle'
 
 export function generateStaticParams() {
 	return languages.map((lng) => ({ lng }))
@@ -31,7 +32,10 @@ export default async function LngLayout({
 					</Link>
 					<div className='hidden min-w-0 sm:block'>{breadcrumb}</div>
 				</div>
-				<LanguageSwitcher lng={lng} />
+				<div className='flex shrink-0 items-center gap-1'>
+					<ThemeToggle />
+					<LanguageSwitcher lng={lng} />
+				</div>
 			</header>
 			<main className='flex-1 py-6'>{children}</main>
 			<footer className='border-border text-muted-foreground border-t py-4 text-xs'>

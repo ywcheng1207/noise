@@ -25,7 +25,8 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 
 	const title = isZh ? event.titleZh : event.titleEn
 	const narrative = isZh ? event.narrativeZh : event.narrativeEn
-	const isResearched = event.status === 'RESEARCHED'
+	const hasContent = Boolean(narrative) || event.timeline.length > 0 || event.sources.length > 0
+	const isResearched = event.status === 'RESEARCHED' && hasContent
 
 	return (
 		<div className='flex flex-col gap-6'>
@@ -83,7 +84,12 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 											)}
 											{node.sourceLabel &&
 												(node.sourceUrl ? (
-													<a className='text-info text-xs underline' href={node.sourceUrl}>
+													<a
+														className='text-info text-xs underline'
+														href={node.sourceUrl}
+														target='_blank'
+														rel='noopener noreferrer'
+													>
 														{node.sourceLabel}
 													</a>
 												) : (
@@ -132,7 +138,13 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 													{t(`tier.${src.credibilityTier}`)}
 												</Badge>
 												{src.externalUrl && (
-													<a href={src.externalUrl} aria-label='open source' className='text-info'>
+													<a
+														href={src.externalUrl}
+														aria-label='open source'
+														className='text-info'
+														target='_blank'
+														rel='noopener noreferrer'
+													>
 														<ExternalLink className='size-4' />
 													</a>
 												)}

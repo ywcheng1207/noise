@@ -9,9 +9,10 @@
 		"interval": "Time",
 		"domain": "Domain",
 		"region": "Region",
-		"mapHint": "hover a topic → highlight its regions",
+		"reliability": "Reliability",
 		"empty": "No core topics match the current filters"
 	},
+	"region": { "all": "All" },
 	"interval": {
 		"all": "All",
 		"TODAY": "Today",
@@ -30,6 +31,7 @@
 		"OTHER": "Other"
 	},
 	"reliability": {
+		"all": "All",
 		"VERIFIED": "Verified",
 		"DEVELOPING": "Developing",
 		"DISPUTED": "Disputed",

@@ -44,11 +44,16 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 	]
 	const regionsPresent = Array.from(new Set(topics.flatMap((tp) => tp.regions)))
 	const regionOptions = [
-		{ value: 'all', label: t('interval.all') },
+		{ value: 'all', label: t('region.all') },
 		...regionsPresent.map((r) => ({
 			value: r,
 			label: isZh ? REGION_LABELS[r].zh : REGION_LABELS[r].en,
 		})),
+	]
+	const reliabilitiesPresent = Array.from(new Set(topics.map((tp) => tp.overallReliability)))
+	const reliabilityOptions = [
+		{ value: 'all', label: t('reliability.all') },
+		...reliabilitiesPresent.map((r) => ({ value: r, label: t(`reliability.${r}`) })),
 	]
 
 	const labels = {
@@ -57,6 +62,7 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 		interval: t('overview.interval'),
 		domain: t('overview.domain'),
 		region: t('overview.region'),
+		reliability: t('overview.reliability'),
 		empty: t('overview.empty'),
 		stats: {
 			events: t('stats.events'),
@@ -72,6 +78,7 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 			intervalOptions={intervalOptions}
 			domainOptions={domainOptions}
 			regionOptions={regionOptions}
+			reliabilityOptions={reliabilityOptions}
 			labels={labels}
 		/>
 	)

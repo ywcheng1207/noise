@@ -2,53 +2,54 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* 色板:暖色調(參考 Claude 介面風格)。亮色為預設,.dark 由 next-themes 切換。 */
 :root {
 	--radius: 0.625rem;
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.145 0 0);
-	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.145 0 0);
-	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.205 0 0);
-	--primary-foreground: oklch(0.985 0 0);
-	--secondary: oklch(0.97 0 0);
-	--secondary-foreground: oklch(0.205 0 0);
-	--muted: oklch(0.97 0 0);
-	--muted-foreground: oklch(0.556 0 0);
-	--accent: oklch(0.97 0 0);
-	--accent-foreground: oklch(0.205 0 0);
-	--destructive: oklch(0.577 0.245 27.325);
-	--border: oklch(0.922 0 0);
-	--input: oklch(0.922 0 0);
-	--ring: oklch(0.708 0 0);
-	--success: oklch(0.62 0.17 145);
-	--warning: oklch(0.75 0.16 75);
-	--info: oklch(0.6 0.16 250);
+	--background: oklch(0.982 0.005 95);
+	--foreground: oklch(0.27 0.012 80);
+	--card: oklch(1 0 0.005);
+	--card-foreground: oklch(0.27 0.012 80);
+	--popover: oklch(1 0 0.005);
+	--popover-foreground: oklch(0.27 0.012 80);
+	--primary: oklch(0.64 0.13 40);
+	--primary-foreground: oklch(0.99 0.004 95);
+	--secondary: oklch(0.945 0.008 90);
+	--secondary-foreground: oklch(0.32 0.012 80);
+	--muted: oklch(0.945 0.008 90);
+	--muted-foreground: oklch(0.52 0.014 80);
+	--accent: oklch(0.93 0.014 70);
+	--accent-foreground: oklch(0.32 0.012 80);
+	--destructive: oklch(0.577 0.2 28);
+	--border: oklch(0.9 0.01 90);
+	--input: oklch(0.9 0.01 90);
+	--ring: oklch(0.64 0.13 40);
+	--success: oklch(0.56 0.13 150);
+	--warning: oklch(0.68 0.14 70);
+	--info: oklch(0.55 0.12 250);
 }
 
 .dark {
-	--background: oklch(0.145 0 0);
-	--foreground: oklch(0.985 0 0);
-	--card: oklch(0.205 0 0);
-	--card-foreground: oklch(0.985 0 0);
-	--popover: oklch(0.205 0 0);
-	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.922 0 0);
-	--primary-foreground: oklch(0.205 0 0);
-	--secondary: oklch(0.269 0 0);
-	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.269 0 0);
-	--muted-foreground: oklch(0.708 0 0);
-	--accent: oklch(0.269 0 0);
-	--accent-foreground: oklch(0.985 0 0);
-	--destructive: oklch(0.704 0.191 22.216);
-	--border: oklch(1 0 0 / 10%);
-	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.556 0 0);
-	--success: oklch(0.7 0.15 145);
-	--warning: oklch(0.8 0.15 75);
-	--info: oklch(0.68 0.15 250);
+	--background: oklch(0.225 0.007 80);
+	--foreground: oklch(0.94 0.008 90);
+	--card: oklch(0.265 0.008 80);
+	--card-foreground: oklch(0.94 0.008 90);
+	--popover: oklch(0.265 0.008 80);
+	--popover-foreground: oklch(0.94 0.008 90);
+	--primary: oklch(0.7 0.13 42);
+	--primary-foreground: oklch(0.2 0.008 80);
+	--secondary: oklch(0.31 0.009 80);
+	--secondary-foreground: oklch(0.94 0.008 90);
+	--muted: oklch(0.31 0.009 80);
+	--muted-foreground: oklch(0.7 0.012 85);
+	--accent: oklch(0.34 0.012 70);
+	--accent-foreground: oklch(0.94 0.008 90);
+	--destructive: oklch(0.7 0.17 25);
+	--border: oklch(1 0 0 / 12%);
+	--input: oklch(1 0 0 / 16%);
+	--ring: oklch(0.7 0.13 42);
+	--success: oklch(0.72 0.13 150);
+	--warning: oklch(0.78 0.13 72);
+	--info: oklch(0.7 0.12 250);
 }
 
 @theme inline {
@@ -56,8 +57,8 @@
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
 	--radius-xl: calc(var(--radius) + 4px);
-	--font-sans: ui-sans-serif, system-ui, -apple-system, 'Noto Sans TC', 'PingFang TC',
-		'Microsoft JhengHei', sans-serif;
+	--font-sans:
+		ui-sans-serif, system-ui, -apple-system, 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
 	--color-card: var(--card);
