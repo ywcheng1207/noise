@@ -25,7 +25,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 	const title = isZh ? topic.titleZh : topic.titleEn
 
 	return (
-		<div className='flex flex-col gap-5'>
+		<div className='mx-auto flex w-full max-w-3xl flex-col gap-5'>
 			<Breadcrumb items={[{ label: t('nav.overview'), href: `/${lng}` }, { label: title }]} />
 
 			<div>
@@ -37,20 +37,20 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 					{topic.regions.map((r) => (
 						<span
 							key={r}
-							className='inline-flex items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-xs text-muted-foreground'
+							className='bg-secondary text-muted-foreground inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs'
 						>
 							<MapPin className='size-3' />
 							{isZh ? REGION_LABELS[r].zh : REGION_LABELS[r].en}
 						</span>
 					))}
-					<span className='text-xs text-muted-foreground'>
+					<span className='text-muted-foreground text-xs'>
 						{topic.eventCount} {t('stats.events')} · {topic.sourceCount} {t('stats.sources')}
 					</span>
 				</div>
-				<p className='mt-2 text-sm text-muted-foreground'>{t('topic.spread')}</p>
+				<p className='text-muted-foreground mt-2 text-sm'>{t('topic.spread')}</p>
 			</div>
 
-			<ol className='relative ml-2 border-l border-border'>
+			<ol className='border-border relative ml-2 border-l'>
 				{topic.events.map((ev) => {
 					const isResearching = ev.status !== 'RESEARCHED'
 					return (
@@ -58,14 +58,14 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 							<span
 								className={cn(
 									'absolute -left-[5px] mt-2 size-2.5 rounded-full',
-									isResearching ? 'animate-pulse bg-info' : 'bg-warning',
+									isResearching ? 'bg-info animate-pulse' : 'bg-warning',
 								)}
 							/>
 							<Link
 								href={`/${lng}/event/${ev.slug}`}
 								className={cn(
-									'block rounded-lg border p-3 transition-colors hover:border-foreground/30',
-									isResearching ? 'border-dashed border-info/40 bg-info/5' : 'border-border',
+									'hover:border-foreground/30 block rounded-lg border p-3 transition-colors',
+									isResearching ? 'border-info/40 bg-info/5 border-dashed' : 'border-border',
 								)}
 							>
 								<div className='flex items-center justify-between gap-2'>
@@ -81,7 +81,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 										</Badge>
 									)}
 								</div>
-								<span className='mt-1 inline-flex items-center gap-1 text-xs text-info'>
+								<span className='text-info mt-1 inline-flex items-center gap-1 text-xs'>
 									{t('event.viewEvent')} <ArrowRight className='size-3' />
 								</span>
 							</Link>
