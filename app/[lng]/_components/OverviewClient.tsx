@@ -203,7 +203,7 @@ function TopicCard({
 			href={`/${lng}/topic/${topic.slug}`}
 			onClick={() => onSeen(topic.slug, topic.updatedAt)}
 			className={cn(
-				'group hover:shadow-primary/10 flex flex-col gap-3 rounded-lg border p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg',
+				'group flex flex-col gap-3 rounded-lg border p-4 backdrop-blur-md transition-all duration-200',
 				isUnseen
 					? 'border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10'
 					: 'border-border/80 bg-card/70 hover:border-primary/40 hover:bg-card',

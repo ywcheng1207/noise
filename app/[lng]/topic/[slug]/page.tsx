@@ -87,7 +87,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 							) : (
 								<Link
 									href={`/${lng}/event/${ev.slug}`}
-									className='border-border/80 bg-card/70 hover:border-primary/40 hover:shadow-primary/10 block rounded-lg border p-3 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg'
+									className='border-border/80 bg-card/70 hover:border-primary/40 block rounded-lg border p-3 backdrop-blur-md transition-all duration-200'
 								>
 									<div className='flex items-center justify-between gap-2'>
 										<span className='font-medium'>{isZh ? ev.titleZh : ev.titleEn}</span>
