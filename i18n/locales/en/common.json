@@ -1,8 +1,14 @@
 {
-	"appName": "FactLine",
+	"appName": "逆風",
 	"tagline": "News event filtering & credibility",
-	"nav": { "overview": "Overview" },
-	"source": { "video": "Video", "text": "Text", "language": "Language" },
+	"nav": {
+		"overview": "Overview"
+	},
+	"source": {
+		"video": "Video",
+		"text": "Text",
+		"language": "Language"
+	},
 	"overview": {
 		"heading": "Core topics",
 		"subtitle": "Radiating from the focus",
@@ -10,9 +16,12 @@
 		"domain": "Domain",
 		"region": "Region",
 		"reliability": "Reliability",
-		"empty": "No core topics match the current filters"
+		"empty": "No core topics match the current filters",
+		"updated": "Updated"
 	},
-	"region": { "all": "All" },
+	"region": {
+		"all": "All"
+	},
 	"interval": {
 		"all": "All",
 		"TODAY": "Today",
@@ -44,8 +53,15 @@
 		"LOW": "Low",
 		"UNVERIFIED": "Unverified"
 	},
-	"stats": { "events": "events", "sources": "sources", "languages": "languages" },
-	"topic": { "spread": "Events radiate over time", "backToOverview": "Back to overview" },
+	"stats": {
+		"events": "events",
+		"sources": "sources",
+		"languages": "languages"
+	},
+	"topic": {
+		"spread": "Events radiate over time",
+		"backToOverview": "Back to overview"
+	},
 	"event": {
 		"background": "Background",
 		"timeline": "Timeline",

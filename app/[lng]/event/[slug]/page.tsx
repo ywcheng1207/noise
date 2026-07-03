@@ -49,7 +49,7 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 			<div className='flex flex-col gap-6 xl:flex-row xl:items-start xl:gap-10'>
 				<div className='flex max-w-3xl min-w-0 flex-1 flex-col gap-6'>
 					{isResearched ? null : (
-						<div className='border-info/50 bg-info/5 text-muted-foreground flex items-center gap-2 rounded-lg border border-dashed p-4 text-sm'>
+						<div className='border-info/50 bg-info/5 text-muted-foreground flex items-center gap-2 rounded-lg border border-dashed p-4 text-sm shadow-sm backdrop-blur-md'>
 							<Clock className='text-info size-4 shrink-0 animate-pulse' />
 							{t('event.researchingHint')}
 						</div>
@@ -123,8 +123,8 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 									<li
 										key={src.id}
 										className={cn(
-											'rounded-lg border p-3',
-											src.isAuthoritative ? 'border-info/40 bg-info/5' : 'border-border',
+											'rounded-lg border p-3 shadow-sm backdrop-blur-md',
+											src.isAuthoritative ? 'border-info/40 bg-info/5' : 'border-border bg-card/70',
 										)}
 									>
 										<div className='flex items-center justify-between gap-2'>
@@ -132,11 +132,11 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 												<span className='text-muted-foreground text-sm font-medium'>{src.rank}</span>
 												<span className='font-medium'>{src.sourceName}</span>
 												{src.language ? (
-													<span className='bg-secondary text-muted-foreground rounded px-1.5 py-0.5 text-xs uppercase'>
+													<span className='bg-secondary/60 text-muted-foreground rounded-lg px-1.5 py-0.5 text-xs uppercase backdrop-blur-sm'>
 														{src.language}
 													</span>
 												) : null}
-												<span className='bg-secondary text-muted-foreground inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs'>
+												<span className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-xs backdrop-blur-sm'>
 													{isVideo ? <Video className='size-3' /> : <FileText className='size-3' />}
 													{isVideo ? t('source.video') : t('source.text')}
 												</span>

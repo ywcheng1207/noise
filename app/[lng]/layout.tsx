@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { Newspaper } from 'lucide-react'
 import { getT } from '@/i18n'
 import { languages } from '@/i18n/settings'
+import { BrandLogo } from '@/components/BrandLogo'
 import { LanguageSwitcher } from './_components/LanguageSwitcher'
 import { ThemeToggle } from './_components/ThemeToggle'
 
@@ -26,9 +26,9 @@ export default async function LngLayout({
 		<div className='mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 sm:px-6 lg:px-8'>
 			<header className='border-border flex items-center justify-between gap-3 border-b py-4'>
 				<div className='flex min-w-0 items-center gap-3'>
-					<Link href={`/${lng}`} className='flex shrink-0 items-center gap-2 font-medium'>
-						<Newspaper className='text-info size-5' />
-						<span>{t('appName')}</span>
+					<Link href={`/${lng}`} className='flex shrink-0 items-center gap-2'>
+						<BrandLogo />
+						<span className='text-lg font-semibold tracking-wide'>{t('appName')}</span>
 					</Link>
 					<div className='hidden min-w-0 sm:block'>{breadcrumb}</div>
 				</div>

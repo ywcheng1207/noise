@@ -1,8 +1,14 @@
 {
-	"appName": "事實序",
+	"appName": "逆風",
 	"tagline": "新聞事件過濾與可信度",
-	"nav": { "overview": "焦點總覽" },
-	"source": { "video": "影音", "text": "文字", "language": "語言" },
+	"nav": {
+		"overview": "焦點總覽"
+	},
+	"source": {
+		"video": "影音",
+		"text": "文字",
+		"language": "語言"
+	},
 	"overview": {
 		"heading": "核心議題",
 		"subtitle": "由焦點向外擴散",
@@ -10,9 +16,12 @@
 		"domain": "領域",
 		"region": "地區",
 		"reliability": "可信度",
-		"empty": "目前沒有符合條件的核心議題"
+		"empty": "目前沒有符合條件的核心議題",
+		"updated": "有更新"
 	},
-	"region": { "all": "全部" },
+	"region": {
+		"all": "全部"
+	},
 	"interval": {
 		"all": "全部",
 		"TODAY": "今日",
@@ -44,8 +53,15 @@
 		"LOW": "低",
 		"UNVERIFIED": "待查證"
 	},
-	"stats": { "events": "事件", "sources": "來源", "languages": "語系" },
-	"topic": { "spread": "旗下事件沿時間擴散", "backToOverview": "返回焦點總覽" },
+	"stats": {
+		"events": "事件",
+		"sources": "來源",
+		"languages": "語系"
+	},
+	"topic": {
+		"spread": "旗下事件沿時間擴散",
+		"backToOverview": "返回焦點總覽"
+	},
 	"event": {
 		"background": "來龍去脈",
 		"timeline": "時間序列",
