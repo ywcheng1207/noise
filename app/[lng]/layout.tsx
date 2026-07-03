@@ -38,8 +38,11 @@ export default async function LngLayout({
 				</div>
 			</header>
 			<main className='flex-1 py-6'>{children}</main>
-			<footer className='border-border text-muted-foreground border-t py-4 text-xs'>
-				{t('event.disclaimer')}
+			<footer className='border-border text-muted-foreground flex flex-col gap-1 border-t py-4 text-xs sm:flex-row sm:items-center sm:justify-between'>
+				<span>{t('event.disclaimer')}</span>
+				<span>
+					© {new Date().getFullYear()} {t('appName')} · {t('footer.rights')}
+				</span>
 			</footer>
 		</div>
 	)

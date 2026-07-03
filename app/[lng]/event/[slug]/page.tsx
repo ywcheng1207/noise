@@ -49,7 +49,7 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 			<div className='flex flex-col gap-6 xl:flex-row xl:items-start xl:gap-10'>
 				<div className='flex max-w-3xl min-w-0 flex-1 flex-col gap-6'>
 					{isResearched ? null : (
-						<div className='border-info/50 bg-info/5 text-muted-foreground flex items-center gap-2 rounded-lg border border-dashed p-4 text-sm shadow-sm backdrop-blur-md'>
+						<div className='border-info/50 bg-info/5 text-muted-foreground flex items-center gap-2 rounded-lg border border-dashed p-4 text-sm backdrop-blur-md'>
 							<Clock className='text-info size-4 shrink-0 animate-pulse' />
 							{t('event.researchingHint')}
 						</div>
@@ -123,12 +123,12 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 									<li
 										key={src.id}
 										className={cn(
-											'rounded-lg border p-3 shadow-sm backdrop-blur-md',
+											'rounded-lg border p-3 backdrop-blur-md',
 											src.isAuthoritative ? 'border-info/40 bg-info/5' : 'border-border bg-card/70',
 										)}
 									>
-										<div className='flex items-center justify-between gap-2'>
-											<div className='flex flex-wrap items-center gap-2'>
+										<div className='flex items-start justify-between gap-2'>
+											<div className='flex min-w-0 flex-wrap items-center gap-2'>
 												<span className='text-muted-foreground text-sm font-medium'>{src.rank}</span>
 												<span className='font-medium'>{src.sourceName}</span>
 												{src.language ? (
@@ -141,8 +141,11 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 													{isVideo ? t('source.video') : t('source.text')}
 												</span>
 											</div>
-											<div className='flex items-center gap-2'>
-												<Badge variant={TIER_VARIANT[src.credibilityTier] ?? 'muted'}>
+											<div className='flex shrink-0 items-center gap-2'>
+												<Badge
+													variant={TIER_VARIANT[src.credibilityTier] ?? 'muted'}
+													className='whitespace-nowrap'
+												>
 													{src.isAuthoritative && <ShieldCheck className='size-3' />}
 													{t(`tier.${src.credibilityTier}`)}
 												</Badge>
@@ -160,9 +163,7 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 											</div>
 										</div>
 										{reasoning && (
-											<p className='text-muted-foreground mt-1.5 text-xs leading-5'>
-												<span className='text-info'>{t('event.why')}</span> {reasoning}
-											</p>
+											<p className='text-muted-foreground mt-1.5 text-xs leading-5'>{reasoning}</p>
 										)}
 									</li>
 								)

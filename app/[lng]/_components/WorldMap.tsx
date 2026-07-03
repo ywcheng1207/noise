@@ -40,6 +40,7 @@ function getWorldPaths(): CountryPath[] {
 export function WorldMap({ activeRegions }: { activeRegions: RegionKey[] }) {
 	const paths = getWorldPaths()
 	const active = new Set(activeRegions)
+	const isGlobal = active.has('GLOBAL')
 	const hasActive = activeRegions.length > 0
 
 	return (
@@ -50,7 +51,7 @@ export function WorldMap({ activeRegions }: { activeRegions: RegionKey[] }) {
 			aria-label='world map highlighting topic regions'
 		>
 			{paths.map((p) => {
-				const on = p.region && active.has(p.region)
+				const on = isGlobal || (p.region && active.has(p.region))
 				return <path key={p.id} d={p.d} strokeWidth={0.3} className={cnPath(Boolean(on), hasActive)} />
 			})}
 		</svg>

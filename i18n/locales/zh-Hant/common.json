@@ -11,7 +11,7 @@
 	},
 	"overview": {
 		"heading": "核心議題",
-		"subtitle": "由焦點向外擴散",
+		"subtitle": "跨語系來源持續追蹤時事議題,最新動態排最前",
 		"interval": "時間區間",
 		"domain": "領域",
 		"region": "地區",
@@ -76,5 +76,8 @@
 		"backToTopic": "返回議題",
 		"researching": "研究中",
 		"researchingHint": "此事件仍在跨來源查證，稍後再回來查看完整來龍去脈與來源排名。"
+	},
+	"footer": {
+		"rights": "版權所有"
 	}
 }
