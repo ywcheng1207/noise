@@ -57,6 +57,7 @@
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-lg: var(--radius);
 	--radius-xl: calc(var(--radius) + 4px);
+	--animate-marquee: marquee 26s linear infinite;
 	--font-sans:
 		ui-sans-serif, system-ui, -apple-system, 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
 	--color-background: var(--background);
@@ -115,5 +116,20 @@
 				color-mix(in oklch, var(--warning) 6%, transparent),
 				transparent 70%
 			);
+	}
+}
+
+/* 跑馬燈:內容重複兩份,位移 -50% 形成無縫循環;hover 暫停、降低動態偏好時停用。 */
+@keyframes marquee {
+	to {
+		transform: translateX(-50%);
+	}
+}
+.group:hover .animate-marquee {
+	animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+	.animate-marquee {
+		animation: none;
 	}
 }

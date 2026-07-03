@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
-import { FOCUS_DOMAINS } from '@/lib/enums'
-import { REGION_LABELS } from '@/lib/regions'
+import { FOCUS_DOMAINS, RELIABILITIES } from '@/lib/enums'
+import { REGIONS, REGION_LABELS } from '@/lib/regions'
 import { OverviewClient, type TopicCardData } from './_components/OverviewClient'
 
 export const dynamic = 'force-dynamic'
@@ -16,6 +16,13 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 	const topics = await prisma.topic.findMany({
 		where: { domain: { in: [...FOCUS_DOMAINS] } },
 		orderBy: { updatedAt: 'desc' },
+		include: {
+			events: {
+				orderBy: { firstSeenAt: 'desc' },
+				take: 3,
+				select: { titleZh: true, titleEn: true },
+			},
+		},
 	})
 
 	const cards: TopicCardData[] = topics.map((tp) => ({
@@ -32,29 +39,38 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 		sourceCount: tp.sourceCount,
 		languageCount: tp.languageCount,
 		updatedAt: tp.updatedAt.toISOString(),
+		spanStartAt: tp.spanStart?.toISOString() ?? null,
+		spanEndAt: tp.spanEnd?.toISOString() ?? null,
+		latestEventTitles: tp.events.map((ev) => (isZh ? ev.titleZh : ev.titleEn)),
 	}))
 
 	const intervalOptions = [
 		{ value: 'all', label: t('interval.all') },
 		...INTERVAL_KEYS.map((k) => ({ value: k, label: t(`interval.${k}`) })),
 	]
-	const domainsPresent = Array.from(new Set(topics.map((tp) => tp.domain)))
+	const domainsPresent = new Set(topics.map((tp) => tp.domain))
 	const domainOptions = [
 		{ value: 'all', label: t('domain.all') },
-		...domainsPresent.map((d) => ({ value: d, label: t(`domain.${d}`) })),
+		...FOCUS_DOMAINS.filter((d) => domainsPresent.has(d)).map((d) => ({
+			value: d,
+			label: t(`domain.${d}`),
+		})),
 	]
-	const regionsPresent = Array.from(new Set(topics.flatMap((tp) => tp.regions)))
+	const regionsPresent = new Set(topics.flatMap((tp) => tp.regions))
 	const regionOptions = [
 		{ value: 'all', label: t('region.all') },
-		...regionsPresent.map((r) => ({
+		...REGIONS.filter((r) => regionsPresent.has(r)).map((r) => ({
 			value: r,
 			label: isZh ? REGION_LABELS[r].zh : REGION_LABELS[r].en,
 		})),
 	]
-	const reliabilitiesPresent = Array.from(new Set(topics.map((tp) => tp.overallReliability)))
+	const reliabilitiesPresent = new Set(topics.map((tp) => tp.overallReliability))
 	const reliabilityOptions = [
 		{ value: 'all', label: t('reliability.all') },
-		...reliabilitiesPresent.map((r) => ({ value: r, label: t(`reliability.${r}`) })),
+		...RELIABILITIES.filter((r) => reliabilitiesPresent.has(r)).map((r) => ({
+			value: r,
+			label: t(`reliability.${r}`),
+		})),
 	]
 
 	const labels = {

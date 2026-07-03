@@ -69,7 +69,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 								)}
 							/>
 							{isResearching ? (
-								<div className='border-info/40 bg-info/5 block rounded-lg border border-dashed p-3 shadow-sm backdrop-blur-md'>
+								<div className='border-info/40 bg-info/5 block rounded-lg border border-dashed p-3 backdrop-blur-md'>
 									<div className='flex items-center justify-between gap-2'>
 										<span className='font-medium'>{isZh ? ev.titleZh : ev.titleEn}</span>
 										<Badge variant='info'>
@@ -87,7 +87,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 							) : (
 								<Link
 									href={`/${lng}/event/${ev.slug}`}
-									className='border-border bg-card/70 hover:border-foreground/30 block rounded-lg border p-3 shadow-sm backdrop-blur-md transition-colors'
+									className='border-border/80 bg-card/70 hover:border-primary/40 hover:shadow-primary/10 block rounded-lg border p-3 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg'
 								>
 									<div className='flex items-center justify-between gap-2'>
 										<span className='font-medium'>{isZh ? ev.titleZh : ev.titleEn}</span>

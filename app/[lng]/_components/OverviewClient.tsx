@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { differenceInCalendarDays } from 'date-fns'
 
 import { WorldMap } from './WorldMap'
 import { Badge } from '@/components/Badge'
@@ -31,6 +32,9 @@ export interface TopicCardData {
 	sourceCount: number
 	languageCount: number
 	updatedAt: string
+	spanStartAt: string | null
+	spanEndAt: string | null
+	latestEventTitles: string[]
 }
 
 interface OverviewStats {
@@ -59,6 +63,17 @@ interface OverviewClientProps {
 	regionOptions: FacetOption[]
 	reliabilityOptions: FacetOption[]
 	labels: OverviewLabels
+}
+
+function matchesInterval(selected: string, spanStartAt: string | null, spanEndAt: string | null) {
+	if (selected === 'all') return true
+	if (!spanEndAt) return false
+	const daysSinceEnd = differenceInCalendarDays(new Date(), new Date(spanEndAt))
+	if (selected === 'TODAY') return daysSinceEnd <= 1
+	if (selected === 'WEEK') return daysSinceEnd <= 7
+	if (selected === 'MONTH') return daysSinceEnd <= 31
+	const spanDays = spanStartAt ? differenceInCalendarDays(new Date(spanEndAt), new Date(spanStartAt)) : 0
+	return spanDays >= 14 && daysSinceEnd <= 7
 }
 
 function readSeenMap(): Record<string, string> {
@@ -96,7 +111,7 @@ export function OverviewClient({
 		() =>
 			topics.filter(
 				(tpc) =>
-					(interval === 'all' || tpc.interval === interval) &&
+					matchesInterval(interval, tpc.spanStartAt, tpc.spanEndAt) &&
 					(domain === 'all' || tpc.domain === domain) &&
 					(region === 'all' || tpc.regions.some((r) => r === region)) &&
 					(reliability === 'all' || tpc.reliability === reliability),
@@ -181,52 +196,66 @@ function TopicCard({
 	isUnseen?: boolean
 	onSeen: (slug: string, updatedAt: string) => void
 }) {
+	const marqueeText = topic.latestEventTitles.join('  ·  ')
+
 	return (
 		<Link
 			href={`/${lng}/topic/${topic.slug}`}
 			onClick={() => onSeen(topic.slug, topic.updatedAt)}
 			className={cn(
-				'flex flex-col gap-3 rounded-lg border p-4 shadow-sm backdrop-blur-md transition-colors sm:flex-row sm:items-center',
+				'group hover:shadow-primary/10 flex flex-col gap-3 rounded-lg border p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg',
 				isUnseen
-					? 'border-primary/40 bg-primary/5 hover:border-primary/60'
-					: 'border-border bg-card/70 hover:border-foreground/30',
+					? 'border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10'
+					: 'border-border/80 bg-card/70 hover:border-primary/40 hover:bg-card',
 			)}
 		>
-			<div className='flex min-w-0 flex-1 flex-col gap-2'>
-				<div className='flex items-start justify-between gap-2'>
-					<span className='flex min-w-0 items-center gap-2 font-medium'>
-						{isUnseen ? <span className='bg-primary size-2 shrink-0 rounded-full' /> : null}
-						{topic.title}
-						<LinkPendingSpinner />
-					</span>
-					<span className='flex shrink-0 items-center gap-1.5'>
-						{isUnseen ? <Badge className='bg-primary/10 text-primary'>{updatedLabel}</Badge> : null}
-						<Badge variant={RELIABILITY_VARIANT[topic.reliability] ?? 'muted'}>
+			<div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
+				<div className='flex min-w-0 flex-1 flex-col gap-2'>
+					<div className='flex items-start justify-between gap-2'>
+						<span className='flex min-w-0 items-center gap-2 font-medium'>
+							{isUnseen ? (
+								<span className='relative flex size-2 shrink-0' title={updatedLabel}>
+									<span className='bg-primary/60 absolute inline-flex h-full w-full animate-ping rounded-full' />
+									<span className='bg-primary relative inline-flex size-2 rounded-full' />
+								</span>
+							) : null}
+							{topic.title}
+							<LinkPendingSpinner />
+						</span>
+						<Badge variant={RELIABILITY_VARIANT[topic.reliability] ?? 'muted'} className='shrink-0'>
 							{topic.reliabilityLabel}
 						</Badge>
-					</span>
-				</div>
-				<div className='flex flex-wrap gap-1.5'>
-					<span className='bg-secondary/60 text-muted-foreground rounded-lg px-2 py-0.5 text-xs backdrop-blur-sm'>
-						{topic.domainLabel}
-					</span>
-					{topic.regionLabels.map((rl) => (
-						<span
-							key={rl}
-							className='bg-secondary/60 text-muted-foreground rounded-lg px-2 py-0.5 text-xs backdrop-blur-sm'
-						>
-							{rl}
+					</div>
+					<div className='flex flex-wrap gap-1.5'>
+						<span className='bg-secondary/60 text-muted-foreground rounded-lg px-2 py-0.5 text-xs backdrop-blur-sm'>
+							{topic.domainLabel}
 						</span>
-					))}
+						{topic.regionLabels.map((rl) => (
+							<span
+								key={rl}
+								className='bg-secondary/60 text-muted-foreground rounded-lg px-2 py-0.5 text-xs backdrop-blur-sm'
+							>
+								{rl}
+							</span>
+						))}
+					</div>
+					<div className='text-muted-foreground text-xs'>
+						{topic.eventCount} {stats.events} · {topic.sourceCount} {stats.sources} · {topic.languageCount}{' '}
+						{stats.languages}
+					</div>
 				</div>
-				<div className='text-muted-foreground text-xs'>
-					{topic.eventCount} {stats.events} · {topic.sourceCount} {stats.sources} · {topic.languageCount}{' '}
-					{stats.languages}
+				<div className='border-border bg-secondary/30 w-full shrink-0 overflow-hidden rounded-lg border p-1 backdrop-blur-sm sm:w-80'>
+					<WorldMap activeRegions={topic.regions} />
 				</div>
 			</div>
-			<div className='border-border bg-secondary/30 w-full shrink-0 overflow-hidden rounded-lg border p-1 backdrop-blur-sm sm:w-80'>
-				<WorldMap activeRegions={topic.regions} />
-			</div>
+			{marqueeText ? (
+				<div className='border-border/60 text-muted-foreground overflow-hidden border-t pt-2 text-xs'>
+					<div className='animate-marquee flex w-max'>
+						<span className='pr-16'>{marqueeText}</span>
+						<span className='pr-16'>{marqueeText}</span>
+					</div>
+				</div>
+			) : null}
 		</Link>
 	)
 }
