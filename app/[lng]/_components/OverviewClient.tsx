@@ -203,13 +203,13 @@ function TopicCard({
 			href={`/${lng}/topic/${topic.slug}`}
 			onClick={() => onSeen(topic.slug, topic.updatedAt)}
 			className={cn(
-				'group flex flex-col gap-3 rounded-lg border p-4 backdrop-blur-md transition-all duration-200',
+				'group relative flex flex-col gap-3 rounded-lg border p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]',
 				isUnseen
 					? 'border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10'
 					: 'border-border/80 bg-card/70 hover:border-primary/40 hover:bg-card',
 			)}
 		>
-			<div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
+			<div className='flex flex-col gap-3 sm:flex-row sm:items-start'>
 				<div className='flex min-w-0 flex-1 flex-col gap-2'>
 					<div className='flex items-start justify-between gap-2'>
 						<span className='flex min-w-0 items-center gap-2 font-medium'>
@@ -249,7 +249,7 @@ function TopicCard({
 				</div>
 			</div>
 			{marqueeText ? (
-				<div className='border-border/60 text-muted-foreground overflow-hidden border-t pt-2 text-xs'>
+				<div className='border-border/60 bg-card/80 text-muted-foreground absolute inset-x-0 bottom-0 overflow-hidden rounded-b-lg border-t px-4 py-1 text-xs backdrop-blur-sm'>
 					<div className='animate-marquee flex w-max'>
 						<span className='pr-16'>{marqueeText}</span>
 						<span className='pr-16'>{marqueeText}</span>
