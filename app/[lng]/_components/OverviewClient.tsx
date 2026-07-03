@@ -1,12 +1,16 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+
 import { WorldMap } from './WorldMap'
 import { Badge } from '@/components/Badge'
+import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
 import { RELIABILITY_VARIANT } from '@/lib/ui'
 import { cn } from '@/lib/utils'
 import type { RegionKey } from '@/lib/regions'
+
+const SEEN_STORAGE_KEY = 'noise-topic-seen'
 
 interface FacetOption {
 	value: string
@@ -26,6 +30,7 @@ export interface TopicCardData {
 	eventCount: number
 	sourceCount: number
 	languageCount: number
+	updatedAt: string
 }
 
 interface OverviewStats {
@@ -41,6 +46,7 @@ interface OverviewLabels {
 	domain: string
 	region: string
 	reliability: string
+	updated: string
 	empty: string
 	stats: OverviewStats
 }
@@ -53,6 +59,22 @@ interface OverviewClientProps {
 	regionOptions: FacetOption[]
 	reliabilityOptions: FacetOption[]
 	labels: OverviewLabels
+}
+
+function readSeenMap(): Record<string, string> {
+	try {
+		const raw = localStorage.getItem(SEEN_STORAGE_KEY)
+		if (!raw) return {}
+		const parsed: unknown = JSON.parse(raw)
+		if (typeof parsed !== 'object' || parsed === null) return {}
+		const result: Record<string, string> = {}
+		Object.entries(parsed).forEach(([key, value]) => {
+			if (typeof value === 'string') result[key] = value
+		})
+		return result
+	} catch {
+		return {}
+	}
 }
 
 export function OverviewClient({
@@ -68,6 +90,7 @@ export function OverviewClient({
 	const [domain, setDomain] = useState('all')
 	const [region, setRegion] = useState('all')
 	const [reliability, setReliability] = useState('all')
+	const [seenMap, setSeenMap] = useState<Record<string, string> | null>(null)
 
 	const filtered = useMemo(
 		() =>
@@ -80,6 +103,18 @@ export function OverviewClient({
 			),
 		[topics, interval, domain, region, reliability],
 	)
+
+	function handleSeen(slug: string, updatedAt: string) {
+		setSeenMap((prev) => {
+			const next = { ...(prev ?? {}), [slug]: updatedAt }
+			localStorage.setItem(SEEN_STORAGE_KEY, JSON.stringify(next))
+			return next
+		})
+	}
+
+	useEffect(() => {
+		setSeenMap(readSeenMap())
+	}, [])
 
 	return (
 		<div className='flex flex-col gap-5'>
@@ -110,9 +145,20 @@ export function OverviewClient({
 					<p className='text-muted-foreground flex-1 py-8 text-center text-sm'>{labels.empty}</p>
 				) : (
 					<div className='flex min-w-0 flex-1 flex-col gap-3'>
-						{filtered.map((tpc) => (
-							<TopicCard key={tpc.slug} lng={lng} topic={tpc} stats={labels.stats} />
-						))}
+						{filtered.map((tpc) => {
+							const isUnseen = seenMap !== null && (!seenMap[tpc.slug] || seenMap[tpc.slug] < tpc.updatedAt)
+							return (
+								<TopicCard
+									key={tpc.slug}
+									lng={lng}
+									topic={tpc}
+									stats={labels.stats}
+									updatedLabel={labels.updated}
+									isUnseen={isUnseen}
+									onSeen={handleSeen}
+								/>
+							)
+						})}
 					</div>
 				)}
 			</div>
@@ -120,23 +166,55 @@ export function OverviewClient({
 	)
 }
 
-function TopicCard({ lng, topic, stats }: { lng: string; topic: TopicCardData; stats: OverviewStats }) {
+function TopicCard({
+	lng,
+	topic,
+	stats,
+	updatedLabel,
+	isUnseen = false,
+	onSeen,
+}: {
+	lng: string
+	topic: TopicCardData
+	stats: OverviewStats
+	updatedLabel: string
+	isUnseen?: boolean
+	onSeen: (slug: string, updatedAt: string) => void
+}) {
 	return (
 		<Link
 			href={`/${lng}/topic/${topic.slug}`}
-			className='border-border hover:border-foreground/30 flex flex-col gap-3 rounded-xl border p-4 transition-colors sm:flex-row sm:items-center'
+			onClick={() => onSeen(topic.slug, topic.updatedAt)}
+			className={cn(
+				'flex flex-col gap-3 rounded-lg border p-4 shadow-sm backdrop-blur-md transition-colors sm:flex-row sm:items-center',
+				isUnseen
+					? 'border-primary/40 bg-primary/5 hover:border-primary/60'
+					: 'border-border bg-card/70 hover:border-foreground/30',
+			)}
 		>
 			<div className='flex min-w-0 flex-1 flex-col gap-2'>
 				<div className='flex items-start justify-between gap-2'>
-					<span className='font-medium'>{topic.title}</span>
-					<Badge variant={RELIABILITY_VARIANT[topic.reliability] ?? 'muted'}>{topic.reliabilityLabel}</Badge>
+					<span className='flex min-w-0 items-center gap-2 font-medium'>
+						{isUnseen ? <span className='bg-primary size-2 shrink-0 rounded-full' /> : null}
+						{topic.title}
+						<LinkPendingSpinner />
+					</span>
+					<span className='flex shrink-0 items-center gap-1.5'>
+						{isUnseen ? <Badge className='bg-primary/10 text-primary'>{updatedLabel}</Badge> : null}
+						<Badge variant={RELIABILITY_VARIANT[topic.reliability] ?? 'muted'}>
+							{topic.reliabilityLabel}
+						</Badge>
+					</span>
 				</div>
 				<div className='flex flex-wrap gap-1.5'>
-					<span className='bg-secondary text-muted-foreground rounded-full px-2 py-0.5 text-xs'>
+					<span className='bg-secondary/60 text-muted-foreground rounded-lg px-2 py-0.5 text-xs backdrop-blur-sm'>
 						{topic.domainLabel}
 					</span>
 					{topic.regionLabels.map((rl) => (
-						<span key={rl} className='bg-secondary text-muted-foreground rounded-full px-2 py-0.5 text-xs'>
+						<span
+							key={rl}
+							className='bg-secondary/60 text-muted-foreground rounded-lg px-2 py-0.5 text-xs backdrop-blur-sm'
+						>
 							{rl}
 						</span>
 					))}
@@ -146,7 +224,7 @@ function TopicCard({ lng, topic, stats }: { lng: string; topic: TopicCardData; s
 					{stats.languages}
 				</div>
 			</div>
-			<div className='border-border bg-secondary/40 w-full shrink-0 overflow-hidden rounded-lg border p-1 sm:w-80'>
+			<div className='border-border bg-secondary/30 w-full shrink-0 overflow-hidden rounded-lg border p-1 backdrop-blur-sm sm:w-80'>
 				<WorldMap activeRegions={topic.regions} />
 			</div>
 		</Link>
@@ -174,10 +252,10 @@ function FacetGroup({
 						type='button'
 						onClick={() => onChange(opt.value)}
 						className={cn(
-							'border-border shrink-0 cursor-pointer rounded-full border px-3 py-1 text-xs whitespace-nowrap transition-colors',
+							'border-border shrink-0 cursor-pointer rounded-lg border px-3 py-1 text-xs whitespace-nowrap backdrop-blur-sm transition-colors',
 							value === opt.value
-								? 'bg-secondary text-foreground'
-								: 'text-muted-foreground hover:text-foreground',
+								? 'bg-secondary/80 text-foreground'
+								: 'bg-card/50 text-muted-foreground hover:text-foreground',
 						)}
 					>
 						{opt.label}

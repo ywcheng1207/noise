@@ -4,6 +4,7 @@ import { ArrowRight, CalendarRange, Clock, MapPin } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
+import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
 import { RELIABILITY_VARIANT } from '@/lib/ui'
 import { REGION_LABELS } from '@/lib/regions'
 import { formatDateRange, formatOccurred } from '@/lib/dates'
@@ -36,7 +37,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 					{topic.regions.map((r) => (
 						<span
 							key={r}
-							className='bg-secondary text-muted-foreground inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs'
+							className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs backdrop-blur-sm'
 						>
 							<MapPin className='size-3' />
 							{isZh ? REGION_LABELS[r].zh : REGION_LABELS[r].en}
@@ -46,7 +47,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 						{topic.eventCount} {t('stats.events')} · {topic.sourceCount} {t('stats.sources')}
 					</span>
 					{spanLabel ? (
-						<span className='bg-secondary text-muted-foreground inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs'>
+						<span className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs backdrop-blur-sm'>
 							<CalendarRange className='size-3' />
 							{spanLabel}
 						</span>
@@ -68,7 +69,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 								)}
 							/>
 							{isResearching ? (
-								<div className='border-info/40 bg-info/5 block rounded-lg border border-dashed p-3'>
+								<div className='border-info/40 bg-info/5 block rounded-lg border border-dashed p-3 shadow-sm backdrop-blur-md'>
 									<div className='flex items-center justify-between gap-2'>
 										<span className='font-medium'>{isZh ? ev.titleZh : ev.titleEn}</span>
 										<Badge variant='info'>
@@ -86,7 +87,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 							) : (
 								<Link
 									href={`/${lng}/event/${ev.slug}`}
-									className='border-border hover:border-foreground/30 block rounded-lg border p-3 transition-colors'
+									className='border-border bg-card/70 hover:border-foreground/30 block rounded-lg border p-3 shadow-sm backdrop-blur-md transition-colors'
 								>
 									<div className='flex items-center justify-between gap-2'>
 										<span className='font-medium'>{isZh ? ev.titleZh : ev.titleEn}</span>
@@ -97,6 +98,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 									<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
 										<span className='text-info inline-flex items-center gap-1 text-xs'>
 											{t('event.viewEvent')} <ArrowRight className='size-3' />
+											<LinkPendingSpinner />
 										</span>
 										{seenLabel ? (
 											<span className='text-muted-foreground font-mono text-xs'>{seenLabel}</span>

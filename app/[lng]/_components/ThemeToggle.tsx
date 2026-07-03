@@ -24,7 +24,7 @@ export function ThemeToggle() {
 			type='button'
 			onClick={handleToggle}
 			aria-label='toggle theme'
-			className='text-muted-foreground hover:bg-secondary hover:text-foreground flex size-8 cursor-pointer items-center justify-center rounded-md transition-colors'
+			className='text-muted-foreground hover:bg-secondary hover:text-foreground flex size-8 cursor-pointer items-center justify-center rounded-lg transition-colors'
 		>
 			{mounted ? (
 				isDark ? (

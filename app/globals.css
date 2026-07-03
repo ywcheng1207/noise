@@ -4,7 +4,7 @@
 
 /* 色板:暖色調(參考 Claude 介面風格)。亮色為預設,.dark 由 next-themes 切換。 */
 :root {
-	--radius: 0.625rem;
+	--radius: 0.5rem;
 	--background: oklch(0.982 0.005 95);
 	--foreground: oklch(0.27 0.012 80);
 	--card: oklch(1 0 0.005);
@@ -91,5 +91,29 @@
 		background-color: var(--color-background);
 		color: var(--color-foreground);
 		font-family: var(--font-sans);
+	}
+	/* 玻璃擬態的底層色彩:固定的柔和色斑,讓 backdrop-blur 有東西可以模糊。 */
+	body::before {
+		content: '';
+		position: fixed;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		background:
+			radial-gradient(
+				40rem 28rem at 12% -8%,
+				color-mix(in oklch, var(--primary) 9%, transparent),
+				transparent 70%
+			),
+			radial-gradient(
+				36rem 26rem at 88% 12%,
+				color-mix(in oklch, var(--info) 7%, transparent),
+				transparent 70%
+			),
+			radial-gradient(
+				32rem 24rem at 55% 105%,
+				color-mix(in oklch, var(--warning) 6%, transparent),
+				transparent 70%
+			);
 	}
 }

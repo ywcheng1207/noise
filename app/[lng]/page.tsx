@@ -31,6 +31,7 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 		eventCount: tp.eventCount,
 		sourceCount: tp.sourceCount,
 		languageCount: tp.languageCount,
+		updatedAt: tp.updatedAt.toISOString(),
 	}))
 
 	const intervalOptions = [
@@ -63,6 +64,7 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 		domain: t('overview.domain'),
 		region: t('overview.region'),
 		reliability: t('overview.reliability'),
+		updated: t('overview.updated'),
 		empty: t('overview.empty'),
 		stats: {
 			events: t('stats.events'),

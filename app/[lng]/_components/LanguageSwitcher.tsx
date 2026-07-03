@@ -1,7 +1,7 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { useTransition } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 
 import { languages } from '@/i18n/settings'
 import { cn } from '@/lib/utils'
@@ -14,28 +14,39 @@ function buildLanguageHref(pathname: string, lng: string) {
 
 export function LanguageSwitcher({ lng }: { lng: string }) {
 	const pathname = usePathname()
+	const router = useRouter()
+
+	const [isPending, startTransition] = useTransition()
 
 	const options = languages.map((l) => ({
 		value: l,
-		href: buildLanguageHref(pathname, l),
 		label: l === 'zh-Hant' ? '中' : 'EN',
 	}))
+
+	function handleSwitch(target: string) {
+		if (target === lng) return
+		startTransition(() => {
+			router.push(buildLanguageHref(pathname, target))
+		})
+	}
 
 	return (
 		<nav className='flex items-center gap-1 text-sm'>
 			{options.map((opt) => (
-				<Link
+				<button
 					key={opt.value}
-					href={opt.href}
+					type='button'
+					onClick={() => handleSwitch(opt.value)}
 					className={cn(
-						'rounded-md px-2 py-1',
+						'cursor-pointer rounded-lg px-2 py-1 transition-colors',
 						opt.value === lng
 							? 'bg-secondary text-foreground'
 							: 'text-muted-foreground hover:text-foreground',
+						isPending && opt.value !== lng && 'animate-pulse',
 					)}
 				>
 					{opt.label}
-				</Link>
+				</button>
 			))}
 		</nav>
 	)
