@@ -51,22 +51,14 @@ export function WorldMap({ activeRegions }: { activeRegions: RegionKey[] }) {
 		>
 			{paths.map((p) => {
 				const on = p.region && active.has(p.region)
-				return (
-					<path
-						key={p.id}
-						d={p.d}
-						strokeWidth={0.3}
-						className={cnPath(Boolean(on), hasActive)}
-					/>
-				)
+				return <path key={p.id} d={p.d} strokeWidth={0.3} className={cnPath(Boolean(on), hasActive)} />
 			})}
 		</svg>
 	)
 }
 
+// 不掛 transition:主題切換時上千個 path 同時跑動畫會造成卡頓。
 function cnPath(on: boolean, hasActive: boolean) {
-	if (on) return 'fill-warning stroke-background transition-colors'
-	return hasActive
-		? 'fill-muted/60 stroke-background transition-colors'
-		: 'fill-muted stroke-background transition-colors'
+	if (on) return 'fill-warning stroke-background'
+	return hasActive ? 'fill-foreground/15 stroke-background' : 'fill-foreground/25 stroke-background'
 }
