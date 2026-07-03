@@ -170,11 +170,12 @@ model Event {
 }
 
 model EventTimeline {
-  id            String   @id @default(uuid()) @db.Uuid
-  eventId       String   @db.Uuid
-  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  occurredAt    DateTime?
-  occurredLabel String?
+  id                String    @id @default(uuid()) @db.Uuid
+  eventId           String    @db.Uuid
+  event             Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  occurredAt        DateTime?
+  occurredPrecision String?
+  occurredLabel     String?
   descZh        String
   descEn        String
   sourceUrl     String?

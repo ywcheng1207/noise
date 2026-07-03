@@ -22,7 +22,7 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
 			<body suppressHydrationWarning className={cn('bg-background text-foreground min-h-screen antialiased')}>
 				<StoreProvider>
 					<QueryProvider>
-						<ThemeProvider attribute='class' defaultTheme='light'>
+						<ThemeProvider attribute='class' defaultTheme='light' disableTransitionOnChange>
 							{children}
 						</ThemeProvider>
 					</QueryProvider>

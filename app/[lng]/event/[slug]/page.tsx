@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
 import { RELIABILITY_VARIANT, TIER_VARIANT } from '@/lib/ui'
+import { formatOccurred } from '@/lib/dates'
 import { cn } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
@@ -65,39 +66,47 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 						<section>
 							<h2 className='text-muted-foreground mb-3 text-sm font-medium'>{t('event.timeline')}</h2>
 							<ol className='border-border relative ml-2 border-l'>
-								{event.timeline.map((node) => (
-									<li key={node.id} className='mb-4 ml-4'>
-										<span
-											className={cn(
-												'absolute -left-[5px] mt-1.5 size-2.5 rounded-full',
-												node.isConflicting ? 'bg-warning' : 'bg-info',
-											)}
-										/>
-										<div className='text-muted-foreground font-mono text-xs'>{node.occurredLabel ?? ''}</div>
-										<div className='text-sm leading-6'>{isZh ? node.descZh : node.descEn}</div>
-										<div className='mt-1 flex flex-wrap items-center gap-2'>
-											{node.isConflicting && (
-												<Badge variant='warning'>
-													<AlertTriangle className='size-3' />
-													{t('event.conflicting')}
-												</Badge>
-											)}
-											{node.sourceLabel &&
-												(node.sourceUrl ? (
-													<a
-														className='text-info text-xs underline'
-														href={node.sourceUrl}
-														target='_blank'
-														rel='noopener noreferrer'
-													>
-														{node.sourceLabel}
-													</a>
-												) : (
-													<span className='text-muted-foreground text-xs'>{node.sourceLabel}</span>
-												))}
-										</div>
-									</li>
-								))}
+								{event.timeline.map((node) => {
+									const occurred = formatOccurred({
+										lng,
+										occurredAt: node.occurredAt,
+										precision: node.occurredPrecision,
+										fallbackLabel: node.occurredLabel,
+									})
+									return (
+										<li key={node.id} className='mb-4 ml-4'>
+											<span
+												className={cn(
+													'absolute -left-[5px] mt-1.5 size-2.5 rounded-full',
+													node.isConflicting ? 'bg-warning' : 'bg-info',
+												)}
+											/>
+											<div className='text-muted-foreground font-mono text-xs'>{occurred ?? ''}</div>
+											<div className='text-sm leading-6'>{isZh ? node.descZh : node.descEn}</div>
+											<div className='mt-1 flex flex-wrap items-center gap-2'>
+												{node.isConflicting && (
+													<Badge variant='warning'>
+														<AlertTriangle className='size-3' />
+														{t('event.conflicting')}
+													</Badge>
+												)}
+												{node.sourceLabel &&
+													(node.sourceUrl ? (
+														<a
+															className='text-info text-xs underline'
+															href={node.sourceUrl}
+															target='_blank'
+															rel='noopener noreferrer'
+														>
+															{node.sourceLabel}
+														</a>
+													) : (
+														<span className='text-muted-foreground text-xs'>{node.sourceLabel}</span>
+													))}
+											</div>
+										</li>
+									)
+								})}
 							</ol>
 						</section>
 					)}

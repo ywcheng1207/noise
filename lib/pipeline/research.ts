@@ -2,13 +2,14 @@ import { prisma } from '@/lib/prisma'
 import { MODEL, logAiRun, generateJsonWithSearch } from '@/lib/gemini'
 import { normalizeMediaType, normalizeReliability, normalizeTier } from '@/lib/enums'
 import { toTraditionalZh, toTraditionalZhOrNull } from '@/lib/zh'
+import { parseOccurredDate } from '@/lib/dates'
 
 interface ResearchResult {
 	narrativeZh: string
 	narrativeEn: string
 	overallReliability: string
 	timeline: Array<{
-		occurredLabel?: string
+		occurredDate?: string
 		descZh: string
 		descEn: string
 		sourceLabel?: string
@@ -35,9 +36,13 @@ export async function researchEvent(eventId: string) {
 	const seeds = event.articles.map((a) => `- ${a.title} (${a.canonicalUrl})`).join('\n') || '(無種子)'
 	const system =
 		'你是新聞事件研究員。針對事件跨來源查證（用 Google 搜尋，不限語系），排出時間序列、講清來龍去脈、依可信度排名來源並標出官方/最高可信來源。評分針對單篇報導或單一主張，不對媒體機構作人格評價。每個主張都要有來源。所有中文欄位一律使用正體中文（臺灣用語），即使來源報導為簡體。'
-	const prompt = `事件：${event.titleZh} / ${event.titleEn}\n種子報導：\n${seeds}\n\n查證後只回 JSON（不要其他文字、不要 markdown；narrativeZh/En 各 2–3 句、timeline 最多 4 節點、sources 最多 4 個，力求精簡以加快回應）。\n每個來源請標 language（ISO 639-1 語言代碼，如 en/zh/ar/fr）與 mediaType（影音報導用 VIDEO，文字報導用 TEXT）：\n{"narrativeZh":"","narrativeEn":"","overallReliability":"VERIFIED|DEVELOPING|DISPUTED|UNVERIFIED","timeline":[{"occurredLabel":"6/18","descZh":"","descEn":"","sourceLabel":"","sourceUrl":"","isConflicting":false}],"sources":[{"sourceName":"","externalUrl":"","language":"en","mediaType":"TEXT","credibilityTier":"OFFICIAL|HIGH|MEDIUM|LOW|UNVERIFIED","isAuthoritative":false,"reasoningZh":"","reasoningEn":""}]}`
+	const prompt = `事件：${event.titleZh} / ${event.titleEn}\n種子報導：\n${seeds}\n\n查證後只回 JSON（不要其他文字、不要 markdown；narrativeZh/En 各 2–3 句、timeline 最多 4 節點、sources 最多 4 個，力求精簡以加快回應）。\ntimeline 的 occurredDate 一律用 ISO 格式：確定到日用 YYYY-MM-DD，只確定到月用 YYYY-MM，只確定到年用 YYYY，不要寫其他文字。\n每個來源請標 language（ISO 639-1 語言代碼，如 en/zh/ar/fr）與 mediaType（影音報導用 VIDEO，文字報導用 TEXT）：\n{"narrativeZh":"","narrativeEn":"","overallReliability":"VERIFIED|DEVELOPING|DISPUTED|UNVERIFIED","timeline":[{"occurredDate":"2026-06-18","descZh":"","descEn":"","sourceLabel":"","sourceUrl":"","isConflicting":false}],"sources":[{"sourceName":"","externalUrl":"","language":"en","mediaType":"TEXT","credibilityTier":"OFFICIAL|HIGH|MEDIUM|LOW|UNVERIFIED","isAuthoritative":false,"reasoningZh":"","reasoningEn":""}]}`
 
-	const { data: parsed, usage, searches } = await generateJsonWithSearch<ResearchResult>({
+	const {
+		data: parsed,
+		usage,
+		searches,
+	} = await generateJsonWithSearch<ResearchResult>({
 		model: MODEL.RESEARCH,
 		system,
 		prompt,
@@ -60,7 +65,7 @@ export async function researchEvent(eventId: string) {
 	await prisma.eventTimeline.createMany({
 		data: (parsed.timeline ?? []).map((n, i) => ({
 			eventId,
-			occurredLabel: toTraditionalZhOrNull(n.occurredLabel),
+			...parseOccurredDate(n.occurredDate),
 			descZh: toTraditionalZh(n.descZh),
 			descEn: n.descEn,
 			sourceUrl: n.sourceUrl ?? null,
