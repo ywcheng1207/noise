@@ -125,16 +125,14 @@ export function OverviewClient({
 	}, [])
 
 	return (
-		<Tabs defaultValue='intro' className='flex flex-col gap-5'>
+		<Tabs defaultValue='intro' className='flex flex-col'>
 			<TabsList>
 				<TabsTrigger value='intro'>{labels.introTab}</TabsTrigger>
 				<TabsTrigger value='topics'>{labels.heading}</TabsTrigger>
 			</TabsList>
 
 			<TabsContent value='intro'>
-				<div className='bg-card/90 rounded-lg p-6'>
-					<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{labels.subtitle}</p>
-				</div>
+				<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{labels.subtitle}</p>
 			</TabsContent>
 
 			<TabsContent value='topics' className='flex flex-col gap-5'>
@@ -206,7 +204,7 @@ function TopicCard({
 			onClick={() => onSeen(topic.slug, topic.updatedAt)}
 			className={cn(
 				'group relative flex flex-col gap-3 rounded-lg p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]',
-				isUnseen ? 'bg-primary/10 hover:bg-primary/15' : 'bg-card/90 hover:bg-card',
+				isUnseen ? 'bg-primary/10 hover:bg-primary/15' : 'bg-secondary/40 hover:bg-secondary/60',
 			)}
 		>
 			<div className='flex flex-col gap-3 sm:flex-row sm:items-start'>
@@ -284,7 +282,7 @@ function FacetGroup({
 							'shrink-0 cursor-pointer rounded-lg px-3 py-1 text-xs whitespace-nowrap backdrop-blur-sm transition-all duration-200 hover:scale-[1.03]',
 							value === opt.value
 								? 'bg-secondary text-foreground'
-								: 'bg-card/80 text-muted-foreground hover:bg-secondary/60 hover:text-foreground',
+								: 'bg-secondary/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground',
 						)}
 					>
 						{opt.label}
