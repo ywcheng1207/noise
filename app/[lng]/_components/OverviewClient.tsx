@@ -2,6 +2,7 @@
 
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { Loader2 } from 'lucide-react'
 
 import { WorldMap } from './WorldMap'
 import { Badge } from '@/components/Badge'
@@ -9,6 +10,7 @@ import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
 import { SearchInput } from '@/components/SearchInput'
 import { RELIABILITY_VARIANT } from '@/lib/ui'
 import { matchesKeyword } from '@/lib/search'
+import { useIncrementalReveal } from '@/lib/hooks/useIncrementalReveal'
 import { cn } from '@/lib/utils'
 import type { RegionKey } from '@/lib/regions'
 
@@ -106,6 +108,8 @@ export function OverviewClient({
 		[topics, domain, region, reliability, deferredKeyword],
 	)
 
+	const { visibleItems, hasMore, sentinelRef } = useIncrementalReveal(filtered)
+
 	function handleSeen(slug: string, updatedAt: string) {
 		setSeenMap((prev) => {
 			const next = { ...(prev ?? {}), [slug]: updatedAt }
@@ -143,7 +147,7 @@ export function OverviewClient({
 					<p className='text-muted-foreground flex-1 py-8 text-center text-sm'>{labels.empty}</p>
 				) : (
 					<div className='flex min-w-0 flex-1 flex-col gap-3'>
-						{filtered.map((tpc) => {
+						{visibleItems.map((tpc) => {
 							const isUnseen = seenMap !== null && (!seenMap[tpc.slug] || seenMap[tpc.slug] < tpc.updatedAt)
 							return (
 								<TopicCard
@@ -157,6 +161,11 @@ export function OverviewClient({
 								/>
 							)
 						})}
+						{hasMore ? (
+							<div ref={sentinelRef} className='flex justify-center py-3'>
+								<Loader2 className='text-muted-foreground size-4 animate-spin' />
+							</div>
+						) : null}
 					</div>
 				)}
 			</div>

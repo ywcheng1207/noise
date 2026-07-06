@@ -11,12 +11,12 @@
 		"language": "Language"
 	},
 	"overview": {
-		"heading": "Core topics",
-		"subtitle": "News doesn't speak just one language. 逆風 tracks the same story across Chinese, English, and beyond, cross-referencing every account into a clear timeline — the freshest reporting always rises to the top.",
+		"heading": "Topics",
+		"subtitle": "The same story, told ten different ways. 逆風 gathers scattered reports into one clear timeline and rates every source for credibility — so you can skip the noise and see exactly what happened.",
 		"domain": "Domain",
 		"region": "Region",
 		"reliability": "Reliability",
-		"empty": "No core topics match the current filters",
+		"empty": "No topics match the current filters",
 		"updated": "Updated",
 		"searchPlaceholder": "Search topics..."
 	},

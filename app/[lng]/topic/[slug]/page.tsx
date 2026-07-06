@@ -24,7 +24,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 	const title = isZh ? topic.titleZh : topic.titleEn
 	const dateBounds =
 		topic.spanStart && topic.spanEnd
-			? { min: topic.spanStart.toISOString().slice(0, 10), max: topic.spanEnd.toISOString().slice(0, 10) }
+			? { from: topic.spanStart.toISOString().slice(0, 10), to: topic.spanEnd.toISOString().slice(0, 10) }
 			: null
 
 	const eventData: TopicPageEventData[] = topic.events.map((ev) => ({

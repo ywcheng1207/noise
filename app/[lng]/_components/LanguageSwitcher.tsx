@@ -2,9 +2,21 @@
 
 import { useTransition } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import { Globe } from 'lucide-react'
 
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { languages } from '@/i18n/settings'
 import { cn } from '@/lib/utils'
+
+const LANGUAGE_LABELS: Record<string, string> = {
+	'zh-Hant': '中文',
+	en: 'English',
+}
 
 function buildLanguageHref(pathname: string, lng: string) {
 	const segments = pathname.split('/')
@@ -18,11 +30,6 @@ export function LanguageSwitcher({ lng }: { lng: string }) {
 
 	const [isPending, startTransition] = useTransition()
 
-	const options = languages.map((l) => ({
-		value: l,
-		label: l === 'zh-Hant' ? '中' : 'EN',
-	}))
-
 	function handleSwitch(target: string) {
 		if (target === lng) return
 		startTransition(() => {
@@ -31,23 +38,27 @@ export function LanguageSwitcher({ lng }: { lng: string }) {
 	}
 
 	return (
-		<nav className='flex items-center gap-1 text-sm'>
-			{options.map((opt) => (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
 				<button
-					key={opt.value}
 					type='button'
-					onClick={() => handleSwitch(opt.value)}
+					aria-label='switch language'
 					className={cn(
-						'cursor-pointer rounded-lg px-2 py-1 transition-colors',
-						opt.value === lng
-							? 'bg-secondary text-foreground'
-							: 'text-muted-foreground hover:text-foreground',
-						isPending && opt.value !== lng && 'animate-pulse',
+						'text-muted-foreground hover:bg-secondary hover:text-foreground flex cursor-pointer items-center gap-1 rounded-lg px-2 py-1.5 text-xs transition-colors',
+						isPending && 'animate-pulse',
 					)}
 				>
-					{opt.label}
+					<Globe className='size-4' />
+					<span>{lng === 'zh-Hant' ? '中' : 'EN'}</span>
 				</button>
-			))}
-		</nav>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent>
+				{languages.map((l) => (
+					<DropdownMenuItem key={l} isActive={l === lng} onSelect={() => handleSwitch(l)}>
+						{LANGUAGE_LABELS[l]}
+					</DropdownMenuItem>
+				))}
+			</DropdownMenuContent>
+		</DropdownMenu>
 	)
 }

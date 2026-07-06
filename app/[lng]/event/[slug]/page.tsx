@@ -128,18 +128,9 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 										)}
 									>
 										<div className='flex items-start justify-between gap-2'>
-											<div className='flex min-w-0 flex-wrap items-center gap-2'>
-												<span className='text-muted-foreground text-sm font-medium'>{src.rank}</span>
-												<span className='font-medium'>{src.sourceName}</span>
-												{src.language ? (
-													<span className='bg-secondary/60 text-muted-foreground rounded-lg px-1.5 py-0.5 text-xs uppercase backdrop-blur-sm'>
-														{src.language}
-													</span>
-												) : null}
-												<span className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-xs backdrop-blur-sm'>
-													{isVideo ? <Video className='size-3' /> : <FileText className='size-3' />}
-													{isVideo ? t('source.video') : t('source.text')}
-												</span>
+											<div className='flex min-w-0 items-start gap-2'>
+												<span className='text-muted-foreground shrink-0 text-sm font-medium'>{src.rank}</span>
+												<span className='min-w-0 font-medium'>{src.sourceName}</span>
 											</div>
 											<div className='flex shrink-0 items-center gap-2'>
 												<Badge
@@ -161,6 +152,17 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 													</a>
 												)}
 											</div>
+										</div>
+										<div className='mt-1.5 flex flex-wrap gap-1.5'>
+											{src.language ? (
+												<span className='bg-secondary/60 text-muted-foreground rounded-lg px-1.5 py-0.5 text-xs uppercase backdrop-blur-sm'>
+													{src.language}
+												</span>
+											) : null}
+											<span className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-xs backdrop-blur-sm'>
+												{isVideo ? <Video className='size-3' /> : <FileText className='size-3' />}
+												{isVideo ? t('source.video') : t('source.text')}
+											</span>
 										</div>
 										{reasoning && (
 											<p className='text-muted-foreground mt-1.5 text-xs leading-5'>{reasoning}</p>
