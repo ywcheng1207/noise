@@ -57,17 +57,20 @@ export function TopicPageEventsList({ lng, events, dateBounds, labels }: TopicPa
 
 	return (
 		<div className='flex flex-col gap-4'>
-			<SearchInput value={keyword} onChange={setKeyword} placeholder={labels.searchPlaceholder} />
-
-			{dateBounds ? (
-				<DateRangePicker
-					lng={lng}
-					label={labels.dateRange}
-					value={dateRange}
-					bounds={dateBounds}
-					onChange={setDateRange}
-				/>
-			) : null}
+			<div className='flex flex-wrap items-center gap-2'>
+				<div className='min-w-40 flex-1'>
+					<SearchInput value={keyword} onChange={setKeyword} placeholder={labels.searchPlaceholder} />
+				</div>
+				{dateBounds ? (
+					<DateRangePicker
+						lng={lng}
+						label={labels.dateRange}
+						value={dateRange}
+						bounds={dateBounds}
+						onChange={setDateRange}
+					/>
+				) : null}
+			</div>
 
 			{filtered.length === 0 ? (
 				<p className='text-muted-foreground py-8 text-center text-sm'>{labels.empty}</p>
