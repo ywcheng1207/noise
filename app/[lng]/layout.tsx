@@ -4,6 +4,7 @@ import { ScrollText } from 'lucide-react'
 import { getT } from '@/i18n'
 import { languages } from '@/i18n/settings'
 import { BrandLogo } from '@/components/BrandLogo'
+import { ScrollToTopButton } from '@/components/ScrollToTopButton'
 import { LanguageSwitcher } from './_components/LanguageSwitcher'
 import { ThemeToggle } from './_components/ThemeToggle'
 
@@ -48,11 +49,14 @@ export default async function LngLayout({
 			</header>
 			<main className='flex-1 py-6'>{children}</main>
 			<footer className='border-border text-muted-foreground flex flex-col gap-1 border-t py-4 text-xs sm:flex-row sm:items-center sm:justify-between'>
-				<span>{t('event.disclaimer')}</span>
+				<Link href={`/${lng}/terms`} className='hover:text-foreground underline transition-colors'>
+					{t('footer.terms')}
+				</Link>
 				<span>
 					© {new Date().getFullYear()} {t('appName')} · {t('footer.rights')}
 				</span>
 			</footer>
+			<ScrollToTopButton />
 		</div>
 	)
 }

@@ -2,7 +2,6 @@
 
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { differenceInCalendarDays } from 'date-fns'
 
 import { WorldMap } from './WorldMap'
 import { Badge } from '@/components/Badge'
@@ -24,7 +23,6 @@ export interface TopicCardData {
 	slug: string
 	title: string
 	domain: string
-	interval: string
 	regions: RegionKey[]
 	reliability: string
 	reliabilityLabel: string
@@ -34,8 +32,6 @@ export interface TopicCardData {
 	sourceCount: number
 	languageCount: number
 	updatedAt: string
-	spanStartAt: string | null
-	spanEndAt: string | null
 	latestEventTitles: string[]
 }
 
@@ -48,7 +44,6 @@ interface OverviewStats {
 interface OverviewLabels {
 	heading: string
 	subtitle: string
-	interval: string
 	domain: string
 	region: string
 	reliability: string
@@ -61,22 +56,10 @@ interface OverviewLabels {
 interface OverviewClientProps {
 	lng: string
 	topics: TopicCardData[]
-	intervalOptions: FacetOption[]
 	domainOptions: FacetOption[]
 	regionOptions: FacetOption[]
 	reliabilityOptions: FacetOption[]
 	labels: OverviewLabels
-}
-
-function matchesInterval(selected: string, spanStartAt: string | null, spanEndAt: string | null) {
-	if (selected === 'all') return true
-	if (!spanEndAt) return false
-	const daysSinceEnd = differenceInCalendarDays(new Date(), new Date(spanEndAt))
-	if (selected === 'TODAY') return daysSinceEnd <= 1
-	if (selected === 'WEEK') return daysSinceEnd <= 7
-	if (selected === 'MONTH') return daysSinceEnd <= 31
-	const spanDays = spanStartAt ? differenceInCalendarDays(new Date(spanEndAt), new Date(spanStartAt)) : 0
-	return spanDays >= 14 && daysSinceEnd <= 7
 }
 
 function readSeenMap(): Record<string, string> {
@@ -98,13 +81,11 @@ function readSeenMap(): Record<string, string> {
 export function OverviewClient({
 	lng,
 	topics,
-	intervalOptions,
 	domainOptions,
 	regionOptions,
 	reliabilityOptions,
 	labels,
 }: OverviewClientProps) {
-	const [interval, setInterval] = useState('all')
 	const [domain, setDomain] = useState('all')
 	const [region, setRegion] = useState('all')
 	const [reliability, setReliability] = useState('all')
@@ -117,13 +98,12 @@ export function OverviewClient({
 		() =>
 			topics.filter(
 				(tpc) =>
-					matchesInterval(interval, tpc.spanStartAt, tpc.spanEndAt) &&
 					(domain === 'all' || tpc.domain === domain) &&
 					(region === 'all' || tpc.regions.some((r) => r === region)) &&
 					(reliability === 'all' || tpc.reliability === reliability) &&
 					matchesKeyword(deferredKeyword, tpc.title, tpc.domainLabel, ...tpc.regionLabels),
 			),
-		[topics, interval, domain, region, reliability, deferredKeyword],
+		[topics, domain, region, reliability, deferredKeyword],
 	)
 
 	function handleSeen(slug: string, updatedAt: string) {
@@ -149,12 +129,6 @@ export function OverviewClient({
 
 			<div className='flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8'>
 				<aside className='flex flex-col gap-2 lg:sticky lg:top-6 lg:w-48 lg:shrink-0 lg:gap-5'>
-					<FacetGroup
-						label={labels.interval}
-						options={intervalOptions}
-						value={interval}
-						onChange={setInterval}
-					/>
 					<FacetGroup label={labels.domain} options={domainOptions} value={domain} onChange={setDomain} />
 					<FacetGroup label={labels.region} options={regionOptions} value={region} onChange={setRegion} />
 					<FacetGroup

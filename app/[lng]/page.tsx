@@ -6,8 +6,6 @@ import { OverviewClient, type TopicCardData } from './_components/OverviewClient
 
 export const dynamic = 'force-dynamic'
 
-const INTERVAL_KEYS = ['TODAY', 'WEEK', 'MONTH', 'ONGOING']
-
 export default async function OverviewPage({ params }: { params: Promise<{ lng: string }> }) {
 	const { lng } = await params
 	const { t } = await getT(lng)
@@ -29,7 +27,6 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 		slug: tp.slug,
 		title: isZh ? tp.titleZh : tp.titleEn,
 		domain: tp.domain,
-		interval: tp.interval,
 		regions: tp.regions,
 		reliability: tp.overallReliability,
 		reliabilityLabel: t(`reliability.${tp.overallReliability}`),
@@ -39,15 +36,9 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 		sourceCount: tp.sourceCount,
 		languageCount: tp.languageCount,
 		updatedAt: tp.updatedAt.toISOString(),
-		spanStartAt: tp.spanStart?.toISOString() ?? null,
-		spanEndAt: tp.spanEnd?.toISOString() ?? null,
 		latestEventTitles: tp.events.map((ev) => (isZh ? ev.titleZh : ev.titleEn)),
 	}))
 
-	const intervalOptions = [
-		{ value: 'all', label: t('interval.all') },
-		...INTERVAL_KEYS.map((k) => ({ value: k, label: t(`interval.${k}`) })),
-	]
 	const domainsPresent = new Set(topics.map((tp) => tp.domain))
 	const domainOptions = [
 		{ value: 'all', label: t('domain.all') },
@@ -76,7 +67,6 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 	const labels = {
 		heading: t('overview.heading'),
 		subtitle: t('overview.subtitle'),
-		interval: t('overview.interval'),
 		domain: t('overview.domain'),
 		region: t('overview.region'),
 		reliability: t('overview.reliability'),
@@ -94,7 +84,6 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 		<OverviewClient
 			lng={lng}
 			topics={cards}
-			intervalOptions={intervalOptions}
 			domainOptions={domainOptions}
 			regionOptions={regionOptions}
 			reliabilityOptions={reliabilityOptions}

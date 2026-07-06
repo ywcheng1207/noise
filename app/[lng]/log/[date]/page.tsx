@@ -88,7 +88,6 @@ export default async function LogDayPage({ params }: { params: Promise<{ lng: st
 			</div>
 
 			<Collapsible title={t('log.sourcesHeading')}>
-				<p className='text-muted-foreground text-xs leading-5'>{t('log.sourcesDescription')}</p>
 				<div className='flex flex-col gap-2'>
 					{activeSources.map(({ source, samples }) => (
 						<div key={source.id} className='bg-card/90 rounded-lg p-3 backdrop-blur-md'>

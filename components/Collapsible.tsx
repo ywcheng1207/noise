@@ -30,12 +30,28 @@ export function Collapsible({
 				<h2 className='text-sm font-medium'>{title}</h2>
 				<ChevronDown
 					className={cn(
-						'text-muted-foreground size-4 shrink-0 transition-transform duration-200',
+						'text-muted-foreground size-4 shrink-0 transition-transform duration-300',
 						isOpen && 'rotate-180',
 					)}
 				/>
 			</button>
-			{isOpen ? children : null}
+			<div
+				className={cn(
+					'grid transition-all duration-300 ease-in-out',
+					isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
+				)}
+			>
+				<div className='overflow-hidden'>
+					<div
+						className={cn(
+							'flex flex-col gap-3 transition-opacity duration-300',
+							isOpen ? 'opacity-100 delay-100' : 'opacity-0',
+						)}
+					>
+						{children}
+					</div>
+				</div>
+			</div>
 		</section>
 	)
 }

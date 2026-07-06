@@ -133,3 +133,22 @@
 		animation: none;
 	}
 }
+
+/* 回頂按鈕:雙箭頭持續緩慢浮動,暗示「往上」的方向感。 */
+@keyframes chevrons-float {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-3px);
+	}
+}
+.animate-chevrons-float {
+	animation: chevrons-float 1.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+	.animate-chevrons-float {
+		animation: none;
+	}
+}

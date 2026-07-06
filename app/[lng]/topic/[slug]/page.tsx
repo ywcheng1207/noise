@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation'
-import { CalendarRange, MapPin } from 'lucide-react'
+import { MapPin } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
 import { RELIABILITY_VARIANT } from '@/lib/ui'
 import { REGION_LABELS } from '@/lib/regions'
-import { formatDateRange, formatOccurred } from '@/lib/dates'
+import { formatOccurred } from '@/lib/dates'
 import { TopicPageEventsList, type TopicPageEventData } from './_components/TopicPageEventsList'
 
 export const dynamic = 'force-dynamic'
@@ -22,7 +22,10 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 	if (!topic) notFound()
 
 	const title = isZh ? topic.titleZh : topic.titleEn
-	const spanLabel = formatDateRange({ lng, start: topic.spanStart, end: topic.spanEnd })
+	const dateBounds =
+		topic.spanStart && topic.spanEnd
+			? { min: topic.spanStart.toISOString().slice(0, 10), max: topic.spanEnd.toISOString().slice(0, 10) }
+			: null
 
 	const eventData: TopicPageEventData[] = topic.events.map((ev) => ({
 		slug: ev.slug,
@@ -31,6 +34,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 		reliability: ev.overallReliability,
 		reliabilityLabel: t(`reliability.${ev.overallReliability}`),
 		seenLabel: formatOccurred({ lng, occurredAt: ev.firstSeenAt }),
+		seenAt: ev.firstSeenAt.toISOString(),
 	}))
 
 	return (
@@ -53,12 +57,6 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 					<span className='text-muted-foreground text-xs'>
 						{topic.eventCount} {t('stats.events')} · {topic.sourceCount} {t('stats.sources')}
 					</span>
-					{spanLabel ? (
-						<span className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs backdrop-blur-sm'>
-							<CalendarRange className='size-3' />
-							{spanLabel}
-						</span>
-					) : null}
 				</div>
 				<p className='text-muted-foreground mt-2 text-sm'>{t('topic.spread')}</p>
 			</div>
@@ -66,12 +64,14 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 			<TopicPageEventsList
 				lng={lng}
 				events={eventData}
+				dateBounds={dateBounds}
 				labels={{
 					searchPlaceholder: t('topic.searchPlaceholder'),
 					empty: t('topic.searchEmpty'),
 					researching: t('event.researching'),
 					researchingHint: t('event.researchingHint'),
 					viewEvent: t('event.viewEvent'),
+					dateRange: t('topic.dateRange'),
 				}}
 			/>
 		</div>

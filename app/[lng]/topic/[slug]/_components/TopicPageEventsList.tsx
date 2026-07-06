@@ -18,32 +18,71 @@ export interface TopicPageEventData {
 	reliability: string
 	reliabilityLabel: string
 	seenLabel: string | null
+	seenAt: string
+}
+
+interface DateBounds {
+	min: string
+	max: string
 }
 
 interface TopicPageEventsListProps {
 	lng: string
 	events: TopicPageEventData[]
+	dateBounds: DateBounds | null
 	labels: {
 		searchPlaceholder: string
 		empty: string
 		researching: string
 		researchingHint: string
 		viewEvent: string
+		dateRange: string
 	}
 }
 
-export function TopicPageEventsList({ lng, events, labels }: TopicPageEventsListProps) {
+export function TopicPageEventsList({ lng, events, dateBounds, labels }: TopicPageEventsListProps) {
 	const [keyword, setKeyword] = useState('')
+	const [dateFrom, setDateFrom] = useState(dateBounds?.min ?? '')
+	const [dateTo, setDateTo] = useState(dateBounds?.max ?? '')
 	const deferredKeyword = useDeferredValue(keyword)
 
 	const filtered = useMemo(
-		() => events.filter((ev) => matchesKeyword(deferredKeyword, ev.title)),
-		[events, deferredKeyword],
+		() =>
+			events.filter((ev) => {
+				const day = ev.seenAt.slice(0, 10)
+				if (dateFrom && day < dateFrom) return false
+				if (dateTo && day > dateTo) return false
+				return matchesKeyword(deferredKeyword, ev.title)
+			}),
+		[events, deferredKeyword, dateFrom, dateTo],
 	)
 
 	return (
 		<div className='flex flex-col gap-4'>
 			<SearchInput value={keyword} onChange={setKeyword} placeholder={labels.searchPlaceholder} />
+
+			{dateBounds ? (
+				<div className='flex flex-wrap items-center gap-2 text-xs'>
+					<span className='text-muted-foreground'>{labels.dateRange}</span>
+					<input
+						type='date'
+						value={dateFrom}
+						min={dateBounds.min}
+						max={dateTo || dateBounds.max}
+						onChange={(e) => setDateFrom(e.target.value)}
+						className='bg-input focus-visible:ring-primary/40 rounded-lg px-2 py-1 text-xs outline-none focus-visible:ring-2'
+					/>
+					<span className='text-muted-foreground'>–</span>
+					<input
+						type='date'
+						value={dateTo}
+						min={dateFrom || dateBounds.min}
+						max={dateBounds.max}
+						onChange={(e) => setDateTo(e.target.value)}
+						className='bg-input focus-visible:ring-primary/40 rounded-lg px-2 py-1 text-xs outline-none focus-visible:ring-2'
+					/>
+				</div>
+			) : null}
 
 			{filtered.length === 0 ? (
 				<p className='text-muted-foreground py-8 text-center text-sm'>{labels.empty}</p>
