@@ -65,10 +65,9 @@ export function DateRangePicker({
 	function handleSelect(range: DateRange | undefined) {
 		if (!range?.from) return
 		setPending(range)
-		// 只有起訖都選定才算完成一次選取,提交給外部並關閉;只選了起點時停留在挑選中狀態。
+		// 起訖都選定就立即套用,但不關閉 popover,方便使用者連續調整區間。
 		if (range.to) {
 			onChange({ from: toDateKey(range.from), to: toDateKey(range.to) })
-			setOpen(false)
 		}
 	}
 

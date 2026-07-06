@@ -26,7 +26,7 @@ export default async function LngLayout({
 
 	return (
 		<div className='mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 sm:px-6 lg:px-8'>
-			<header className='border-border flex items-center justify-between gap-3 border-b py-4'>
+			<header className='flex items-center justify-between gap-3 py-4'>
 				<div className='flex min-w-0 items-center gap-3'>
 					<Link href={`/${lng}`} className='flex shrink-0 items-center gap-2'>
 						<BrandLogo />

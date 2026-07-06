@@ -8,6 +8,7 @@ import { WorldMap } from './WorldMap'
 import { Badge } from '@/components/Badge'
 import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
 import { SearchInput } from '@/components/SearchInput'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { RELIABILITY_VARIANT } from '@/lib/ui'
 import { matchesKeyword } from '@/lib/search'
 import { useIncrementalReveal } from '@/lib/hooks/useIncrementalReveal'
@@ -45,6 +46,7 @@ interface OverviewStats {
 
 interface OverviewLabels {
 	heading: string
+	introTab: string
 	subtitle: string
 	domain: string
 	region: string
@@ -123,53 +125,61 @@ export function OverviewClient({
 	}, [])
 
 	return (
-		<div className='flex flex-col gap-5'>
-			<div>
-				<h1 className='text-xl font-medium lg:text-2xl'>{labels.heading}</h1>
-				<p className='text-muted-foreground text-sm'>{labels.subtitle}</p>
-			</div>
+		<Tabs defaultValue='intro' className='flex flex-col gap-5'>
+			<TabsList>
+				<TabsTrigger value='intro'>{labels.introTab}</TabsTrigger>
+				<TabsTrigger value='topics'>{labels.heading}</TabsTrigger>
+			</TabsList>
 
-			<SearchInput value={keyword} onChange={setKeyword} placeholder={labels.searchPlaceholder} />
+			<TabsContent value='intro'>
+				<div className='bg-card/90 rounded-lg p-6'>
+					<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{labels.subtitle}</p>
+				</div>
+			</TabsContent>
 
-			<div className='flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8'>
-				<aside className='flex flex-col gap-2 lg:sticky lg:top-6 lg:w-48 lg:shrink-0 lg:gap-5'>
-					<FacetGroup label={labels.domain} options={domainOptions} value={domain} onChange={setDomain} />
-					<FacetGroup label={labels.region} options={regionOptions} value={region} onChange={setRegion} />
-					<FacetGroup
-						label={labels.reliability}
-						options={reliabilityOptions}
-						value={reliability}
-						onChange={setReliability}
-					/>
-				</aside>
+			<TabsContent value='topics' className='flex flex-col gap-5'>
+				<SearchInput value={keyword} onChange={setKeyword} placeholder={labels.searchPlaceholder} />
 
-				{filtered.length === 0 ? (
-					<p className='text-muted-foreground flex-1 py-8 text-center text-sm'>{labels.empty}</p>
-				) : (
-					<div className='flex min-w-0 flex-1 flex-col gap-3'>
-						{visibleItems.map((tpc) => {
-							const isUnseen = seenMap !== null && (!seenMap[tpc.slug] || seenMap[tpc.slug] < tpc.updatedAt)
-							return (
-								<TopicCard
-									key={tpc.slug}
-									lng={lng}
-									topic={tpc}
-									stats={labels.stats}
-									updatedLabel={labels.updated}
-									isUnseen={isUnseen}
-									onSeen={handleSeen}
-								/>
-							)
-						})}
-						{hasMore ? (
-							<div ref={sentinelRef} className='flex justify-center py-3'>
-								<Loader2 className='text-muted-foreground size-4 animate-spin' />
-							</div>
-						) : null}
-					</div>
-				)}
-			</div>
-		</div>
+				<div className='flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8'>
+					<aside className='flex flex-col gap-2 lg:sticky lg:top-6 lg:w-48 lg:shrink-0 lg:gap-5'>
+						<FacetGroup label={labels.domain} options={domainOptions} value={domain} onChange={setDomain} />
+						<FacetGroup label={labels.region} options={regionOptions} value={region} onChange={setRegion} />
+						<FacetGroup
+							label={labels.reliability}
+							options={reliabilityOptions}
+							value={reliability}
+							onChange={setReliability}
+						/>
+					</aside>
+
+					{filtered.length === 0 ? (
+						<p className='text-muted-foreground flex-1 py-8 text-center text-sm'>{labels.empty}</p>
+					) : (
+						<div className='flex min-w-0 flex-1 flex-col gap-3'>
+							{visibleItems.map((tpc) => {
+								const isUnseen = seenMap !== null && (!seenMap[tpc.slug] || seenMap[tpc.slug] < tpc.updatedAt)
+								return (
+									<TopicCard
+										key={tpc.slug}
+										lng={lng}
+										topic={tpc}
+										stats={labels.stats}
+										updatedLabel={labels.updated}
+										isUnseen={isUnseen}
+										onSeen={handleSeen}
+									/>
+								)
+							})}
+							{hasMore ? (
+								<div ref={sentinelRef} className='flex justify-center py-3'>
+									<Loader2 className='text-muted-foreground size-4 animate-spin' />
+								</div>
+							) : null}
+						</div>
+					)}
+				</div>
+			</TabsContent>
+		</Tabs>
 	)
 }
 

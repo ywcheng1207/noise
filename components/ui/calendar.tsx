@@ -25,12 +25,10 @@ export function Calendar({ className, classNames, ...props }: ComponentProps<typ
 				week: 'mt-1 flex w-full',
 				day: 'relative flex size-9 items-center justify-center p-0 text-center text-sm',
 				day_button:
-					'flex size-9 cursor-pointer items-center justify-center rounded-lg transition-all duration-150 hover:scale-105 hover:bg-secondary',
-				range_start:
-					'[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary rounded-l-lg bg-primary/15',
-				range_end:
-					'[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary rounded-r-lg bg-primary/15',
-				range_middle: 'bg-primary/15 [&>button]:hover:bg-primary/25',
+					'flex size-9 cursor-pointer items-center justify-center rounded-full transition-all duration-150 hover:scale-105 hover:bg-secondary',
+				range_start: '[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary',
+				range_end: '[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary',
+				range_middle: '[&>button]:bg-primary/20 [&>button]:hover:bg-primary/30',
 				selected: '[&>button]:bg-primary [&>button]:text-primary-foreground',
 				today: '[&>button]:text-primary [&>button]:font-semibold',
 				outside: 'text-muted-foreground/40',
