@@ -86,11 +86,13 @@
 	},
 	"log": {
 		"heading": "日誌",
-		"subtitle": "管線最近做了什麼:抓了哪些來源、AI 深入查證了哪些事件",
-		"lastUpdated": "最近一次更新:",
-		"sourcesHeading": "爬蟲來源與最新抓取",
+		"listSubtitle": "管線的每日活動記錄,點擊進入查看細節",
+		"empty": "目前還沒有日誌紀錄",
+		"summaryLine": "彙整 {{articleCount}} 則參考資料 ‧ 深入查證 {{researchCount}} 起事件",
+		"sourcesHeading": "參考資料來源",
+		"sourcesDescription": "逆風長期關注多個公開新聞與財經資訊平台,以自動化方式定期整理其公開發布的標題與摘要,做為後續跨來源比對、事實查核與可信度評估的參考素材。下方列出當天整理到的部分內容——僅摘錄標題並附上原文連結,完整報導請點擊前往各平台官方網站閱讀。",
 		"aiHeading": "AI 延伸查證",
-		"aiEmpty": "目前沒有 AI 查證紀錄",
+		"aiEmpty": "當天沒有 AI 延伸查證紀錄",
 		"webSearches": "查了 {{count}} 次網路搜尋"
 	}
 }

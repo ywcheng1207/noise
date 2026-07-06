@@ -86,11 +86,13 @@
 	},
 	"log": {
 		"heading": "Log",
-		"subtitle": "What the pipeline did recently: which sources it crawled, which events AI dug into",
-		"lastUpdated": "Last updated:",
-		"sourcesHeading": "Crawler sources & latest pulls",
+		"listSubtitle": "Daily pipeline activity — click into a day for details",
+		"empty": "No log entries yet",
+		"summaryLine": "Compiled {{articleCount}} reference items ‧ researched {{researchCount}} events in depth",
+		"sourcesHeading": "Reference sources",
+		"sourcesDescription": "Noise continuously monitors a range of public news and financial-information platforms, periodically compiling their publicly published headlines and summaries through an automated process, as reference material for later cross-source comparison, fact-checking, and credibility assessment. Below is a sample of what was compiled that day — only headlines are excerpted, each linking back to the original article; please visit each platform's own site to read the full report.",
 		"aiHeading": "AI research expansions",
-		"aiEmpty": "No AI research activity yet",
+		"aiEmpty": "No AI research activity that day",
 		"webSearches": "Ran {{count}} web searches"
 	}
 }

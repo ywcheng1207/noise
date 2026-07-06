@@ -58,7 +58,7 @@ export function TopicPageEventsList({ lng, events, labels }: TopicPageEventsList
 								)}
 							/>
 							{ev.isResearching ? (
-								<div className='border-info/40 bg-info/5 block rounded-lg border border-dashed p-3 backdrop-blur-md'>
+								<div className='bg-info/10 block rounded-lg p-3 backdrop-blur-md'>
 									<div className='flex items-center justify-between gap-2'>
 										<span className='font-medium'>{ev.title}</span>
 										<Badge variant='info'>
@@ -76,7 +76,7 @@ export function TopicPageEventsList({ lng, events, labels }: TopicPageEventsList
 							) : (
 								<Link
 									href={`/${lng}/event/${ev.slug}`}
-									className='border-border/80 bg-card/70 hover:border-primary/40 block rounded-lg border p-3 backdrop-blur-md transition-all duration-200'
+									className='bg-card/90 hover:bg-card block rounded-lg p-3 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]'
 								>
 									<div className='flex items-center justify-between gap-2'>
 										<span className='font-medium'>{ev.title}</span>

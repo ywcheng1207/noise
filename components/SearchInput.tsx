@@ -19,7 +19,7 @@ export function SearchInput({
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
 				placeholder={placeholder}
-				className='border-border bg-card/50 placeholder:text-muted-foreground focus:border-primary/40 w-full rounded-lg border py-2 pr-3 pl-9 text-sm backdrop-blur-sm transition-colors outline-none'
+				className='bg-input placeholder:text-muted-foreground focus-visible:ring-primary/40 w-full rounded-lg py-2 pr-3 pl-9 text-sm transition-colors outline-none focus-visible:ring-2'
 			/>
 		</div>
 	)

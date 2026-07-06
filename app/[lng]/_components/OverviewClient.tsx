@@ -212,10 +212,8 @@ function TopicCard({
 			href={`/${lng}/topic/${topic.slug}`}
 			onClick={() => onSeen(topic.slug, topic.updatedAt)}
 			className={cn(
-				'group relative flex flex-col gap-3 rounded-lg border p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]',
-				isUnseen
-					? 'border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10'
-					: 'border-border/80 bg-card/70 hover:border-primary/40 hover:bg-card',
+				'group relative flex flex-col gap-3 rounded-lg p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]',
+				isUnseen ? 'bg-primary/10 hover:bg-primary/15' : 'bg-card/90 hover:bg-card',
 			)}
 		>
 			<div className='flex flex-col gap-3 sm:flex-row sm:items-start'>
@@ -253,12 +251,12 @@ function TopicCard({
 						{stats.languages}
 					</div>
 				</div>
-				<div className='border-border bg-secondary/30 w-full shrink-0 overflow-hidden rounded-lg border p-1 backdrop-blur-sm sm:w-80'>
+				<div className='bg-secondary/50 w-full shrink-0 overflow-hidden rounded-lg p-1 backdrop-blur-sm sm:w-80'>
 					<WorldMap activeRegions={topic.regions} />
 				</div>
 			</div>
 			{marqueeText ? (
-				<div className='border-border/60 text-muted-foreground absolute inset-x-0 bottom-0 overflow-hidden rounded-b-lg border-t px-4 py-1 text-xs backdrop-blur-sm'>
+				<div className='text-muted-foreground absolute inset-x-0 bottom-0 overflow-hidden rounded-b-lg px-4 py-1 text-xs backdrop-blur-sm'>
 					<div className='animate-marquee flex w-max'>
 						<span className='pr-16'>{marqueeText}</span>
 						<span className='pr-16'>{marqueeText}</span>
@@ -290,10 +288,10 @@ function FacetGroup({
 						type='button'
 						onClick={() => onChange(opt.value)}
 						className={cn(
-							'border-border shrink-0 cursor-pointer rounded-lg border px-3 py-1 text-xs whitespace-nowrap backdrop-blur-sm transition-colors',
+							'shrink-0 cursor-pointer rounded-lg px-3 py-1 text-xs whitespace-nowrap backdrop-blur-sm transition-all duration-200 hover:scale-[1.03]',
 							value === opt.value
-								? 'bg-secondary/80 text-foreground'
-								: 'bg-card/50 text-muted-foreground hover:text-foreground',
+								? 'bg-secondary text-foreground'
+								: 'bg-card/80 text-muted-foreground hover:bg-secondary/60 hover:text-foreground',
 						)}
 					>
 						{opt.label}

@@ -1,160 +1,95 @@
 import Link from 'next/link'
-import { ExternalLink } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
-import { formatDateTime } from '@/lib/dates'
-import { PipelineStage } from '@/lib/generated/prisma'
+import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
+import { formatOccurred } from '@/lib/dates'
 
 export const dynamic = 'force-dynamic'
 
-const NARRATIVE_EXCERPT_LENGTH = 88
+interface DayBucket {
+	day: Date
+	count: number
+}
 
-function excerpt(text: string | null) {
-	if (!text) return null
-	return text.length > NARRATIVE_EXCERPT_LENGTH ? `${text.slice(0, NARRATIVE_EXCERPT_LENGTH)}…` : text
+interface DayEntry {
+	key: string
+	date: Date
+	articleCount: number
+	researchCount: number
 }
 
 export default async function LogPage({ params }: { params: Promise<{ lng: string }> }) {
 	const { lng } = await params
 	const { t } = await getT(lng)
-	const isZh = lng.startsWith('zh')
 
-	const [sources, latestArticle, latestEvent, aiRuns] = await Promise.all([
-		prisma.source.findMany({ where: { enabled: true }, orderBy: { name: 'asc' } }),
-		prisma.article.findFirst({ orderBy: { fetchedAt: 'desc' }, select: { fetchedAt: true } }),
-		prisma.event.findFirst({ orderBy: { lastUpdatedAt: 'desc' }, select: { lastUpdatedAt: true } }),
-		prisma.aiRun.findMany({
-			where: { stage: PipelineStage.RESEARCH, eventId: { not: null } },
-			orderBy: { createdAt: 'desc' },
-			take: 20,
-			select: { id: true, eventId: true, createdAt: true, webSearches: true },
-		}),
+	const [articleDays, researchDays] = await Promise.all([
+		prisma.$queryRaw<DayBucket[]>`
+			SELECT ("fetchedAt" AT TIME ZONE 'UTC')::date AS day, count(*)::int AS count
+			FROM "Article"
+			GROUP BY day
+			ORDER BY day DESC
+			LIMIT 60
+		`,
+		prisma.$queryRaw<DayBucket[]>`
+			SELECT ("createdAt" AT TIME ZONE 'UTC')::date AS day, count(*)::int AS count
+			FROM "AiRun"
+			WHERE stage = 'RESEARCH'
+			GROUP BY day
+			ORDER BY day DESC
+			LIMIT 60
+		`,
 	])
 
-	const sourceSamples = await Promise.all(
-		sources.map((source) =>
-			prisma.article.findMany({
-				where: { sourceId: source.id },
-				orderBy: { fetchedAt: 'desc' },
-				take: 3,
-				select: { title: true, canonicalUrl: true },
-			}),
-		),
-	)
+	const byDay = new Map<string, DayEntry>()
+	for (const row of articleDays) {
+		const key = row.day.toISOString().slice(0, 10)
+		byDay.set(key, { key, date: row.day, articleCount: row.count, researchCount: 0 })
+	}
+	for (const row of researchDays) {
+		const key = row.day.toISOString().slice(0, 10)
+		const existing = byDay.get(key)
+		if (existing) existing.researchCount = row.count
+		else byDay.set(key, { key, date: row.day, articleCount: 0, researchCount: row.count })
+	}
 
-	const eventIds = aiRuns.map((run) => run.eventId).filter((id): id is string => Boolean(id))
-	const events = await prisma.event.findMany({
-		where: { id: { in: eventIds } },
-		select: {
-			id: true,
-			slug: true,
-			titleZh: true,
-			titleEn: true,
-			narrativeZh: true,
-			narrativeEn: true,
-		},
-	})
-	const eventById = new Map(events.map((ev) => [ev.id, ev]))
-
-	const lastUpdatedAt =
-		[latestArticle?.fetchedAt, latestEvent?.lastUpdatedAt]
-			.filter((d): d is Date => Boolean(d))
-			.sort((a, b) => b.getTime() - a.getTime())[0] ?? null
-
-	const researchEntries = aiRuns.flatMap((run) => {
-		const event = run.eventId ? eventById.get(run.eventId) : undefined
-		if (!event) return []
-		return [
-			{
-				id: run.id,
-				title: isZh ? event.titleZh : event.titleEn,
-				summary: excerpt(isZh ? event.narrativeZh : event.narrativeEn),
-				href: `/${lng}/event/${event.slug}`,
-				createdAt: run.createdAt,
-				webSearches: run.webSearches,
-			},
-		]
-	})
+	const entries = Array.from(byDay.values())
+		.sort((a, b) => b.key.localeCompare(a.key))
+		.slice(0, 30)
 
 	return (
-		<div className='mx-auto flex w-full max-w-3xl flex-col gap-8'>
+		<div className='mx-auto flex w-full max-w-3xl flex-col gap-5'>
 			<div>
 				<h1 className='text-xl font-medium lg:text-2xl'>{t('log.heading')}</h1>
-				<p className='text-muted-foreground text-sm'>{t('log.subtitle')}</p>
-				<p className='text-muted-foreground mt-2 text-xs'>
-					{t('log.lastUpdated')}{' '}
-					<span className='text-foreground font-mono'>
-						{formatDateTime({ lng, date: lastUpdatedAt }) ?? '—'}
-					</span>
-				</p>
+				<p className='text-muted-foreground text-sm'>{t('log.listSubtitle')}</p>
 			</div>
 
-			<section className='flex flex-col gap-3'>
-				<h2 className='text-sm font-medium'>{t('log.sourcesHeading')}</h2>
-				<div className='flex flex-col gap-2'>
-					{sources.map((source, i) => (
-						<div
-							key={source.id}
-							className='border-border/80 bg-card/70 rounded-lg border p-3 backdrop-blur-md'
-						>
-							<div className='flex items-center justify-between gap-2'>
-								<span className='font-medium'>{source.name}</span>
-								<span className='bg-secondary/60 text-muted-foreground rounded-lg px-2 py-0.5 text-xs backdrop-blur-sm'>
-									{source.type}
-								</span>
-							</div>
-							{sourceSamples[i].length > 0 ? (
-								<ul className='mt-2 flex flex-col gap-1'>
-									{sourceSamples[i].map((article) => (
-										<li key={article.canonicalUrl}>
-											<a
-												href={article.canonicalUrl}
-												target='_blank'
-												rel='noopener noreferrer'
-												className='text-info flex items-center gap-1 text-xs hover:underline'
-											>
-												<ExternalLink className='size-3 shrink-0' />
-												<span className='truncate'>{article.title}</span>
-											</a>
-										</li>
-									))}
-								</ul>
-							) : null}
-						</div>
-					))}
-				</div>
-			</section>
-
-			<section className='flex flex-col gap-3'>
-				<h2 className='text-sm font-medium'>{t('log.aiHeading')}</h2>
-				{researchEntries.length === 0 ? (
-					<p className='text-muted-foreground text-sm'>{t('log.aiEmpty')}</p>
-				) : (
-					<ul className='flex flex-col gap-2'>
-						{researchEntries.map((entry) => (
-							<li key={entry.id}>
-								<Link
-									href={entry.href}
-									className='border-border/80 bg-card/70 hover:border-primary/40 block rounded-lg border p-3 backdrop-blur-md transition-all duration-200'
-								>
-									<div className='flex items-center justify-between gap-2'>
-										<span className='font-medium'>{entry.title}</span>
-										<span className='text-muted-foreground font-mono text-xs'>
-											{formatDateTime({ lng, date: entry.createdAt })}
-										</span>
-									</div>
-									{entry.summary ? (
-										<p className='text-muted-foreground mt-1 text-xs leading-5'>{entry.summary}</p>
-									) : null}
-									<span className='text-muted-foreground mt-1 block text-xs'>
-										{t('log.webSearches', { count: entry.webSearches })}
+			{entries.length === 0 ? (
+				<p className='text-muted-foreground py-8 text-center text-sm'>{t('log.empty')}</p>
+			) : (
+				<ol className='flex flex-col gap-2'>
+					{entries.map((entry) => (
+						<li key={entry.key}>
+							<Link
+								href={`/${lng}/log/${entry.key}`}
+								className='bg-card/90 hover:bg-card block rounded-lg p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]'
+							>
+								<div className='flex items-center gap-2'>
+									<span className='font-medium'>
+										{formatOccurred({ lng, occurredAt: entry.date, precision: 'DAY' })}
 									</span>
-								</Link>
-							</li>
-						))}
-					</ul>
-				)}
-			</section>
+									<LinkPendingSpinner />
+								</div>
+								<p className='text-muted-foreground mt-1 text-xs'>
+									{t('log.summaryLine', {
+										articleCount: entry.articleCount,
+										researchCount: entry.researchCount,
+									})}
+								</p>
+							</Link>
+						</li>
+					))}
+				</ol>
+			)}
 		</div>
 	)
 }
