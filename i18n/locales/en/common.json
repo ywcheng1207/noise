@@ -2,7 +2,8 @@
 	"appName": "逆風",
 	"tagline": "News event filtering & credibility",
 	"nav": {
-		"overview": "Overview"
+		"overview": "Overview",
+		"log": "Log"
 	},
 	"source": {
 		"video": "Video",
@@ -17,7 +18,8 @@
 		"region": "Region",
 		"reliability": "Reliability",
 		"empty": "No core topics match the current filters",
-		"updated": "Updated"
+		"updated": "Updated",
+		"searchPlaceholder": "Search topics..."
 	},
 	"region": {
 		"all": "All"
@@ -60,7 +62,9 @@
 	},
 	"topic": {
 		"spread": "Events radiate over time",
-		"backToOverview": "Back to overview"
+		"backToOverview": "Back to overview",
+		"searchPlaceholder": "Search events...",
+		"searchEmpty": "No events match the current search"
 	},
 	"event": {
 		"background": "Background",
@@ -79,5 +83,14 @@
 	},
 	"footer": {
 		"rights": "All rights reserved"
+	},
+	"log": {
+		"heading": "Log",
+		"subtitle": "What the pipeline did recently: which sources it crawled, which events AI dug into",
+		"lastUpdated": "Last updated:",
+		"sourcesHeading": "Crawler sources & latest pulls",
+		"aiHeading": "AI research expansions",
+		"aiEmpty": "No AI research activity yet",
+		"webSearches": "Ran {{count}} web searches"
 	}
 }

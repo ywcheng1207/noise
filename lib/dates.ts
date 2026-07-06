@@ -63,3 +63,10 @@ export function formatDateRange({ lng, start, end }: { lng: string; start: Date 
 	if (!to || from === to) return from
 	return `${from} – ${to}`
 }
+
+/** 完整日期＋時間(日誌等場景用),非 UTC 錨定,直接反映時間戳原始時刻。 */
+export function formatDateTime({ lng, date }: { lng: string; date: Date | null }) {
+	if (!date) return null
+	const isZh = lng.startsWith('zh')
+	return format(date, isZh ? 'yyyy年M月d日 HH:mm' : 'MMM d, yyyy HH:mm', { locale: isZh ? zhTW : enUS })
+}

@@ -1,14 +1,12 @@
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { ArrowRight, CalendarRange, Clock, MapPin } from 'lucide-react'
+import { CalendarRange, MapPin } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
-import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
 import { RELIABILITY_VARIANT } from '@/lib/ui'
 import { REGION_LABELS } from '@/lib/regions'
 import { formatDateRange, formatOccurred } from '@/lib/dates'
-import { cn } from '@/lib/utils'
+import { TopicPageEventsList, type TopicPageEventData } from './_components/TopicPageEventsList'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,6 +23,15 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 
 	const title = isZh ? topic.titleZh : topic.titleEn
 	const spanLabel = formatDateRange({ lng, start: topic.spanStart, end: topic.spanEnd })
+
+	const eventData: TopicPageEventData[] = topic.events.map((ev) => ({
+		slug: ev.slug,
+		title: isZh ? ev.titleZh : ev.titleEn,
+		isResearching: ev.status !== 'RESEARCHED',
+		reliability: ev.overallReliability,
+		reliabilityLabel: t(`reliability.${ev.overallReliability}`),
+		seenLabel: formatOccurred({ lng, occurredAt: ev.firstSeenAt }),
+	}))
 
 	return (
 		<div className='mx-auto flex w-full max-w-3xl flex-col gap-5'>
@@ -56,60 +63,17 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 				<p className='text-muted-foreground mt-2 text-sm'>{t('topic.spread')}</p>
 			</div>
 
-			<ol className='border-border relative ml-2 border-l'>
-				{topic.events.map((ev) => {
-					const isResearching = ev.status !== 'RESEARCHED'
-					const seenLabel = formatOccurred({ lng, occurredAt: ev.firstSeenAt })
-					return (
-						<li key={ev.slug} className='mb-5 ml-4'>
-							<span
-								className={cn(
-									'absolute -left-[5px] mt-2 size-2.5 rounded-full',
-									isResearching ? 'bg-info animate-pulse' : 'bg-warning',
-								)}
-							/>
-							{isResearching ? (
-								<div className='border-info/40 bg-info/5 block rounded-lg border border-dashed p-3 backdrop-blur-md'>
-									<div className='flex items-center justify-between gap-2'>
-										<span className='font-medium'>{isZh ? ev.titleZh : ev.titleEn}</span>
-										<Badge variant='info'>
-											<Clock className='size-3' />
-											{t('event.researching')}
-										</Badge>
-									</div>
-									<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
-										<span className='text-muted-foreground text-xs'>{t('event.researchingHint')}</span>
-										{seenLabel ? (
-											<span className='text-muted-foreground font-mono text-xs'>{seenLabel}</span>
-										) : null}
-									</div>
-								</div>
-							) : (
-								<Link
-									href={`/${lng}/event/${ev.slug}`}
-									className='border-border/80 bg-card/70 hover:border-primary/40 block rounded-lg border p-3 backdrop-blur-md transition-all duration-200'
-								>
-									<div className='flex items-center justify-between gap-2'>
-										<span className='font-medium'>{isZh ? ev.titleZh : ev.titleEn}</span>
-										<Badge variant={RELIABILITY_VARIANT[ev.overallReliability] ?? 'muted'}>
-											{t(`reliability.${ev.overallReliability}`)}
-										</Badge>
-									</div>
-									<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
-										<span className='text-info inline-flex items-center gap-1 text-xs'>
-											{t('event.viewEvent')} <ArrowRight className='size-3' />
-											<LinkPendingSpinner />
-										</span>
-										{seenLabel ? (
-											<span className='text-muted-foreground font-mono text-xs'>{seenLabel}</span>
-										) : null}
-									</div>
-								</Link>
-							)}
-						</li>
-					)
-				})}
-			</ol>
+			<TopicPageEventsList
+				lng={lng}
+				events={eventData}
+				labels={{
+					searchPlaceholder: t('topic.searchPlaceholder'),
+					empty: t('topic.searchEmpty'),
+					researching: t('event.researching'),
+					researchingHint: t('event.researchingHint'),
+					viewEvent: t('event.viewEvent'),
+				}}
+			/>
 		</div>
 	)
 }

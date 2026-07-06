@@ -1,13 +1,15 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { differenceInCalendarDays } from 'date-fns'
 
 import { WorldMap } from './WorldMap'
 import { Badge } from '@/components/Badge'
 import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
+import { SearchInput } from '@/components/SearchInput'
 import { RELIABILITY_VARIANT } from '@/lib/ui'
+import { matchesKeyword } from '@/lib/search'
 import { cn } from '@/lib/utils'
 import type { RegionKey } from '@/lib/regions'
 
@@ -52,6 +54,7 @@ interface OverviewLabels {
 	reliability: string
 	updated: string
 	empty: string
+	searchPlaceholder: string
 	stats: OverviewStats
 }
 
@@ -105,7 +108,10 @@ export function OverviewClient({
 	const [domain, setDomain] = useState('all')
 	const [region, setRegion] = useState('all')
 	const [reliability, setReliability] = useState('all')
+	const [keyword, setKeyword] = useState('')
 	const [seenMap, setSeenMap] = useState<Record<string, string> | null>(null)
+
+	const deferredKeyword = useDeferredValue(keyword)
 
 	const filtered = useMemo(
 		() =>
@@ -114,9 +120,10 @@ export function OverviewClient({
 					matchesInterval(interval, tpc.spanStartAt, tpc.spanEndAt) &&
 					(domain === 'all' || tpc.domain === domain) &&
 					(region === 'all' || tpc.regions.some((r) => r === region)) &&
-					(reliability === 'all' || tpc.reliability === reliability),
+					(reliability === 'all' || tpc.reliability === reliability) &&
+					matchesKeyword(deferredKeyword, tpc.title, tpc.domainLabel, ...tpc.regionLabels),
 			),
-		[topics, interval, domain, region, reliability],
+		[topics, interval, domain, region, reliability, deferredKeyword],
 	)
 
 	function handleSeen(slug: string, updatedAt: string) {
@@ -137,6 +144,8 @@ export function OverviewClient({
 				<h1 className='text-xl font-medium lg:text-2xl'>{labels.heading}</h1>
 				<p className='text-muted-foreground text-sm'>{labels.subtitle}</p>
 			</div>
+
+			<SearchInput value={keyword} onChange={setKeyword} placeholder={labels.searchPlaceholder} />
 
 			<div className='flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8'>
 				<aside className='flex flex-col gap-2 lg:sticky lg:top-6 lg:w-48 lg:shrink-0 lg:gap-5'>
@@ -249,7 +258,7 @@ function TopicCard({
 				</div>
 			</div>
 			{marqueeText ? (
-				<div className='border-border/60 bg-card/80 text-muted-foreground absolute inset-x-0 bottom-0 overflow-hidden rounded-b-lg border-t px-4 py-1 text-xs backdrop-blur-sm'>
+				<div className='border-border/60 text-muted-foreground absolute inset-x-0 bottom-0 overflow-hidden rounded-b-lg border-t px-4 py-1 text-xs backdrop-blur-sm'>
 					<div className='animate-marquee flex w-max'>
 						<span className='pr-16'>{marqueeText}</span>
 						<span className='pr-16'>{marqueeText}</span>

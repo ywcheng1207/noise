@@ -2,7 +2,8 @@
 	"appName": "逆風",
 	"tagline": "新聞事件過濾與可信度",
 	"nav": {
-		"overview": "焦點總覽"
+		"overview": "焦點總覽",
+		"log": "日誌"
 	},
 	"source": {
 		"video": "影音",
@@ -17,7 +18,8 @@
 		"region": "地區",
 		"reliability": "可信度",
 		"empty": "目前沒有符合條件的核心議題",
-		"updated": "有更新"
+		"updated": "有更新",
+		"searchPlaceholder": "搜尋議題關鍵字..."
 	},
 	"region": {
 		"all": "全部"
@@ -60,7 +62,9 @@
 	},
 	"topic": {
 		"spread": "旗下事件沿時間擴散",
-		"backToOverview": "返回焦點總覽"
+		"backToOverview": "返回焦點總覽",
+		"searchPlaceholder": "搜尋事件關鍵字...",
+		"searchEmpty": "沒有符合條件的事件"
 	},
 	"event": {
 		"background": "來龍去脈",
@@ -79,5 +83,14 @@
 	},
 	"footer": {
 		"rights": "版權所有"
+	},
+	"log": {
+		"heading": "日誌",
+		"subtitle": "管線最近做了什麼:抓了哪些來源、AI 深入查證了哪些事件",
+		"lastUpdated": "最近一次更新:",
+		"sourcesHeading": "爬蟲來源與最新抓取",
+		"aiHeading": "AI 延伸查證",
+		"aiEmpty": "目前沒有 AI 查證紀錄",
+		"webSearches": "查了 {{count}} 次網路搜尋"
 	}
 }

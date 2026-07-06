@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
+import { ScrollText } from 'lucide-react'
 import { getT } from '@/i18n'
 import { languages } from '@/i18n/settings'
 import { BrandLogo } from '@/components/BrandLogo'
@@ -33,6 +34,14 @@ export default async function LngLayout({
 					<div className='hidden min-w-0 sm:block'>{breadcrumb}</div>
 				</div>
 				<div className='flex shrink-0 items-center gap-1'>
+					<Link
+						href={`/${lng}/log`}
+						aria-label={t('nav.log')}
+						title={t('nav.log')}
+						className='text-muted-foreground hover:bg-secondary hover:text-foreground flex size-8 items-center justify-center rounded-lg transition-colors'
+					>
+						<ScrollText className='size-4' />
+					</Link>
 					<ThemeToggle />
 					<LanguageSwitcher lng={lng} />
 				</div>

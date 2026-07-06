@@ -82,6 +82,7 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 		reliability: t('overview.reliability'),
 		updated: t('overview.updated'),
 		empty: t('overview.empty'),
+		searchPlaceholder: t('overview.searchPlaceholder'),
 		stats: {
 			events: t('stats.events'),
 			sources: t('stats.sources'),
