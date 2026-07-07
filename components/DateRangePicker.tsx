@@ -79,9 +79,9 @@ export function DateRangePicker({
 			<PopoverTrigger asChild>
 				<button
 					type='button'
-					className='bg-input text-foreground hover:bg-secondary flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs transition-all duration-150 hover:scale-[1.02]'
+					className='bg-input text-foreground hover:bg-secondary flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-sm transition-all duration-150 hover:scale-[1.02]'
 				>
-					<CalendarRange className='text-muted-foreground size-3.5' />
+					<CalendarRange className='text-muted-foreground size-4' />
 					<span className='text-muted-foreground hidden sm:inline'>{label}</span>
 					<span className='font-medium whitespace-nowrap'>
 						{fromLabel} – {toLabel}

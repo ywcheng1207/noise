@@ -65,9 +65,6 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 	]
 
 	const labels = {
-		heading: t('overview.heading'),
-		introTab: t('overview.introTab'),
-		subtitle: t('overview.subtitle'),
 		domain: t('overview.domain'),
 		region: t('overview.region'),
 		reliability: t('overview.reliability'),
