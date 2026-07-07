@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { MODEL, logAiRun, generateJsonWithSearch } from '@/lib/gemini'
 import { normalizeMediaType, normalizeReliability, normalizeTier } from '@/lib/enums'
+import { resolveVerifiedUrl } from '@/lib/pipeline/verifyUrl'
 import { toTraditionalZh, toTraditionalZhOrNull } from '@/lib/zh'
 import { parseOccurredDate } from '@/lib/dates'
 
@@ -42,12 +43,23 @@ export async function researchEvent(eventId: string) {
 		data: parsed,
 		usage,
 		searches,
+		groundedSources,
 	} = await generateJsonWithSearch<ResearchResult>({
 		model: MODEL.RESEARCH,
 		system,
 		prompt,
 	})
 	await logAiRun({ eventId, stage: 'RESEARCH', model: MODEL.RESEARCH, usage, searches })
+
+	const timeline = parsed.timeline ?? []
+	const sources = parsed.sources ?? []
+
+	// Gemini 在 JSON 裡手打的網址不保證真的存在（可能記錯、或引用已下架的頁面）；
+	// 用真正的 Google Search 接地結果驗證/替換，確認死掉的一律拿掉，不留死連結給使用者點。
+	const [verifiedTimelineUrls, verifiedSourceUrls] = await Promise.all([
+		Promise.all(timeline.map((n) => resolveVerifiedUrl(n.sourceUrl, groundedSources))),
+		Promise.all(sources.map((s) => resolveVerifiedUrl(s.externalUrl, groundedSources))),
+	])
 
 	await prisma.eventTimeline.deleteMany({ where: { eventId } })
 	await prisma.eventSource.deleteMany({ where: { eventId } })
@@ -63,12 +75,12 @@ export async function researchEvent(eventId: string) {
 	})
 
 	await prisma.eventTimeline.createMany({
-		data: (parsed.timeline ?? []).map((n, i) => ({
+		data: timeline.map((n, i) => ({
 			eventId,
 			...parseOccurredDate(n.occurredDate),
 			descZh: toTraditionalZh(n.descZh),
 			descEn: n.descEn,
-			sourceUrl: n.sourceUrl ?? null,
+			sourceUrl: verifiedTimelineUrls[i],
 			sourceLabel: n.sourceLabel ?? null,
 			isConflicting: Boolean(n.isConflicting),
 			rank: i,
@@ -76,10 +88,10 @@ export async function researchEvent(eventId: string) {
 	})
 
 	await prisma.eventSource.createMany({
-		data: (parsed.sources ?? []).map((s, i) => ({
+		data: sources.map((s, i) => ({
 			eventId,
 			sourceName: toTraditionalZh(s.sourceName),
-			externalUrl: s.externalUrl ?? null,
+			externalUrl: verifiedSourceUrls[i],
 			language: s.language ? s.language.toLowerCase().slice(0, 5) : null,
 			mediaType: normalizeMediaType(s.mediaType),
 			credibilityTier: normalizeTier(s.credibilityTier),
@@ -90,5 +102,5 @@ export async function researchEvent(eventId: string) {
 		})),
 	})
 
-	return { eventId, timeline: parsed.timeline?.length ?? 0, sources: parsed.sources?.length ?? 0 }
+	return { eventId, timeline: timeline.length, sources: sources.length }
 }

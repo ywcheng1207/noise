@@ -109,6 +109,12 @@ export async function generateJson<T>(opts: { model: string; system: string; pro
 	return { data: parseJsonObject<T>(res.text ?? ''), usage }
 }
 
+/** Google Search 接地回傳的真實搜尋結果（程式化取得，保證是真的網頁，不是模型手打的網址）。 */
+export interface GroundingSource {
+	uri: string
+	title: string
+}
+
 /** 產生 JSON（含 Google Search 接地）：不能用 responseMimeType，靠 prompt 指示 + 解析。 */
 export async function generateJsonWithSearch<T>(opts: { model: string; system: string; prompt: string }) {
 	const res = await withRetry(async () => {
@@ -129,6 +135,9 @@ export async function generateJsonWithSearch<T>(opts: { model: string; system: s
 		return r
 	})
 	const usage: UsageLike = res.usageMetadata ?? {}
-	const searches = res.candidates?.[0]?.groundingMetadata?.groundingChunks?.length ?? 0
-	return { data: parseJsonObject<T>(res.text ?? ''), usage, searches }
+	const chunks = res.candidates?.[0]?.groundingMetadata?.groundingChunks ?? []
+	const groundedSources: GroundingSource[] = chunks.flatMap((c) =>
+		c.web?.uri ? [{ uri: c.web.uri, title: c.web.title ?? '' }] : [],
+	)
+	return { data: parseJsonObject<T>(res.text ?? ''), usage, searches: chunks.length, groundedSources }
 }
