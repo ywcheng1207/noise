@@ -1,16 +1,17 @@
 'use client'
 
-import { useDeferredValue, useMemo, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Clock, Loader2 } from 'lucide-react'
+import { ArrowRight, Clock } from 'lucide-react'
+import { useVirtualizer } from '@tanstack/react-virtual'
 
 import { Badge } from '@/components/Badge'
 import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
 import { SearchInput } from '@/components/SearchInput'
 import { DateRangePicker, type DateRangeValue } from '@/components/DateRangePicker'
+import { useScrollContainerRef } from '@/components/ScrollContainerContext'
 import { RELIABILITY_VARIANT } from '@/lib/ui'
 import { matchesKeyword } from '@/lib/search'
-import { useIncrementalReveal } from '@/lib/hooks/useIncrementalReveal'
 import { cn } from '@/lib/utils'
 
 export interface TopicPageEventData {
@@ -23,24 +24,39 @@ export interface TopicPageEventData {
 	seenAt: string
 }
 
+interface EventTimelineLabels {
+	researching: string
+	researchingHint: string
+	viewEvent: string
+}
+
 interface TopicPageEventsListProps {
 	lng: string
 	events: TopicPageEventData[]
 	dateBounds: DateRangeValue | null
-	labels: {
+	labels: EventTimelineLabels & {
 		searchPlaceholder: string
 		empty: string
-		researching: string
-		researchingHint: string
-		viewEvent: string
 		dateRange: string
 	}
 }
+
+const ESTIMATED_ROW_HEIGHT = 92
+const OVERSCAN = 6
 
 export function TopicPageEventsList({ lng, events, dateBounds, labels }: TopicPageEventsListProps) {
 	const [keyword, setKeyword] = useState('')
 	const [dateRange, setDateRange] = useState<DateRangeValue>(dateBounds ?? { from: '', to: '' })
 	const deferredKeyword = useDeferredValue(keyword)
+	const scrollContainerRef = useScrollContainerRef()
+
+	// scrollContainerRef 是透過 context 從祖先元件(TabShell)拿到的 ref,不是本元件自己
+	// 掛上去的 ref——react-virtual 內部靠 ResizeObserver 偵測 scroll element 就緒後觸發重繪,
+	// 但跨元件拿到的 ref 這個機制不夠可靠,所以改成用 state 明確記一次,保證真的會重繪。
+	const [scrollElement, setScrollElement] = useState<HTMLDivElement | null>(null)
+	useEffect(() => {
+		setScrollElement(scrollContainerRef?.current ?? null)
+	}, [scrollContainerRef])
 
 	const filtered = useMemo(
 		() =>
@@ -53,7 +69,13 @@ export function TopicPageEventsList({ lng, events, dateBounds, labels }: TopicPa
 		[events, deferredKeyword, dateRange],
 	)
 
-	const { visibleItems, hasMore, sentinelRef } = useIncrementalReveal(filtered)
+	const virtualizer = useVirtualizer({
+		count: filtered.length,
+		getScrollElement: () => scrollElement,
+		estimateSize: () => ESTIMATED_ROW_HEIGHT,
+		overscan: OVERSCAN,
+		getItemKey: (index) => filtered[index].slug,
+	})
 
 	return (
 		<div className='flex flex-col gap-4'>
@@ -75,63 +97,84 @@ export function TopicPageEventsList({ lng, events, dateBounds, labels }: TopicPa
 			{filtered.length === 0 ? (
 				<p className='text-muted-foreground py-8 text-center text-sm'>{labels.empty}</p>
 			) : (
-				<>
-					<ol className='border-border relative ml-2 border-l'>
-						{visibleItems.map((ev) => (
-							<li key={ev.slug} className='mb-5 ml-4'>
-								<span
-									className={cn(
-										'absolute -left-[5px] mt-2 size-2.5 rounded-full',
-										ev.isResearching ? 'bg-info animate-pulse' : 'bg-warning',
-									)}
-								/>
-								{ev.isResearching ? (
-									<div className='bg-info/10 block rounded-lg p-3 backdrop-blur-md'>
-										<div className='flex items-center justify-between gap-2'>
-											<span className='font-medium'>{ev.title}</span>
-											<Badge variant='info'>
-												<Clock className='size-3' />
-												{labels.researching}
-											</Badge>
-										</div>
-										<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
-											<span className='text-muted-foreground text-xs'>{labels.researchingHint}</span>
-											{ev.seenLabel ? (
-												<span className='text-muted-foreground font-mono text-xs'>{ev.seenLabel}</span>
-											) : null}
-										</div>
-									</div>
-								) : (
-									<Link
-										href={`/${lng}/event/${ev.slug}`}
-										className='bg-secondary/40 hover:bg-secondary/60 block rounded-lg p-3 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]'
-									>
-										<div className='flex items-center justify-between gap-2'>
-											<span className='font-medium'>{ev.title}</span>
-											<Badge variant={RELIABILITY_VARIANT[ev.reliability] ?? 'muted'}>
-												{ev.reliabilityLabel}
-											</Badge>
-										</div>
-										<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
-											<span className='text-info inline-flex items-center gap-1 text-xs'>
-												{labels.viewEvent} <ArrowRight className='size-3' />
-												<LinkPendingSpinner />
-											</span>
-											{ev.seenLabel ? (
-												<span className='text-muted-foreground font-mono text-xs'>{ev.seenLabel}</span>
-											) : null}
-										</div>
-									</Link>
-								)}
-							</li>
-						))}
-					</ol>
-					{hasMore ? (
-						<div ref={sentinelRef} className='flex justify-center py-3'>
-							<Loader2 className='text-muted-foreground size-4 animate-spin' />
-						</div>
-					) : null}
-				</>
+				// react-virtual 只渲染可視範圍內的列,捲出畫面的列直接從 DOM 移除(不只是跳過繪製)。
+				// 每列的垂直位置是量測後才知道的浮點數,無法事先寫成 Tailwind class,這裡是唯一用 inline style 的地方。
+				<div className='relative ml-2' style={{ height: virtualizer.getTotalSize() }}>
+					<div className='border-border absolute top-0 bottom-0 left-0 border-l' />
+					{virtualizer.getVirtualItems().map((row) => {
+						const event = filtered[row.index]
+						return (
+							<div
+								key={row.key}
+								ref={virtualizer.measureElement}
+								data-index={row.index}
+								style={{ transform: `translateY(${row.start}px)` }}
+								className='absolute top-0 left-0 w-full pb-5 pl-4'
+							>
+								<EventTimelineCard lng={lng} event={event} labels={labels} />
+							</div>
+						)
+					})}
+				</div>
+			)}
+		</div>
+	)
+}
+
+function EventTimelineCard({
+	lng,
+	event,
+	labels,
+}: {
+	lng: string
+	event: TopicPageEventData
+	labels: EventTimelineLabels
+}) {
+	return (
+		<div className='relative'>
+			<span
+				className={cn(
+					'absolute -left-[21px] mt-2 size-2.5 rounded-full',
+					event.isResearching ? 'bg-info animate-pulse' : 'bg-warning',
+				)}
+			/>
+			{event.isResearching ? (
+				<div className='bg-info/10 block rounded-lg p-3 backdrop-blur-md'>
+					<div className='flex items-center justify-between gap-2'>
+						<span className='font-medium'>{event.title}</span>
+						<Badge variant='info'>
+							<Clock className='size-3' />
+							{labels.researching}
+						</Badge>
+					</div>
+					<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
+						<span className='text-muted-foreground text-xs'>{labels.researchingHint}</span>
+						{event.seenLabel ? (
+							<span className='text-muted-foreground font-mono text-xs'>{event.seenLabel}</span>
+						) : null}
+					</div>
+				</div>
+			) : (
+				<Link
+					href={`/${lng}/event/${event.slug}`}
+					className='bg-secondary/40 hover:bg-secondary/60 block rounded-lg p-3 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]'
+				>
+					<div className='flex items-center justify-between gap-2'>
+						<span className='font-medium'>{event.title}</span>
+						<Badge variant={RELIABILITY_VARIANT[event.reliability] ?? 'muted'}>
+							{event.reliabilityLabel}
+						</Badge>
+					</div>
+					<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
+						<span className='text-info inline-flex items-center gap-1 text-xs'>
+							{labels.viewEvent} <ArrowRight className='size-3' />
+							<LinkPendingSpinner />
+						</span>
+						{event.seenLabel ? (
+							<span className='text-muted-foreground font-mono text-xs'>{event.seenLabel}</span>
+						) : null}
+					</div>
+				</Link>
 			)}
 		</div>
 	)

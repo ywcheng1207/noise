@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
+import { ScrollContainerProvider } from '@/components/ScrollContainerContext'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 type RootTab = 'intro' | 'topics'
@@ -28,6 +29,7 @@ export function TabShell({
 }) {
 	const pathname = usePathname()
 	const router = useRouter()
+	const scrollContainerRef = useRef<HTMLDivElement>(null)
 	const overviewHref = `/${lng}`
 	// 第一次掛載就已經在子頁面(議題/事件/日誌)代表使用者是從深連結進來的,
 	// 之後透過麵包屑「回總覽」應該回到議題清單而不是介紹頁。
@@ -66,15 +68,18 @@ export function TabShell({
 			</TabsList>
 			<TabsContent
 				key={activeTab}
+				ref={scrollContainerRef}
 				value={activeTab}
 				className='min-h-0 flex-1 scrollbar-thin overflow-y-auto'
 			>
-				<div className='flex flex-col gap-4'>
-					{/* 麵包屑 parallel route 在跨路由樹導航時偶爾不會正確 fallback 回 default.tsx(Next.js 已知限制),
-					    根路徑一律不該有麵包屑,直接用當下路徑主動擋掉,不依賴 slot 是否過期。 */}
-					{isAtRoot ? null : breadcrumb}
-					{content}
-				</div>
+				<ScrollContainerProvider value={scrollContainerRef}>
+					<div className='flex flex-col gap-4'>
+						{/* 麵包屑 parallel route 在跨路由樹導航時偶爾不會正確 fallback 回 default.tsx(Next.js 已知限制),
+						    根路徑一律不該有麵包屑,直接用當下路徑主動擋掉,不依賴 slot 是否過期。 */}
+						{isAtRoot ? null : breadcrumb}
+						{content}
+					</div>
+				</ScrollContainerProvider>
 			</TabsContent>
 		</Tabs>
 	)
