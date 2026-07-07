@@ -112,6 +112,8 @@ export default async function LogDayPage({ params }: { params: Promise<{ lng: st
 				</div>
 			</Collapsible>
 
+			<div className='border-border border-t' />
+
 			<Collapsible title={t('log.aiHeading')}>
 				{researchEntries.length === 0 ? (
 					<p className='text-muted-foreground text-sm'>{t('log.aiEmpty')}</p>

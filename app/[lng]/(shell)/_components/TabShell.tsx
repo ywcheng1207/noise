@@ -1,12 +1,14 @@
 'use client'
 
-import { useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { ScrollContainerProvider } from '@/components/ScrollContainerContext'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 type RootTab = 'intro' | 'topics'
+
+const ROOT_TAB_STORAGE_KEY = 'noise-root-tab'
 
 export interface TabShellLabels {
 	intro: string
@@ -31,16 +33,31 @@ export function TabShell({
 	const router = useRouter()
 	const scrollContainerRef = useRef<HTMLDivElement>(null)
 	const overviewHref = `/${lng}`
+
+	// 用路徑本身的第二段判斷分頁,不依賴 lng prop 組字串比對——切換語系時
+	// usePathname() 會比 server 傳下來的新 lng prop 更早更新,用 `${lng}/topic` 這種
+	// 字串比對會有一瞬間對不上(pathname 已經是新語系、lng prop 還是舊的),
+	// 誤判成不在子頁面而掉回本地 rootTab 狀態,導致切語言時畫面跳回介紹分頁。
+	const secondSegment = pathname.split('/')[2]
+	const isAtRoot = !secondSegment
 	// 第一次掛載就已經在子頁面(議題/事件/日誌)代表使用者是從深連結進來的,
 	// 之後透過麵包屑「回總覽」應該回到議題清單而不是介紹頁。
-	const [rootTab, setRootTab] = useState<RootTab>(() => (pathname === overviewHref ? 'intro' : 'topics'))
+	const [rootTab, setRootTab] = useState<RootTab>(() => (isAtRoot ? 'intro' : 'topics'))
 
-	const isAtRoot = pathname === overviewHref
-	const activeTab = pathname.startsWith(`${overviewHref}/log`)
-		? 'log'
-		: pathname.startsWith(`${overviewHref}/topic`) || pathname.startsWith(`${overviewHref}/event`)
-			? 'topics'
-			: rootTab
+	// [lng] 是 generateStaticParams 的靜態動態區段,切換語系會整棵樹重新掛載、
+	// rootTab 這種純前端 state 一定會遺失且無法從網址復原(根路徑在兩個語系下長得一樣)。
+	// 用 sessionStorage 記住使用者最後選的分頁,掛載後(僅限根路徑)校正回來。
+	useEffect(() => {
+		if (!isAtRoot) return
+		if (window.sessionStorage.getItem(ROOT_TAB_STORAGE_KEY) === 'topics') setRootTab('topics')
+	}, [isAtRoot])
+
+	const activeTab =
+		secondSegment === 'log'
+			? 'log'
+			: secondSegment === 'topic' || secondSegment === 'event'
+				? 'topics'
+				: rootTab
 
 	function handleTabSelect(value: string) {
 		if (value === 'log') {
@@ -48,7 +65,9 @@ export function TabShell({
 			return
 		}
 		if (!isAtRoot) router.push(overviewHref)
-		setRootTab(value === 'intro' ? 'intro' : 'topics')
+		const next: RootTab = value === 'intro' ? 'intro' : 'topics'
+		setRootTab(next)
+		window.sessionStorage.setItem(ROOT_TAB_STORAGE_KEY, next)
 	}
 
 	const content = activeTab === 'intro' && isAtRoot ? intro : children

@@ -1,8 +1,7 @@
-import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
-import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
 import { formatOccurred } from '@/lib/dates'
+import { LogList } from './_components/LogList'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,6 +55,17 @@ export default async function LogPage({ params }: { params: Promise<{ lng: strin
 		.sort((a, b) => b.key.localeCompare(a.key))
 		.slice(0, 30)
 
+	const dateBounds = entries.length > 0 ? { from: entries[entries.length - 1].key, to: entries[0].key } : null
+
+	const rows = entries.map((entry) => ({
+		key: entry.key,
+		dateLabel: formatOccurred({ lng, occurredAt: entry.date, precision: 'DAY' }) ?? entry.key,
+		summaryLine: t('log.summaryLine', {
+			articleCount: entry.articleCount,
+			researchCount: entry.researchCount,
+		}),
+	}))
+
 	return (
 		<div className='mx-auto flex w-full max-w-3xl flex-col gap-5'>
 			<div>
@@ -63,33 +73,12 @@ export default async function LogPage({ params }: { params: Promise<{ lng: strin
 				<p className='text-muted-foreground mt-1 text-sm leading-6'>{t('log.pageIntro')}</p>
 			</div>
 
-			{entries.length === 0 ? (
-				<p className='text-muted-foreground py-8 text-center text-sm'>{t('log.empty')}</p>
-			) : (
-				<ol className='flex flex-col gap-2'>
-					{entries.map((entry) => (
-						<li key={entry.key}>
-							<Link
-								href={`/${lng}/log/${entry.key}`}
-								className='bg-secondary/40 hover:bg-secondary/60 block rounded-lg p-4 transition-all duration-200 hover:scale-[1.01]'
-							>
-								<div className='flex items-center gap-2'>
-									<span className='font-medium'>
-										{formatOccurred({ lng, occurredAt: entry.date, precision: 'DAY' })}
-									</span>
-									<LinkPendingSpinner />
-								</div>
-								<p className='text-muted-foreground mt-1 text-xs'>
-									{t('log.summaryLine', {
-										articleCount: entry.articleCount,
-										researchCount: entry.researchCount,
-									})}
-								</p>
-							</Link>
-						</li>
-					))}
-				</ol>
-			)}
+			<LogList
+				lng={lng}
+				rows={rows}
+				dateBounds={dateBounds}
+				labels={{ empty: t('log.empty'), dateRange: t('topic.dateRange') }}
+			/>
 		</div>
 	)
 }

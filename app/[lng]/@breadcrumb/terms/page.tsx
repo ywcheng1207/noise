@@ -1,14 +1,18 @@
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import { getT } from '@/i18n'
-import { Breadcrumb } from '@/components/Breadcrumb'
 
-export default async function TermsBreadcrumb({ params }: { params: Promise<{ lng: string }> }) {
+export default async function TermsBackLink({ params }: { params: Promise<{ lng: string }> }) {
 	const { lng } = await params
 	const { t } = await getT(lng)
 
 	return (
-		<Breadcrumb
-			className='flex-nowrap'
-			items={[{ label: t('nav.overview'), href: `/${lng}` }, { label: t('footer.terms') }]}
-		/>
+		<Link
+			href={`/${lng}`}
+			className='text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm transition-colors'
+		>
+			<ArrowLeft className='size-4' />
+			{t('terms.backToPlatform')}
+		</Link>
 	)
 }
