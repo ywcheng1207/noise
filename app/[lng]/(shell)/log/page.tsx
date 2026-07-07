@@ -71,7 +71,7 @@ export default async function LogPage({ params }: { params: Promise<{ lng: strin
 						<li key={entry.key}>
 							<Link
 								href={`/${lng}/log/${entry.key}`}
-								className='bg-card/90 hover:bg-card block rounded-lg p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]'
+								className='bg-secondary/40 hover:bg-secondary/60 block rounded-lg p-4 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]'
 							>
 								<div className='flex items-center gap-2'>
 									<span className='font-medium'>

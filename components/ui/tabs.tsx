@@ -27,7 +27,7 @@ export const TabsTrigger = ({ className, ...props }: ComponentProps<typeof TabsP
 export const TabsContent = ({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>) => {
 	return (
 		<TabsPrimitive.Content
-			className={cn('bg-card animate-tab-in h-[70dvh] overflow-y-auto rounded-b-lg p-4 sm:p-6', className)}
+			className={cn('bg-card animate-tab-in rounded-b-lg p-4 sm:p-6', className)}
 			{...props}
 		/>
 	)

@@ -1,26 +1,31 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChevronsUp } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
 const SCROLL_THRESHOLD = 400
 
+// 頁面本身不再捲動(main / 分頁內容區各自內部捲動),實際捲動的元素會隨頁面而異,
+// 所以在 document 用 capture 監聽(scroll 事件不冒泡,但捲動階段仍會經過祖先節點),
+// 用 event.target 找出當下真正在捲動的元素。
 export function ScrollToTopButton() {
 	const [isVisible, setIsVisible] = useState(false)
+	const scrolledElementRef = useRef<HTMLElement | null>(null)
 
 	function handleClick() {
-		window.scrollTo({ top: 0, behavior: 'smooth' })
+		scrolledElementRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
 	}
 
 	useEffect(() => {
-		function handleScroll() {
-			setIsVisible(window.scrollY > SCROLL_THRESHOLD)
+		function handleScroll(event: Event) {
+			if (!(event.target instanceof HTMLElement)) return
+			scrolledElementRef.current = event.target
+			setIsVisible(event.target.scrollTop > SCROLL_THRESHOLD)
 		}
-		handleScroll()
-		window.addEventListener('scroll', handleScroll, { passive: true })
-		return () => window.removeEventListener('scroll', handleScroll)
+		document.addEventListener('scroll', handleScroll, { capture: true, passive: true })
+		return () => document.removeEventListener('scroll', handleScroll, true)
 	}, [])
 
 	return (

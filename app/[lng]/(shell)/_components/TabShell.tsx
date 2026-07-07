@@ -52,7 +52,7 @@ export function TabShell({
 	const content = activeTab === 'intro' && isAtRoot ? intro : children
 
 	return (
-		<Tabs value={activeTab} onValueChange={handleTabSelect} className='flex flex-col'>
+		<Tabs value={activeTab} onValueChange={handleTabSelect} className='flex h-full flex-col'>
 			<TabsList>
 				<TabsTrigger value='intro' onClick={() => handleTabSelect('intro')}>
 					{labels.intro}
@@ -64,9 +64,17 @@ export function TabShell({
 					{labels.log}
 				</TabsTrigger>
 			</TabsList>
-			<TabsContent key={activeTab} value={activeTab} className='flex flex-col gap-4'>
-				{breadcrumb}
-				{content}
+			<TabsContent
+				key={activeTab}
+				value={activeTab}
+				className='min-h-0 flex-1 scrollbar-thin overflow-y-auto'
+			>
+				<div className='flex flex-col gap-4'>
+					{/* 麵包屑 parallel route 在跨路由樹導航時偶爾不會正確 fallback 回 default.tsx(Next.js 已知限制),
+					    根路徑一律不該有麵包屑,直接用當下路徑主動擋掉,不依賴 slot 是否過期。 */}
+					{isAtRoot ? null : breadcrumb}
+					{content}
+				</div>
 			</TabsContent>
 		</Tabs>
 	)

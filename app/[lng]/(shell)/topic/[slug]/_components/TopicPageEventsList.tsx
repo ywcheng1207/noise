@@ -104,7 +104,7 @@ export function TopicPageEventsList({ lng, events, dateBounds, labels }: TopicPa
 								) : (
 									<Link
 										href={`/${lng}/event/${ev.slug}`}
-										className='bg-card/90 hover:bg-card block rounded-lg p-3 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]'
+										className='bg-secondary/40 hover:bg-secondary/60 block rounded-lg p-3 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]'
 									>
 										<div className='flex items-center justify-between gap-2'>
 											<span className='font-medium'>{ev.title}</span>

@@ -124,7 +124,7 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 										key={src.id}
 										className={cn(
 											'rounded-lg p-3 backdrop-blur-md',
-											src.isAuthoritative ? 'bg-info/10' : 'bg-card/90',
+											src.isAuthoritative ? 'bg-info/10' : 'bg-secondary/40',
 										)}
 									>
 										<div className='flex items-start justify-between gap-2'>
