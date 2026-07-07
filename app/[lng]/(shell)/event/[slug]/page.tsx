@@ -1,9 +1,20 @@
 import { notFound } from 'next/navigation'
-import { AlertTriangle, Clock, ExternalLink, FileText, ShieldCheck, Video } from 'lucide-react'
+import {
+	AlertTriangle,
+	AlignLeft,
+	Clock,
+	ExternalLink,
+	FileText,
+	History,
+	ListOrdered,
+	ShieldCheck,
+	Video,
+} from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
-import { RELIABILITY_VARIANT, TIER_VARIANT } from '@/lib/ui'
+import { ReliabilityBadge } from '@/components/ReliabilityBadge'
+import { TIER_ICON, TIER_VARIANT } from '@/lib/ui'
 import { formatOccurred } from '@/lib/dates'
 import { cn } from '@/lib/utils'
 
@@ -34,9 +45,10 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 			<div>
 				<h1 className='text-2xl font-medium'>{title}</h1>
 				<div className='mt-2 flex flex-wrap items-center gap-2'>
-					<Badge variant={RELIABILITY_VARIANT[event.overallReliability] ?? 'muted'}>
-						{t(`reliability.${event.overallReliability}`)}
-					</Badge>
+					<ReliabilityBadge
+						reliability={event.overallReliability}
+						label={t(`reliability.${event.overallReliability}`)}
+					/>
 					{isResearched ? null : (
 						<Badge variant='info'>
 							<Clock className='size-3' />
@@ -57,14 +69,20 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 
 					{narrative && (
 						<section>
-							<h2 className='text-muted-foreground mb-2 text-sm font-medium'>{t('event.background')}</h2>
+							<h2 className='text-muted-foreground mb-2 flex items-center gap-1.5 text-sm font-medium'>
+								<AlignLeft className='size-3.5' />
+								{t('event.background')}
+							</h2>
 							<p className='text-[15px] leading-7'>{narrative}</p>
 						</section>
 					)}
 
 					{event.timeline.length > 0 && (
 						<section>
-							<h2 className='text-muted-foreground mb-3 text-sm font-medium'>{t('event.timeline')}</h2>
+							<h2 className='text-muted-foreground mb-3 flex items-center gap-1.5 text-sm font-medium'>
+								<History className='size-3.5' />
+								{t('event.timeline')}
+							</h2>
 							<ol className='border-border relative ml-2 border-l'>
 								{event.timeline.map((node) => {
 									const occurred = formatOccurred({
@@ -114,11 +132,17 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 
 				{event.sources.length > 0 && (
 					<section className='min-w-0 xl:sticky xl:top-6 xl:w-96 xl:shrink-0'>
-						<h2 className='text-muted-foreground mb-3 text-sm font-medium'>{t('event.sources')}</h2>
+						<h2 className='text-muted-foreground mb-3 flex items-center gap-1.5 text-sm font-medium'>
+							<ListOrdered className='size-3.5' />
+							{t('event.sources')}
+						</h2>
 						<ol className='flex flex-col gap-2'>
 							{event.sources.map((src) => {
 								const reasoning = isZh ? src.reasoningZh : src.reasoningEn
 								const isVideo = src.mediaType === 'VIDEO'
+								const TierIcon = src.isAuthoritative
+									? ShieldCheck
+									: (TIER_ICON[src.credibilityTier] ?? TIER_ICON.UNVERIFIED)
 								return (
 									<li
 										key={src.id}
@@ -134,7 +158,7 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 													variant={TIER_VARIANT[src.credibilityTier] ?? 'muted'}
 													className='whitespace-nowrap'
 												>
-													{src.isAuthoritative && <ShieldCheck className='size-3' />}
+													<TierIcon className='size-3' />
 													{t(`tier.${src.credibilityTier}`)}
 												</Badge>
 												{src.externalUrl && (

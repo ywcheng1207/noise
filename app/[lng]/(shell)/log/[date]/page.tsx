@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, Newspaper, Sparkles } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { Collapsible } from '@/components/Collapsible'
@@ -87,7 +87,14 @@ export default async function LogDayPage({ params }: { params: Promise<{ lng: st
 				</p>
 			</div>
 
-			<Collapsible title={t('log.sourcesHeading')}>
+			<Collapsible
+				title={
+					<span className='flex items-center gap-1.5'>
+						<Newspaper className='size-4' />
+						{t('log.sourcesHeading')}
+					</span>
+				}
+			>
 				<div className='flex flex-col gap-2'>
 					{activeSources.map(({ source, samples }) => (
 						<div key={source.id} className='bg-secondary/40 rounded-lg p-3'>
@@ -114,7 +121,14 @@ export default async function LogDayPage({ params }: { params: Promise<{ lng: st
 
 			<div className='border-border border-t' />
 
-			<Collapsible title={t('log.aiHeading')}>
+			<Collapsible
+				title={
+					<span className='flex items-center gap-1.5'>
+						<Sparkles className='text-primary size-4' />
+						{t('log.aiHeading')}
+					</span>
+				}
+			>
 				{researchEntries.length === 0 ? (
 					<p className='text-muted-foreground text-sm'>{t('log.aiEmpty')}</p>
 				) : (

@@ -2,13 +2,13 @@
 
 import { memo, useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Loader2 } from 'lucide-react'
+import { Loader2, MapPin, SearchX } from 'lucide-react'
 
 import { WorldMap } from './WorldMap'
-import { Badge } from '@/components/Badge'
 import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
+import { ReliabilityBadge } from '@/components/ReliabilityBadge'
 import { SearchInput } from '@/components/SearchInput'
-import { RELIABILITY_VARIANT } from '@/lib/ui'
+import { DOMAIN_ICON } from '@/lib/ui'
 import { matchesKeyword } from '@/lib/search'
 import { useIncrementalReveal } from '@/lib/hooks/useIncrementalReveal'
 import { cn } from '@/lib/utils'
@@ -138,7 +138,10 @@ export function OverviewClient({
 				</aside>
 
 				{filtered.length === 0 ? (
-					<p className='text-muted-foreground flex-1 py-8 text-center text-sm'>{labels.empty}</p>
+					<div className='flex flex-1 flex-col items-center gap-2 py-8 text-center'>
+						<SearchX className='text-muted-foreground/50 size-8' />
+						<p className='text-muted-foreground text-sm'>{labels.empty}</p>
+					</div>
 				) : (
 					<div className='flex min-w-0 flex-1 flex-col gap-3'>
 						{visibleItems.map((tpc) => {
@@ -210,19 +213,20 @@ const TopicCard = memo(
 								{topic.title}
 								<LinkPendingSpinner />
 							</span>
-							<Badge variant={RELIABILITY_VARIANT[topic.reliability] ?? 'muted'} className='shrink-0'>
-								{topic.reliabilityLabel}
-							</Badge>
+							<ReliabilityBadge
+								reliability={topic.reliability}
+								label={topic.reliabilityLabel}
+								className='shrink-0'
+							/>
 						</div>
 						<div className='flex flex-wrap gap-1.5'>
-							<span className='bg-secondary/60 text-muted-foreground rounded-lg px-2 py-0.5 text-xs'>
-								{topic.domainLabel}
-							</span>
+							<DomainTag domain={topic.domain} label={topic.domainLabel} />
 							{topic.regionLabels.map((rl) => (
 								<span
 									key={rl}
-									className='bg-secondary/60 text-muted-foreground rounded-lg px-2 py-0.5 text-xs'
+									className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs'
 								>
+									<MapPin className='size-3' />
 									{rl}
 								</span>
 							))}
@@ -248,6 +252,16 @@ const TopicCard = memo(
 		)
 	},
 )
+
+function DomainTag({ domain, label }: { domain: string; label: string }) {
+	const Icon = DOMAIN_ICON[domain] ?? DOMAIN_ICON.OTHER
+	return (
+		<span className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs'>
+			<Icon className='size-3' />
+			{label}
+		</span>
+	)
+}
 
 function FacetGroup({
 	label,

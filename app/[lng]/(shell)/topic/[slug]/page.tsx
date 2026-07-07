@@ -2,8 +2,7 @@ import { notFound } from 'next/navigation'
 import { MapPin } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
-import { Badge } from '@/components/Badge'
-import { RELIABILITY_VARIANT } from '@/lib/ui'
+import { ReliabilityBadge } from '@/components/ReliabilityBadge'
 import { REGION_LABELS } from '@/lib/regions'
 import { formatOccurred } from '@/lib/dates'
 import { TopicPageEventsList, type TopicPageEventData } from './_components/TopicPageEventsList'
@@ -42,9 +41,10 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 			<div>
 				<h1 className='text-2xl font-medium'>{title}</h1>
 				<div className='mt-2 flex flex-wrap items-center gap-2'>
-					<Badge variant={RELIABILITY_VARIANT[topic.overallReliability] ?? 'muted'}>
-						{t(`reliability.${topic.overallReliability}`)}
-					</Badge>
+					<ReliabilityBadge
+						reliability={topic.overallReliability}
+						label={t(`reliability.${topic.overallReliability}`)}
+					/>
 					{topic.regions.map((r) => (
 						<span
 							key={r}

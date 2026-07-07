@@ -2,15 +2,15 @@
 
 import { memo, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Clock } from 'lucide-react'
+import { ArrowRight, Clock, SearchX } from 'lucide-react'
 import { useVirtualizer } from '@tanstack/react-virtual'
 
 import { Badge } from '@/components/Badge'
 import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
+import { ReliabilityBadge } from '@/components/ReliabilityBadge'
 import { SearchInput } from '@/components/SearchInput'
 import { DateRangePicker, type DateRangeValue } from '@/components/DateRangePicker'
 import { useScrollContainerRef } from '@/components/ScrollContainerContext'
-import { RELIABILITY_VARIANT } from '@/lib/ui'
 import { matchesKeyword } from '@/lib/search'
 import { cn } from '@/lib/utils'
 
@@ -95,7 +95,10 @@ export function TopicPageEventsList({ lng, events, dateBounds, labels }: TopicPa
 			</div>
 
 			{filtered.length === 0 ? (
-				<p className='text-muted-foreground py-8 text-center text-sm'>{labels.empty}</p>
+				<div className='flex flex-col items-center gap-2 py-8 text-center'>
+					<SearchX className='text-muted-foreground/50 size-8' />
+					<p className='text-muted-foreground text-sm'>{labels.empty}</p>
+				</div>
 			) : (
 				// react-virtual 只渲染可視範圍內的列,捲出畫面的列直接從 DOM 移除(不只是跳過繪製)。
 				// 每列的垂直位置是量測後才知道的浮點數,無法事先寫成 Tailwind class,這裡是唯一用 inline style 的地方。
@@ -151,17 +154,16 @@ const EventTimelineCard = memo(
 				) : (
 					<Link
 						href={`/${lng}/event/${event.slug}`}
-						className='bg-secondary/40 hover:bg-secondary/60 block rounded-lg p-3 transition-all duration-200 hover:scale-[1.01]'
+						className='group bg-secondary/40 hover:bg-secondary/60 block rounded-lg p-3 transition-all duration-200 hover:scale-[1.01]'
 					>
 						<div className='flex items-center justify-between gap-2'>
 							<span className='font-medium'>{event.title}</span>
-							<Badge variant={RELIABILITY_VARIANT[event.reliability] ?? 'muted'}>
-								{event.reliabilityLabel}
-							</Badge>
+							<ReliabilityBadge reliability={event.reliability} label={event.reliabilityLabel} />
 						</div>
 						<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
 							<span className='text-info inline-flex items-center gap-1 text-xs'>
-								{labels.viewEvent} <ArrowRight className='size-3' />
+								{labels.viewEvent}{' '}
+								<ArrowRight className='size-3 transition-transform duration-200 group-hover:translate-x-0.5' />
 								<LinkPendingSpinner />
 							</span>
 							{event.seenLabel ? (

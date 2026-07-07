@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
+import { CalendarDays, SearchX } from 'lucide-react'
 import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
 import { DateRangePicker, type DateRangeValue } from '@/components/DateRangePicker'
 
@@ -52,7 +53,10 @@ export function LogList({
 			) : null}
 
 			{filtered.length === 0 ? (
-				<p className='text-muted-foreground py-8 text-center text-sm'>{labels.empty}</p>
+				<div className='flex flex-col items-center gap-2 py-8 text-center'>
+					<SearchX className='text-muted-foreground/50 size-8' />
+					<p className='text-muted-foreground text-sm'>{labels.empty}</p>
+				</div>
 			) : (
 				<ol className='flex flex-col gap-2'>
 					{filtered.map((row) => (
@@ -62,6 +66,7 @@ export function LogList({
 								className='bg-secondary/40 hover:bg-secondary/60 block rounded-lg p-4 transition-all duration-200 hover:scale-[1.01]'
 							>
 								<div className='flex items-center gap-2'>
+									<CalendarDays className='text-info size-4' />
 									<span className='font-medium'>{row.dateLabel}</span>
 									<LinkPendingSpinner />
 								</div>
