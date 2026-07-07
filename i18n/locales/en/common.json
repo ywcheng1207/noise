@@ -12,14 +12,35 @@
 	},
 	"overview": {
 		"heading": "Topics",
-		"introTab": "逆風",
-		"subtitle": "The same story, told ten different ways. 逆風 gathers scattered reports into one clear timeline and rates every source for credibility — so you can skip the noise and see exactly what happened.",
+		"introTab": "About",
+		"subtitle": "In an age of information overload, truth and rumor blur together — the same event can spark a dozen conflicting accounts. We gather reporting scattered across the globe, focus it into a coherent timeline, summarize what's known, and rate the credibility of every source we reference.",
 		"domain": "Domain",
 		"region": "Region",
 		"reliability": "Reliability",
 		"empty": "No topics match the current filters",
 		"updated": "Updated",
 		"searchPlaceholder": "Search topics..."
+	},
+	"intro": {
+		"pipelineHeading": "How we organize information",
+		"pipelineBody": "The system continuously tracks a range of public news and financial-information sources, automatically grouping reports that describe the same story into a single \"topic,\" and arranging individual \"events\" within it in chronological order. For each event, AI cross-checks across sources (regardless of language), searches public information, and produces a summary and timeline, while recording each source and rating its credibility.",
+		"credibilityHeading": "How credibility is judged",
+		"credibilityIntro": "Credibility ratings apply to an individual report or an individual claim — not to an overall judgment of a media outlet or journalist. Ratings weigh whether a source is official or authoritative, whether it's attributed by name, and whether it's corroborated by other independent sources.",
+		"topicTiersHeading": "Topic credibility tags",
+		"topicTier": {
+			"VERIFIED": "Cross-checked across multiple sources with consistent, well-supported reporting.",
+			"DEVELOPING": "Still being actively tracked — information may be incomplete or still changing.",
+			"DISPUTED": "Sources give noticeably inconsistent or conflicting accounts of the same event.",
+			"UNVERIFIED": "Currently based on only one or a few sources, not yet cross-checked."
+		},
+		"sourceTiersHeading": "Individual source credibility tiers",
+		"sourceTier": {
+			"OFFICIAL": "Published directly by an official body, involved party, or first-hand authoritative source.",
+			"HIGH": "Named reporting from a named outlet, corroborated by other sources.",
+			"MEDIUM": "Has a named source, but not yet corroborated by enough other sources.",
+			"LOW": "Source isn't clearly named, or its account diverges from other sources.",
+			"UNVERIFIED": "A source or claim still awaiting further verification."
+		}
 	},
 	"region": {
 		"all": "All"
@@ -61,7 +82,7 @@
 		"dateRange": "Date range"
 	},
 	"event": {
-		"background": "Background",
+		"background": "Summary",
 		"timeline": "Timeline",
 		"sources": "Sources by credibility",
 		"why": "Why?",
@@ -72,7 +93,7 @@
 		"appeal": "Request correction",
 		"backToTopic": "Back to topic",
 		"researching": "Researching",
-		"researchingHint": "This event is still being cross-checked across sources. Check back soon for the full background and ranked sources."
+		"researchingHint": "This event is still being cross-checked across sources. Check back soon for the full summary and ranked sources."
 	},
 	"footer": {
 		"terms": "Terms of Service",

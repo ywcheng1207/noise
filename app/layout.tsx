@@ -9,7 +9,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
 	title: { default: '逆風 — 新聞事件過濾與可信度', template: '%s | 逆風' },
-	description: '以核心議題與事件為單位，幫讀者篩選與查證新聞：時序、來龍去脈與來源可信度排名。',
+	description: '以核心議題與事件為單位，幫讀者篩選與查證新聞：時序、摘要與來源可信度排名。',
 }
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {

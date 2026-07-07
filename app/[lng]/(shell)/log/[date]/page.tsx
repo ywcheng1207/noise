@@ -90,7 +90,7 @@ export default async function LogDayPage({ params }: { params: Promise<{ lng: st
 			<Collapsible title={t('log.sourcesHeading')}>
 				<div className='flex flex-col gap-2'>
 					{activeSources.map(({ source, samples }) => (
-						<div key={source.id} className='bg-card/90 rounded-lg p-3 backdrop-blur-md'>
+						<div key={source.id} className='bg-secondary/40 rounded-lg p-3 backdrop-blur-md'>
 							<span className='font-medium'>{source.name}</span>
 							<ul className='mt-2 flex flex-col gap-1'>
 								{samples.map((article) => (
@@ -121,7 +121,7 @@ export default async function LogDayPage({ params }: { params: Promise<{ lng: st
 							<li key={entry.id}>
 								<Link
 									href={entry.href}
-									className='bg-card/90 hover:bg-card block rounded-lg p-3 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]'
+									className='bg-secondary/40 hover:bg-secondary/60 block rounded-lg p-3 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]'
 								>
 									<div className='flex items-center justify-between gap-2'>
 										<span className='font-medium'>{entry.title}</span>
