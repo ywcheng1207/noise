@@ -48,7 +48,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 					{topic.regions.map((r) => (
 						<span
 							key={r}
-							className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs backdrop-blur-sm'
+							className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs'
 						>
 							<MapPin className='size-3' />
 							{isZh ? REGION_LABELS[r].zh : REGION_LABELS[r].en}

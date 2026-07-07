@@ -1,6 +1,6 @@
 'use client'
 
-import { useDeferredValue, useEffect, useMemo, useState } from 'react'
+import { memo, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Clock } from 'lucide-react'
 import { useVirtualizer } from '@tanstack/react-virtual'
@@ -121,61 +121,56 @@ export function TopicPageEventsList({ lng, events, dateBounds, labels }: TopicPa
 	)
 }
 
-function EventTimelineCard({
-	lng,
-	event,
-	labels,
-}: {
-	lng: string
-	event: TopicPageEventData
-	labels: EventTimelineLabels
-}) {
-	return (
-		<div className='relative'>
-			<span
-				className={cn(
-					'absolute -left-[21px] mt-2 size-2.5 rounded-full',
-					event.isResearching ? 'bg-info animate-pulse' : 'bg-warning',
+// memo:虛擬清單在每次捲動都會 re-render 外層,列本身的 props 不變就不用重繪內容。
+const EventTimelineCard = memo(
+	({ lng, event, labels }: { lng: string; event: TopicPageEventData; labels: EventTimelineLabels }) => {
+		return (
+			<div className='relative'>
+				<span
+					className={cn(
+						'absolute -left-[21px] mt-2 size-2.5 rounded-full',
+						event.isResearching ? 'bg-info animate-pulse' : 'bg-warning',
+					)}
+				/>
+				{event.isResearching ? (
+					<div className='bg-info/10 block rounded-lg p-3'>
+						<div className='flex items-center justify-between gap-2'>
+							<span className='font-medium'>{event.title}</span>
+							<Badge variant='info'>
+								<Clock className='size-3' />
+								{labels.researching}
+							</Badge>
+						</div>
+						<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
+							<span className='text-muted-foreground text-xs'>{labels.researchingHint}</span>
+							{event.seenLabel ? (
+								<span className='text-muted-foreground font-mono text-xs'>{event.seenLabel}</span>
+							) : null}
+						</div>
+					</div>
+				) : (
+					<Link
+						href={`/${lng}/event/${event.slug}`}
+						className='bg-secondary/40 hover:bg-secondary/60 block rounded-lg p-3 transition-all duration-200 hover:scale-[1.01]'
+					>
+						<div className='flex items-center justify-between gap-2'>
+							<span className='font-medium'>{event.title}</span>
+							<Badge variant={RELIABILITY_VARIANT[event.reliability] ?? 'muted'}>
+								{event.reliabilityLabel}
+							</Badge>
+						</div>
+						<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
+							<span className='text-info inline-flex items-center gap-1 text-xs'>
+								{labels.viewEvent} <ArrowRight className='size-3' />
+								<LinkPendingSpinner />
+							</span>
+							{event.seenLabel ? (
+								<span className='text-muted-foreground font-mono text-xs'>{event.seenLabel}</span>
+							) : null}
+						</div>
+					</Link>
 				)}
-			/>
-			{event.isResearching ? (
-				<div className='bg-info/10 block rounded-lg p-3 backdrop-blur-md'>
-					<div className='flex items-center justify-between gap-2'>
-						<span className='font-medium'>{event.title}</span>
-						<Badge variant='info'>
-							<Clock className='size-3' />
-							{labels.researching}
-						</Badge>
-					</div>
-					<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
-						<span className='text-muted-foreground text-xs'>{labels.researchingHint}</span>
-						{event.seenLabel ? (
-							<span className='text-muted-foreground font-mono text-xs'>{event.seenLabel}</span>
-						) : null}
-					</div>
-				</div>
-			) : (
-				<Link
-					href={`/${lng}/event/${event.slug}`}
-					className='bg-secondary/40 hover:bg-secondary/60 block rounded-lg p-3 backdrop-blur-md transition-all duration-200 hover:scale-[1.01]'
-				>
-					<div className='flex items-center justify-between gap-2'>
-						<span className='font-medium'>{event.title}</span>
-						<Badge variant={RELIABILITY_VARIANT[event.reliability] ?? 'muted'}>
-							{event.reliabilityLabel}
-						</Badge>
-					</div>
-					<div className='mt-1 flex flex-wrap items-center justify-between gap-2'>
-						<span className='text-info inline-flex items-center gap-1 text-xs'>
-							{labels.viewEvent} <ArrowRight className='size-3' />
-							<LinkPendingSpinner />
-						</span>
-						{event.seenLabel ? (
-							<span className='text-muted-foreground font-mono text-xs'>{event.seenLabel}</span>
-						) : null}
-					</div>
-				</Link>
-			)}
-		</div>
-	)
-}
+			</div>
+		)
+	},
+)

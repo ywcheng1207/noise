@@ -49,7 +49,7 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 			<div className='flex flex-col gap-6 xl:flex-row xl:items-start xl:gap-10'>
 				<div className='flex max-w-3xl min-w-0 flex-1 flex-col gap-6'>
 					{isResearched ? null : (
-						<div className='bg-info/10 text-muted-foreground flex items-center gap-2 rounded-lg p-4 text-sm backdrop-blur-md'>
+						<div className='bg-info/10 text-muted-foreground flex items-center gap-2 rounded-lg p-4 text-sm'>
 							<Clock className='text-info size-4 shrink-0 animate-pulse' />
 							{t('event.researchingHint')}
 						</div>
@@ -122,10 +122,7 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 								return (
 									<li
 										key={src.id}
-										className={cn(
-											'rounded-lg p-3 backdrop-blur-md',
-											src.isAuthoritative ? 'bg-info/10' : 'bg-secondary/40',
-										)}
+										className={cn('rounded-lg p-3', src.isAuthoritative ? 'bg-info/10' : 'bg-secondary/40')}
 									>
 										<div className='flex items-start justify-between gap-2'>
 											<div className='flex min-w-0 items-start gap-2'>
@@ -155,11 +152,11 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 										</div>
 										<div className='mt-1.5 flex flex-wrap gap-1.5'>
 											{src.language ? (
-												<span className='bg-secondary/60 text-muted-foreground rounded-lg px-1.5 py-0.5 text-xs uppercase backdrop-blur-sm'>
+												<span className='bg-secondary/60 text-muted-foreground rounded-lg px-1.5 py-0.5 text-xs uppercase'>
 													{src.language}
 												</span>
 											) : null}
-											<span className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-xs backdrop-blur-sm'>
+											<span className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-1.5 py-0.5 text-xs'>
 												{isVideo ? <Video className='size-3' /> : <FileText className='size-3' />}
 												{isVideo ? t('source.video') : t('source.text')}
 											</span>
