@@ -24,6 +24,8 @@
 	"intro": {
 		"pipelineHeading": "How we organize information",
 		"pipelineBody": "The system continuously tracks a range of public news and financial-information sources, automatically grouping reports that describe the same story into a single \"topic,\" and arranging individual \"events\" within it in chronological order. For each event, AI cross-checks across sources (regardless of language), searches public information, and produces a summary and timeline, while recording each source and rating its credibility.",
+		"linkCheckHeading": "Links are verified before publishing",
+		"linkCheckBody": "Every external link cited during AI research is checked with a real request before it's saved. Dead links are swapped for the page actually visited during research — or dropped entirely if no reliable substitute exists — so you never land on a broken page.",
 		"credibilityHeading": "How credibility is judged",
 		"credibilityIntro": "Credibility ratings apply to an individual report or an individual claim — not to an overall judgment of a media outlet or journalist. Ratings weigh whether a source is official or authoritative, whether it's attributed by name, and whether it's corroborated by other independent sources.",
 		"topicTiersHeading": "Topic credibility tags",

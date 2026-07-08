@@ -1,36 +1,47 @@
-import { ShieldCheck, Workflow } from 'lucide-react'
+import type { ReactNode } from 'react'
+import { Link2, Scale, ShieldCheck, Tags, Workflow } from 'lucide-react'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
 import { ReliabilityBadge } from '@/components/ReliabilityBadge'
+import { Carousel, type CarouselSlide } from '@/components/ui/carousel'
 import { TIER_ICON, TIER_VARIANT } from '@/lib/ui'
 import { RELIABILITIES, TIERS } from '@/lib/enums'
 
 export async function IntroContent({ lng }: { lng: string }) {
 	const { t } = await getT(lng)
 
-	return (
-		<div className='flex flex-col gap-6'>
-			<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('overview.subtitle')}</p>
-
-			<section className='flex flex-col gap-2'>
-				<h2 className='flex items-center gap-2 text-base font-medium'>
-					<Workflow className='text-primary size-4' />
-					{t('intro.pipelineHeading')}
-				</h2>
-				<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.pipelineBody')}</p>
-			</section>
-
-			<section className='flex flex-col gap-4'>
-				<div className='flex flex-col gap-2'>
-					<h2 className='flex items-center gap-2 text-base font-medium'>
-						<ShieldCheck className='text-primary size-4' />
-						{t('intro.credibilityHeading')}
-					</h2>
+	const slides: CarouselSlide[] = [
+		{
+			key: 'pipeline',
+			content: (
+				<IntroSlide icon={<Workflow className='text-primary size-4' />} heading={t('intro.pipelineHeading')}>
+					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.pipelineBody')}</p>
+				</IntroSlide>
+			),
+		},
+		{
+			key: 'link-check',
+			content: (
+				<IntroSlide icon={<Link2 className='text-primary size-4' />} heading={t('intro.linkCheckHeading')}>
+					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.linkCheckBody')}</p>
+				</IntroSlide>
+			),
+		},
+		{
+			key: 'credibility',
+			content: (
+				<IntroSlide
+					icon={<ShieldCheck className='text-primary size-4' />}
+					heading={t('intro.credibilityHeading')}
+				>
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.credibilityIntro')}</p>
-				</div>
-
-				<div className='flex flex-col gap-2'>
-					<h3 className='text-muted-foreground text-sm font-medium'>{t('intro.topicTiersHeading')}</h3>
+				</IntroSlide>
+			),
+		},
+		{
+			key: 'topic-tiers',
+			content: (
+				<IntroSlide icon={<Tags className='text-primary size-4' />} heading={t('intro.topicTiersHeading')}>
 					<ul className='flex flex-col gap-1.5'>
 						{RELIABILITIES.map((key) => (
 							<li key={key} className='flex items-start gap-2 text-sm'>
@@ -43,10 +54,13 @@ export async function IntroContent({ lng }: { lng: string }) {
 							</li>
 						))}
 					</ul>
-				</div>
-
-				<div className='flex flex-col gap-2'>
-					<h3 className='text-muted-foreground text-sm font-medium'>{t('intro.sourceTiersHeading')}</h3>
+				</IntroSlide>
+			),
+		},
+		{
+			key: 'source-tiers',
+			content: (
+				<IntroSlide icon={<Scale className='text-primary size-4' />} heading={t('intro.sourceTiersHeading')}>
 					<ul className='flex flex-col gap-1.5'>
 						{TIERS.map((key) => {
 							const TierIcon = TIER_ICON[key] ?? TIER_ICON.UNVERIFIED
@@ -61,8 +75,27 @@ export async function IntroContent({ lng }: { lng: string }) {
 							)
 						})}
 					</ul>
-				</div>
-			</section>
+				</IntroSlide>
+			),
+		},
+	]
+
+	return (
+		<div className='flex flex-col gap-6'>
+			<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('overview.subtitle')}</p>
+			<Carousel slides={slides} />
 		</div>
+	)
+}
+
+function IntroSlide({ icon, heading, children }: { icon: ReactNode; heading: string; children: ReactNode }) {
+	return (
+		<section className='bg-secondary/30 flex min-h-44 flex-col gap-3 rounded-lg p-4 sm:p-5'>
+			<h2 className='flex items-center gap-2 text-base font-medium'>
+				{icon}
+				{heading}
+			</h2>
+			{children}
+		</section>
 	)
 }
