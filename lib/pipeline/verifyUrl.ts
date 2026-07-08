@@ -37,6 +37,23 @@ async function isConfirmedDead(url: string): Promise<boolean> {
 	}
 }
 
+// grounding 回傳的 uri 是 vertexaisearch 轉址連結（會過期），真正的來源網域放在 title。
+// 追蹤轉址取得最終文章網址後才儲存，避免存進一個日後會過期的轉址連結。
+async function resolveFinalUrl(redirectUrl: string): Promise<string | null> {
+	try {
+		const res = await fetch(redirectUrl, {
+			redirect: 'follow',
+			signal: AbortSignal.timeout(CHECK_TIMEOUT_MS),
+			headers: { 'User-Agent': USER_AGENT },
+		})
+		await res.body?.cancel()
+		if (res.status === 404 || res.status === 410 || res.status >= 500) return null
+		return res.url || null
+	} catch {
+		return null
+	}
+}
+
 /**
  * 驗證 Gemini 在 JSON 裡手打的來源網址。確認死掉的話，優先換成同網域、真正來自
  * Google Search 接地的網址（groundingChunks，程式化取得，保證是真實搜尋結果）；
@@ -50,10 +67,15 @@ export async function resolveVerifiedUrl(
 	if (!(await isConfirmedDead(candidateUrl))) return candidateUrl
 
 	const candidateHost = safeHostname(candidateUrl)
-	const fallback = candidateHost
-		? groundedSources.find((g) => safeHostname(g.uri) === candidateHost)
-		: undefined
-	if (fallback && !(await isConfirmedDead(fallback.uri))) return fallback.uri
+	if (!candidateHost) return null
+
+	const sameDomain = groundedSources.filter(
+		(g) => g.title === candidateHost || safeHostname(g.uri) === candidateHost,
+	)
+	for (const source of sameDomain) {
+		const finalUrl = await resolveFinalUrl(source.uri)
+		if (finalUrl) return finalUrl
+	}
 
 	return null
 }

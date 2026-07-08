@@ -2,11 +2,15 @@ import { GoogleGenAI } from '@google/genai'
 import { prisma } from '@/lib/prisma'
 import type { PipelineStage } from '@/lib/generated/prisma'
 
-/** 模型選擇。免費層 flash-lite 容易 503，分群也改用 flash；最難推理可選 pro。 */
+/** 模型選擇（2026-07 盤點）。
+ *  分群/歸類升級 gemini-3.1-flash-lite（GA，比 2.5-flash 便宜且更強，實測 JSON 輸出正常）。
+ *  研究維持 gemini-2.5-flash：3.5-flash 實測接地會執行、但回應完全不帶 groundingMetadata
+ *  （無 webSearchQueries/groundingChunks），會弄壞搜尋成本記帳、日誌的搜尋次數與來源網址驗證，
+ *  等 Google 補上 Gemini 3 的接地中繼資料再升級。 */
 export const MODEL = {
-	CLUSTER: 'gemini-2.5-flash',
+	CLUSTER: 'gemini-3.1-flash-lite',
 	RESEARCH: 'gemini-2.5-flash',
-	REASON: 'gemini-2.5-pro',
+	REASON: 'gemini-3.1-pro-preview',
 } as const
 
 /** 近似單價（USD / 1M tokens）。實際以 Google 官方定價為準。 */
@@ -14,7 +18,11 @@ const PRICING: Record<string, { in: number; out: number }> = {
 	'gemini-2.5-flash-lite': { in: 0.1, out: 0.4 },
 	'gemini-2.5-flash': { in: 0.3, out: 2.5 },
 	'gemini-2.5-pro': { in: 1.25, out: 10 },
+	'gemini-3.1-flash-lite': { in: 0.25, out: 1.5 },
+	'gemini-3.5-flash': { in: 1.5, out: 9 },
+	'gemini-3.1-pro-preview': { in: 2, out: 12 },
 }
+// Gemini 2.5 接地按「有接地的 prompt」計費（$35/1,000 次），與單次 prompt 內執行幾個查詢無關。
 const SEARCH_PRICE_USD = 0.035
 
 let client: GoogleGenAI | null = null
@@ -34,10 +42,11 @@ interface UsageLike {
 }
 
 export function estimateCostUsd(model: string, usage: UsageLike, searches = 0) {
-	const p = PRICING[model] ?? PRICING['gemini-2.5-flash']
+	const p = PRICING[model] ?? PRICING[MODEL.RESEARCH]
 	const input = usage.promptTokenCount ?? 0
 	const output = usage.candidatesTokenCount ?? 0
-	return (input * p.in + output * p.out) / 1_000_000 + searches * SEARCH_PRICE_USD
+	// searches 記的是該 prompt 內實際執行的查詢數（供日誌顯示），但 2.5 的接地費用按 prompt 計。
+	return (input * p.in + output * p.out) / 1_000_000 + (searches > 0 ? SEARCH_PRICE_USD : 0)
 }
 
 /** 從可能夾雜文字的回應中抽出第一個 JSON 物件並解析。 */
@@ -127,6 +136,7 @@ export async function generateJsonWithSearch<T>(opts: { model: string; system: s
 				temperature: 0.3,
 				// thinking tokens 也計入 maxOutputTokens；上限拉高並限制 thinking，
 				// 避免 thinking 吃光預算導致 res.text 為空（grounding 路徑常見）。
+				// 注意 thinkingBudget 是 2.5 系列參數；若改用 Gemini 3 需換成 thinkingLevel。
 				maxOutputTokens: 12000,
 				thinkingConfig: { thinkingBudget: 3000 },
 			},
@@ -135,9 +145,12 @@ export async function generateJsonWithSearch<T>(opts: { model: string; system: s
 		return r
 	})
 	const usage: UsageLike = res.usageMetadata ?? {}
-	const chunks = res.candidates?.[0]?.groundingMetadata?.groundingChunks ?? []
+	const grounding = res.candidates?.[0]?.groundingMetadata
+	const chunks = grounding?.groundingChunks ?? []
 	const groundedSources: GroundingSource[] = chunks.flatMap((c) =>
 		c.web?.uri ? [{ uri: c.web.uri, title: c.web.title ?? '' }] : [],
 	)
-	return { data: parseJsonObject<T>(res.text ?? ''), usage, searches: chunks.length, groundedSources }
+	// 實測 groundingChunks 常為空、webSearchQueries 才是實際執行的查詢清單；用後者計數，chunks 當備援。
+	const searches = grounding?.webSearchQueries?.length ?? chunks.length
+	return { data: parseJsonObject<T>(res.text ?? ''), usage, searches, groundedSources }
 }

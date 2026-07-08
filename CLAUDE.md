@@ -12,13 +12,13 @@
 
 階段對應（SDD 生命週期 ↔ git）：
 
-| 階段 | 意義 | git 動作 |
-|------|------|---------|
-| explore | 釐清需求、想清楚（不寫 code） | 想法，尚未開 branch |
-| propose | 建 change：proposal / design / tasks（+ delta spec） | 開 feature branch + spec commit |
-| apply | 照 tasks 實作 | branch 上 commits |
-| sync | delta 套回 `openspec/specs/` | 編輯 specs/ commit |
-| archive | 歸檔 change | `git mv` → `changes/archive/` → merge main |
+| 階段    | 意義                                                 | git 動作                                   |
+| ------- | ---------------------------------------------------- | ------------------------------------------ |
+| explore | 釐清需求、想清楚（不寫 code）                        | 想法，尚未開 branch                        |
+| propose | 建 change：proposal / design / tasks（+ delta spec） | 開 feature branch + spec commit            |
+| apply   | 照 tasks 實作                                        | branch 上 commits                          |
+| sync    | delta 套回 `openspec/specs/`                         | 編輯 specs/ commit                         |
+| archive | 歸檔 change                                          | `git mv` → `changes/archive/` → merge main |
 
 模板（把 `【 】` 移到當前階段）：
 
@@ -35,6 +35,7 @@ git:   (想法)   開 branch +        在 branch        編輯 specs/     git mv
 ```
 
 規則：
+
 - 只在「實際推進開發任務」（實作、修 bug、SDD 任一步）的回應放此圖；純討論、問答、查詢不放。
 - **依變更規模分流（AI 自行判定）**：
   - **大 feature / 改對外行為** → 走 feature branch + SDD + PR；branch 上 `sync + archive` 完成後，圖下標 `✅ 分支完成，可開 PR`，主動提示去處理 PR。
@@ -63,37 +64,45 @@ git:   (想法)   開 branch +        在 branch        編輯 specs/     git mv
 ## Hard Rules
 
 ### API
+
 - 前台 fetch 一律用 `apiFetch`（`lib/apiClient.ts`），禁止直接使用 `fetch`
 - API Route 一律用 `apiHandler` wrapper（`lib/apiHandler.ts`），回傳一律 `ApiResponse<T>`（`types/api.ts`）
 
 ### TypeScript
+
 - 禁止 `any`、`!`（non-null assertion）；禁止 `as`（唯一例外：不支援泛型的第三方套件），`unknown` 須經 Zod 或型別守衛收窄後使用
 - 禁止手動寫對應 DB 的 `interface` / `type`，用 Prisma 自動產生的型別（`lib/generated/prisma`）
 
 ### React
+
 - 禁止 `var`、`forwardRef`、`defaultProps`、`React.FC`
 - 禁止 `import React from 'react'`
 - 清單渲染禁止用 index 或 `Math.random()` 當 key
 
 ### Styling
+
 - 禁止 `style={}`，禁止自訂 CSS（特殊動畫除外）
 - 禁止硬編碼色碼，一律用 Tailwind Theme Token
 - 條件式 class 用 `cn()`；條件太多時優先拆元件
 
 ### State
+
 - Redux 禁止儲存 Server State（DB 資料）
 - Server State 一律用 React Query（`@tanstack/react-query`），禁止用 SWR
 
 ### AI / Gemini（本專案核心）
-- 一律用官方 `@google/genai`；模型 ID 用 `gemini-2.5-flash-lite`（分群）、`gemini-2.5-flash`（事件研究＋接地）、`gemini-2.5-pro`（最難推理，可選）
+
+- 一律用官方 `@google/genai`；模型 ID 用 `gemini-3.1-flash-lite`（分群/歸類）、`gemini-2.5-flash`（事件研究＋接地——3.5-flash 實測接地回應不帶 groundingMetadata，會弄壞搜尋記帳與來源驗證，暫不升級）、`gemini-3.1-pro-preview`（最難推理，可選）。Gemini 3 系列 thinking 用 `thinkingLevel`（`thinkingBudget` 是 2.5 的參數）
 - 結構化輸出用 `responseMimeType: 'application/json'`；事件研究用 Google Search 接地（`tools: [{ googleSearch: {} }]`，不可與 responseMimeType 並用，靠 prompt 指示 + 解析）
 - 統一走 `lib/gemini.ts` 的 `generateJson` / `generateJsonWithSearch`，禁止在各處直接 new client
 - 每次呼叫的 token/搜尋/成本寫入 `AiRun`
 
 ### 地圖（Hard Rule）
+
 - 地圖一律用**真實地理邊界**（d3-geo + TopoJSON world-atlas），**禁止用幾何圖形拼湊**示意地圖
 
 ### 資料 / 管線
+
 - 對外呈現只給標題＋自製摘要＋原文連結，**不重製全文**；全文僅後端暫存且設保存期限
 - 管線各階段以 Prisma `status` 欄位做冪等控制；排程用 Vercel Cron，長步驟（事件研究）卸載到佇列
 
