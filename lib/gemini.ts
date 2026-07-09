@@ -49,11 +49,44 @@ export function estimateCostUsd(model: string, usage: UsageLike, searches = 0) {
 	return (input * p.in + output * p.out) / 1_000_000 + (searches > 0 ? SEARCH_PRICE_USD : 0)
 }
 
-/** 從可能夾雜文字的回應中抽出第一個 JSON 物件並解析。 */
+/** 從第一個 `{` 開始找配對的結尾 `}`（略過字串內的括號與跳脫字元），忽略其後任何多餘內容。 */
+function findMatchingBraceEnd(raw: string, start: number): number {
+	let depth = 0
+	let inString = false
+	let escaped = false
+	for (let i = start; i < raw.length; i++) {
+		const char = raw[i]
+		if (escaped) {
+			escaped = false
+			continue
+		}
+		if (char === '\\' && inString) {
+			escaped = true
+			continue
+		}
+		if (char === '"') {
+			inString = !inString
+			continue
+		}
+		if (inString) continue
+		if (char === '{') depth++
+		else if (char === '}') {
+			depth--
+			if (depth === 0) return i
+		}
+	}
+	return -1
+}
+
+/** 從可能夾雜文字的回應中抽出第一個 JSON 物件並解析。
+ *  只取頭尾 indexOf/lastIndexOf 在輸出較長、模型偶爾在 JSON 後多吐一段內容時會誤把後面的
+ *  文字也框進來，導致 JSON.parse 在合法物件結束後遇到多餘字元而炸開；改成從第一個 `{` 依
+ *  括號深度找到真正配對的結尾，其後不論還有什麼都直接丟棄。 */
 export function parseJsonObject<T>(raw: string): T {
 	const start = raw.indexOf('{')
-	const end = raw.lastIndexOf('}')
-	if (start === -1 || end === -1) throw new Error('No JSON object found in model response')
+	if (start === -1) throw new Error('No JSON object found in model response')
+	const end = findMatchingBraceEnd(raw, start)
+	if (end === -1) throw new Error('Unterminated JSON object in model response')
 	return JSON.parse(raw.slice(start, end + 1))
 }
 
