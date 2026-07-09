@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
-import { formatOccurred } from '@/lib/dates'
+import { formatOccurred, formatTime } from '@/lib/dates'
 import { LogList } from './_components/LogList'
 
 export const dynamic = 'force-dynamic'
@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic'
 interface DayBucket {
 	day: Date
 	count: number
+	lastAt: Date
 }
 
 interface DayEntry {
@@ -15,6 +16,7 @@ interface DayEntry {
 	date: Date
 	articleCount: number
 	researchCount: number
+	lastUpdatedAt: Date
 }
 
 export default async function LogPage({ params }: { params: Promise<{ lng: string }> }) {
@@ -23,14 +25,14 @@ export default async function LogPage({ params }: { params: Promise<{ lng: strin
 
 	const [articleDays, researchDays] = await Promise.all([
 		prisma.$queryRaw<DayBucket[]>`
-			SELECT ("fetchedAt" AT TIME ZONE 'UTC')::date AS day, count(*)::int AS count
+			SELECT ("fetchedAt" AT TIME ZONE 'UTC')::date AS day, count(*)::int AS count, max("fetchedAt") AS "lastAt"
 			FROM "Article"
 			GROUP BY day
 			ORDER BY day DESC
 			LIMIT 60
 		`,
 		prisma.$queryRaw<DayBucket[]>`
-			SELECT ("createdAt" AT TIME ZONE 'UTC')::date AS day, count(*)::int AS count
+			SELECT ("createdAt" AT TIME ZONE 'UTC')::date AS day, count(*)::int AS count, max("createdAt") AS "lastAt"
 			FROM "AiRun"
 			WHERE stage = 'RESEARCH'
 			GROUP BY day
@@ -42,13 +44,29 @@ export default async function LogPage({ params }: { params: Promise<{ lng: strin
 	const byDay = new Map<string, DayEntry>()
 	for (const row of articleDays) {
 		const key = row.day.toISOString().slice(0, 10)
-		byDay.set(key, { key, date: row.day, articleCount: row.count, researchCount: 0 })
+		byDay.set(key, {
+			key,
+			date: row.day,
+			articleCount: row.count,
+			researchCount: 0,
+			lastUpdatedAt: row.lastAt,
+		})
 	}
 	for (const row of researchDays) {
 		const key = row.day.toISOString().slice(0, 10)
 		const existing = byDay.get(key)
-		if (existing) existing.researchCount = row.count
-		else byDay.set(key, { key, date: row.day, articleCount: 0, researchCount: row.count })
+		if (existing) {
+			existing.researchCount = row.count
+			if (row.lastAt > existing.lastUpdatedAt) existing.lastUpdatedAt = row.lastAt
+		} else {
+			byDay.set(key, {
+				key,
+				date: row.day,
+				articleCount: 0,
+				researchCount: row.count,
+				lastUpdatedAt: row.lastAt,
+			})
+		}
 	}
 
 	const entries = Array.from(byDay.values())
@@ -60,6 +78,7 @@ export default async function LogPage({ params }: { params: Promise<{ lng: strin
 	const rows = entries.map((entry) => ({
 		key: entry.key,
 		dateLabel: formatOccurred({ lng, occurredAt: entry.date, precision: 'DAY' }) ?? entry.key,
+		lastUpdatedLabel: formatTime({ date: entry.lastUpdatedAt }),
 		summaryLine: t('log.summaryLine', {
 			articleCount: entry.articleCount,
 			researchCount: entry.researchCount,
@@ -77,7 +96,7 @@ export default async function LogPage({ params }: { params: Promise<{ lng: strin
 				lng={lng}
 				rows={rows}
 				dateBounds={dateBounds}
-				labels={{ empty: t('log.empty'), dateRange: t('topic.dateRange') }}
+				labels={{ empty: t('log.empty'), dateRange: t('topic.dateRange'), lastUpdated: t('log.lastUpdated') }}
 			/>
 		</div>
 	)

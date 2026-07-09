@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { Collapsible } from '@/components/Collapsible'
 import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
-import { formatDateTime, formatOccurred } from '@/lib/dates'
+import { formatDateTime, formatOccurred, formatTime } from '@/lib/dates'
 import { PipelineStage } from '@/lib/generated/prisma'
 
 export const dynamic = 'force-dynamic'
@@ -43,7 +43,7 @@ export default async function LogDayPage({ params }: { params: Promise<{ lng: st
 				where: { sourceId: source.id, fetchedAt: { gte: dayStart, lt: dayEnd } },
 				orderBy: { fetchedAt: 'desc' },
 				take: 5,
-				select: { title: true, canonicalUrl: true },
+				select: { title: true, canonicalUrl: true, fetchedAt: true },
 			}),
 		),
 	)
@@ -66,7 +66,7 @@ export default async function LogDayPage({ params }: { params: Promise<{ lng: st
 				id: run.id,
 				title: isZh ? event.titleZh : event.titleEn,
 				summary: excerpt(isZh ? event.narrativeZh : event.narrativeEn),
-				href: `/${lng}/event/${event.slug}`,
+				href: `/${lng}/event/${event.slug}?fromLog=${date}`,
 				createdAt: run.createdAt,
 				webSearches: run.webSearches,
 			},
@@ -109,7 +109,10 @@ export default async function LogDayPage({ params }: { params: Promise<{ lng: st
 											className='text-info flex items-center gap-1 text-xs hover:underline'
 										>
 											<ExternalLink className='size-3 shrink-0' />
-											<span className='truncate'>{article.title}</span>
+											<span className='min-w-0 truncate'>{article.title}</span>
+											<span className='text-muted-foreground shrink-0 font-mono'>
+												{formatTime({ date: article.fetchedAt })}
+											</span>
 										</a>
 									</li>
 								))}

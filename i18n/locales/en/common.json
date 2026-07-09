@@ -123,13 +123,15 @@
 	},
 	"log": {
 		"heading": "Log",
-		"pageIntro": "逆風 continuously monitors a range of public news and financial-information platforms, periodically compiling their publicly published headlines and summaries through an automated process, as reference material for later cross-source comparison, fact-checking, and credibility assessment. Below is the daily activity log — click into a day to see its sources and AI research in detail.",
+		"pageIntro": "逆風 continuously monitors a range of public news and financial-information platforms, periodically compiling their publicly published headlines and summaries through an automated process, as reference material for later cross-source comparison, fact-checking, and credibility assessment. Below is the daily activity log — click into a day to see its reference materials and extended discussion in detail.",
 		"empty": "No log entries yet",
 		"summaryLine": "Compiled {{articleCount}} reference items ‧ researched {{researchCount}} events in depth",
-		"sourcesHeading": "Reference sources",
-		"aiHeading": "AI research expansions",
-		"aiEmpty": "No AI research activity that day",
-		"webSearches": "Ran {{count}} web searches"
+		"sourcesHeading": "Reference materials",
+		"aiHeading": "Extended discussion",
+		"aiEmpty": "No extended discussion that day",
+		"webSearches": "Ran {{count}} web searches",
+		"lastUpdated": "Last updated",
+		"backToLog": "Back to log"
 	},
 	"terms": {
 		"heading": "Terms of Service",

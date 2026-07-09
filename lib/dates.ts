@@ -70,3 +70,9 @@ export function formatDateTime({ lng, date }: { lng: string; date: Date | null }
 	const isZh = lng.startsWith('zh')
 	return format(date, isZh ? 'yyyy年M月d日 HH:mm' : 'MMM d, yyyy HH:mm', { locale: isZh ? zhTW : enUS })
 }
+
+/** 只顯示時分(HH:mm),用於已知同一天、只需標示當天內先後順序的場景(如日誌單日頁的項目列表)。 */
+export function formatTime({ date }: { date: Date | null }) {
+	if (!date) return null
+	return format(date, 'HH:mm')
+}

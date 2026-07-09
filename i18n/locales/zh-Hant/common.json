@@ -123,13 +123,15 @@
 	},
 	"log": {
 		"heading": "日誌",
-		"pageIntro": "逆風長期關注多個公開新聞與財經資訊平台，以自動化方式定期整理其公開發布的標題與摘要，做為後續跨來源比對、事實查核與可信度評估的參考素材。以下為每日彙整紀錄，點擊進入即可查看當天的詳細來源與 AI 查證內容。",
+		"pageIntro": "逆風長期關注多個公開新聞與財經資訊平台，以自動化方式定期整理其公開發布的標題與摘要，做為後續跨來源比對、事實查核與可信度評估的參考素材。以下為每日彙整紀錄，點擊進入即可查看當天的詳細參考資料與延伸探討內容。",
 		"empty": "目前還沒有日誌紀錄",
 		"summaryLine": "彙整 {{articleCount}} 則參考資料 ‧ 深入查證 {{researchCount}} 起事件",
-		"sourcesHeading": "參考資料來源",
-		"aiHeading": "AI 延伸查證",
-		"aiEmpty": "當天沒有 AI 延伸查證紀錄",
-		"webSearches": "查了 {{count}} 次網路搜尋"
+		"sourcesHeading": "參考資料",
+		"aiHeading": "延伸探討",
+		"aiEmpty": "當天沒有延伸探討紀錄",
+		"webSearches": "查了 {{count}} 次網路搜尋",
+		"lastUpdated": "最後更新",
+		"backToLog": "回到日誌"
 	},
 	"terms": {
 		"heading": "服務條款",

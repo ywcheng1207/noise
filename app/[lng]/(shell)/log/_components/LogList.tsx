@@ -9,12 +9,14 @@ import { DateRangePicker, type DateRangeValue } from '@/components/DateRangePick
 export interface LogRow {
 	key: string
 	dateLabel: string
+	lastUpdatedLabel: string | null
 	summaryLine: string
 }
 
 interface LogListLabels {
 	empty: string
 	dateRange: string
+	lastUpdated: string
 }
 
 export function LogList({
@@ -69,6 +71,11 @@ export function LogList({
 									<CalendarDays className='text-info size-4' />
 									<span className='font-medium'>{row.dateLabel}</span>
 									<LinkPendingSpinner />
+									{row.lastUpdatedLabel ? (
+										<span className='text-muted-foreground ml-auto shrink-0 font-mono text-xs'>
+											{labels.lastUpdated} {row.lastUpdatedLabel}
+										</span>
+									) : null}
 								</div>
 								<p className='text-muted-foreground mt-1 text-xs'>{row.summaryLine}</p>
 							</Link>
