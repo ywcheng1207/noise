@@ -19,7 +19,9 @@
 		"reliability": "Reliability",
 		"empty": "No topics match the current filters",
 		"updated": "Updated",
-		"searchPlaceholder": "Search topics..."
+		"searchPlaceholder": "Search topics...",
+		"showArchived": "Show archived",
+		"candidatePool": "Watchlist"
 	},
 	"intro": {
 		"pipelineHeading": "How we organize information",
@@ -83,7 +85,22 @@
 		"backToOverview": "Back to overview",
 		"searchPlaceholder": "Search events...",
 		"searchEmpty": "No events match the current search",
-		"dateRange": "Date range"
+		"dateRange": "Date range",
+		"digestHeading": "Current state",
+		"whyHeading": "Why it matters",
+		"criteriaHeading": "What counts as part of this thread",
+		"actorsHeading": "Key actors",
+		"linksHeading": "Related threads",
+		"lifecycle": {
+			"ACTIVE": "Active",
+			"DORMANT": "Dormant",
+			"ARCHIVED": "Archived"
+		}
+	},
+	"candidates": {
+		"intro": "The watchlist tracks signals that haven't yet accumulated enough evidence to become a fully tracked thread. The system keeps an eye on them and promotes a signal to a thread once it's been corroborated across multiple days and sources — so you can always see why something hasn't made the cut yet.",
+		"empty": "The watchlist is empty right now",
+		"mentionCount": "Mentioned {{count}} times"
 	},
 	"event": {
 		"background": "Summary",
@@ -97,7 +114,8 @@
 		"appeal": "Request correction",
 		"backToTopic": "Back to topic",
 		"researching": "Researching",
-		"researchingHint": "This event is still being cross-checked across sources. Check back soon for the full summary and ranked sources."
+		"researchingHint": "This event is still being cross-checked across sources. Check back soon for the full summary and ranked sources.",
+		"corroborationCount": "Corroborated by {{count}} follow-up report(s)"
 	},
 	"footer": {
 		"terms": "Terms of Service",

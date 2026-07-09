@@ -55,7 +55,7 @@ export function TabShell({
 	const activeTab =
 		secondSegment === 'log'
 			? 'log'
-			: secondSegment === 'topic' || secondSegment === 'event'
+			: secondSegment === 'topic' || secondSegment === 'event' || secondSegment === 'candidates'
 				? 'topics'
 				: rootTab
 

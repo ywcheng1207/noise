@@ -19,7 +19,9 @@
 		"reliability": "可信度",
 		"empty": "目前沒有符合條件的議題",
 		"updated": "有更新",
-		"searchPlaceholder": "搜尋議題關鍵字..."
+		"searchPlaceholder": "搜尋議題關鍵字...",
+		"showArchived": "顯示已封存",
+		"candidatePool": "候選池"
 	},
 	"intro": {
 		"pipelineHeading": "我們怎麼整理資訊",
@@ -83,7 +85,22 @@
 		"backToOverview": "返回焦點總覽",
 		"searchPlaceholder": "搜尋事件關鍵字...",
 		"searchEmpty": "沒有符合條件的事件",
-		"dateRange": "時間範圍"
+		"dateRange": "時間範圍",
+		"digestHeading": "目前態勢",
+		"whyHeading": "為什麼重要",
+		"criteriaHeading": "收錄判準",
+		"actorsHeading": "關鍵行為者",
+		"linksHeading": "連動脈絡",
+		"lifecycle": {
+			"ACTIVE": "追蹤中",
+			"DORMANT": "休眠中",
+			"ARCHIVED": "已封存"
+		}
+	},
+	"candidates": {
+		"intro": "候選池是還沒累積到足夠證據、尚未成為正式追蹤脈絡的觀察名單。系統持續留意這些訊號，累積到多日、多來源的佐證後才會升格成脈絡；你隨時可以在這裡看到「為什麼這個還沒上」。",
+		"empty": "目前候選池是空的",
+		"mentionCount": "累積提及 {{count}} 次"
 	},
 	"event": {
 		"background": "摘要",
@@ -97,7 +114,8 @@
 		"appeal": "提出更正",
 		"backToTopic": "返回議題",
 		"researching": "研究中",
-		"researchingHint": "此事件仍在跨來源查證，稍後再回來查看完整摘要與來源排名。"
+		"researchingHint": "此事件仍在跨來源查證，稍後再回來查看完整摘要與來源排名。",
+		"corroborationCount": "另有 {{count}} 則後續報導佐證"
 	},
 	"footer": {
 		"terms": "服務條款",

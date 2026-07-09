@@ -2,11 +2,12 @@
 
 import { memo, useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Loader2, MapPin, SearchX } from 'lucide-react'
+import { Archive, Loader2, MapPin, SearchX, Telescope } from 'lucide-react'
 
 import { WorldMap } from './WorldMap'
 import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
 import { ReliabilityBadge } from '@/components/ReliabilityBadge'
+import { LifecycleBadge } from '@/components/LifecycleBadge'
 import { SearchInput } from '@/components/SearchInput'
 import { DOMAIN_ICON } from '@/lib/ui'
 import { matchesKeyword } from '@/lib/search'
@@ -35,6 +36,8 @@ export interface TopicCardData {
 	languageCount: number
 	updatedAt: string
 	latestEventTitles: string[]
+	lifecycle: string
+	lifecycleLabel: string
 }
 
 interface OverviewStats {
@@ -50,6 +53,8 @@ interface OverviewLabels {
 	updated: string
 	empty: string
 	searchPlaceholder: string
+	showArchived: string
+	candidatePool: string
 	stats: OverviewStats
 }
 
@@ -90,6 +95,7 @@ export function OverviewClient({
 	const [region, setRegion] = useState('all')
 	const [reliability, setReliability] = useState('all')
 	const [keyword, setKeyword] = useState('')
+	const [showArchived, setShowArchived] = useState(false)
 	const [seenMap, setSeenMap] = useState<Record<string, string> | null>(null)
 
 	const deferredKeyword = useDeferredValue(keyword)
@@ -98,12 +104,13 @@ export function OverviewClient({
 		() =>
 			topics.filter(
 				(tpc) =>
+					(showArchived || tpc.lifecycle !== 'ARCHIVED') &&
 					(domain === 'all' || tpc.domain === domain) &&
 					(region === 'all' || tpc.regions.some((r) => r === region)) &&
 					(reliability === 'all' || tpc.reliability === reliability) &&
 					matchesKeyword(deferredKeyword, tpc.title, tpc.domainLabel, ...tpc.regionLabels),
 			),
-		[topics, domain, region, reliability, deferredKeyword],
+		[topics, domain, region, reliability, showArchived, deferredKeyword],
 	)
 
 	const { visibleItems, hasMore, sentinelRef } = useIncrementalReveal(filtered)
@@ -123,7 +130,21 @@ export function OverviewClient({
 
 	return (
 		<div className='flex flex-col gap-5'>
-			<SearchInput value={keyword} onChange={setKeyword} placeholder={labels.searchPlaceholder} />
+			<div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
+				<SearchInput
+					value={keyword}
+					onChange={setKeyword}
+					placeholder={labels.searchPlaceholder}
+					className='flex-1'
+				/>
+				<Link
+					href={`/${lng}/candidates`}
+					className='text-muted-foreground hover:bg-secondary hover:text-foreground flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs whitespace-nowrap transition-colors'
+				>
+					<Telescope className='size-3.5' />
+					{labels.candidatePool}
+				</Link>
+			</div>
 
 			<div className='flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8'>
 				<aside className='flex flex-col gap-2 lg:sticky lg:top-6 lg:w-48 lg:shrink-0 lg:gap-5'>
@@ -135,6 +156,19 @@ export function OverviewClient({
 						value={reliability}
 						onChange={setReliability}
 					/>
+					<button
+						type='button'
+						onClick={() => setShowArchived((prev) => !prev)}
+						className={cn(
+							'flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1 text-xs transition-all duration-200 hover:scale-[1.03]',
+							showArchived
+								? 'bg-secondary text-foreground'
+								: 'bg-secondary/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground',
+						)}
+					>
+						<Archive className='size-3.5' />
+						{labels.showArchived}
+					</button>
 				</aside>
 
 				{filtered.length === 0 ? (
@@ -213,11 +247,10 @@ const TopicCard = memo(
 								{topic.title}
 								<LinkPendingSpinner />
 							</span>
-							<ReliabilityBadge
-								reliability={topic.reliability}
-								label={topic.reliabilityLabel}
-								className='shrink-0'
-							/>
+							<div className='flex shrink-0 items-center gap-1.5'>
+								<LifecycleBadge lifecycle={topic.lifecycle} label={topic.lifecycleLabel} />
+								<ReliabilityBadge reliability={topic.reliability} label={topic.reliabilityLabel} />
+							</div>
 						</div>
 						<div className='flex flex-wrap gap-1.5'>
 							<DomainTag domain={topic.domain} label={topic.domainLabel} />
