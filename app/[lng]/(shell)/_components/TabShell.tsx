@@ -96,8 +96,10 @@ export function TabShell({
 						{/* 麵包屑 parallel route 在跨路由樹導航時偶爾不會正確 fallback 回 default.tsx(Next.js 已知限制),
 						    根路徑一律不該有麵包屑,直接用當下路徑主動擋掉,不依賴 slot 是否過期。 */}
 						{isAtRoot ? null : (
-							<div className='bg-card sticky top-0 z-10 -mx-4 -mt-4 px-4 pt-4 pb-2 sm:-mx-6 sm:-mt-6 sm:px-6 sm:pt-6'>
-								{breadcrumb}
+							<div className='sticky top-0 z-10'>
+								<div className='bg-card pb-2'>{breadcrumb}</div>
+								{/* 內容捲動到麵包屑下方時用漸層淡出,避免文字被硬生生切一半的觀感 */}
+								<div className='from-card h-4 bg-gradient-to-b to-transparent' />
 							</div>
 						)}
 						{content}

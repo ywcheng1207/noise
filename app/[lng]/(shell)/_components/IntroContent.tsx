@@ -139,7 +139,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 
 function IntroSlide({ icon, heading, children }: { icon: ReactNode; heading: string; children: ReactNode }) {
 	return (
-		<section className='bg-secondary/30 flex h-full min-h-44 flex-col gap-3 rounded-lg p-4 sm:p-5'>
+		<section className='bg-secondary/30 flex min-h-44 flex-col gap-3 rounded-lg p-4 sm:p-5'>
 			<h2 className='flex items-center gap-2 text-base font-medium'>
 				{icon}
 				{heading}
