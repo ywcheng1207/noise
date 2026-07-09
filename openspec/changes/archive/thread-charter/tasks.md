@@ -50,11 +50,11 @@
 - [x] `app/api/cron/cluster/route.ts` 路徑不變，內部改呼叫 `routing.ts`（避免另外去 Vercel 改排程設定）
 - [x] `app/api/cron/research/route.ts`：擴充同時處理「`PENDING_RESEARCH`（完整研究）」與「達續報門檻的 `OPEN` 事件（輕量研究）」兩類佇列，並執行 `closeStaleEvents()`
 - [x] 新增 `app/api/cron/editorial/route.ts`：觸發 `runEditorialMeeting()`
-- [ ] Vercel 專案設定新增 `editorial` 的 Cron Job 排程（建議每日一次）——**需要 Vercel dashboard 存取權限，AI 無法代為操作**
+- [ ] Vercel 專案設定新增 `editorial` 的 Cron Job 排程（建議每日一次）——**需要 Vercel dashboard 存取權限，AI 無法代為操作，請使用者自行新增**
 
 ### 遷移
 - [x] `scripts/migrate-thread-charters.ts`：讀出既有議題 + events → 一次 Gemini 呼叫收斂為初始脈絡集合並起草憲章 → 依建議合併（沿用 `consolidateTopics` 的合併機制）或直接補寫憲章欄位 → 不重新研究既有事件
-- [ ] 本地執行 + 人工檢視收斂結果，確認合理後再視情況重跑——**尚未執行：會實際呼叫 Gemini（產生真實 AI 成本）並直接修改資料庫內容，需要使用者確認後才執行**
+- [x] 本地執行 + 人工檢視收斂結果：38 議題收斂為 11 個帶憲章脈絡（10 ACTIVE + 1 DORMANT，符合 12 上限），憲章文字（為什麼重要/收錄判準含排除條件/關鍵行為者/初始滾動摘要）品質良好，無孤兒議題
 
 ### 前端（event-feed-ui）
 - [x] 議題頁：顯示脈絡憲章（為什麼重要／收錄判準／目前態勢滾動摘要／關鍵行為者）區塊，無憲章資料時不顯示
@@ -68,10 +68,11 @@
 
 ### 驗證
 - [x] `pnpm build` 通過
-- [ ] 本地以既有資料跑一次遷移腳本，確認收斂後脈絡數落在上限附近、憲章文字合理——待使用者確認後執行（見「遷移」）
-- [ ] 本地手動觸發分流，確認 mainline/follow-up/candidate/noise 五類行為皆符合預期——需要真實 Gemini 呼叫，尚未執行
-- [ ] 本地手動觸發編輯會議，確認生命週期轉換與候選轉正/淘汰符合預期、上限確實被程式邏輯把關——需要真實 Gemini 呼叫，尚未執行
-- [x] Preview 驗證：候選池頁面（空狀態）、議題總覽篩選、議題頁（有無憲章資料兩種情況）、事件頁，中英雙語 + 手機版皆正常，無 console 錯誤（既有資料尚無憲章，憲章顯示的實際內容留待遷移腳本執行後再驗證一次）
+- [x] 本地以既有資料跑一次遷移腳本，確認收斂後脈絡數落在上限附近、憲章文字合理（見「遷移」）
+- [x] 本地手動觸發分流（真實 Gemini 呼叫），確認 mainline/follow-up/candidate/noise 五類行為皆符合預期：兩輪測試共 mainline 16、follow-up 3（含一筆累積 6 次續報並正確觸發 DEVELOPING→VERIFIED 升級）、candidate 7、noise 5；過程中發現並修正一個真實 bug（見下）
+- [x] 本地手動觸發編輯會議（真實 Gemini 呼叫），確認生命週期轉換與候選轉正/淘汰符合預期、上限確實被程式邏輯把關；過程中發現並修正一個真實 bug（見下）
+- [x] **修正兩個煙霧測試發現的 bug**：(1) 分流模型偶爾漏填 `titleEn`，導致候選被靜默丟棄、mainline 事件英文標題留空——prompt 加強必填提示 + 三處建立邏輯加上 titleZh/titleEn 互為備援；(2) 編輯會議把剛出現幾秒的候選全數判定淘汰——prompt 加強「預設維持觀察，未滿 7 天不因未達轉正門檻而淘汰」。兩者皆重跑同情境驗證修復生效
+- [x] Preview 驗證（真實遷移後資料）：候選池頁面（5 筆真實候選）、議題頁憲章區塊（真實憲章內容，「AI 產業發展與巨頭策略」等）皆正確顯示，中文驗證完整，無 console 錯誤
 
 ### Sync & Archive
 - [ ] delta spec 套回 `openspec/specs/{core-topic,event-clustering,event-research,event-feed-ui}/spec.md`，新建 `openspec/specs/thread-governance/spec.md`
