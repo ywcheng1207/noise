@@ -67,7 +67,7 @@ export async function runRouting(limit = 50) {
 
 	const system =
 		'你是新聞分流編輯。任務是把新文章依「是否屬於已在追蹤的脈絡」分類，而不是單純判斷文章講不講同一件事。中文一律使用正體中文（臺灣用語），即使原文為簡體。'
-	const prompt = `【既有追蹤中的脈絡】（每個脈絡列出收錄判準與目前開放中的事件；不符合任何脈絡收錄判準的新聞才需要另外評估）\n${topicContext}\n\n【新文章清單】（index. 標題）\n${articleList}\n\n對每篇文章判斷屬於下列哪一類，同一類且同一具體事件的文章可合併成一個 item：\n\n1. mainline_existing：符合上面某脈絡的收錄判準，且是該脈絡底下一則新的具體事件（不是任何既有 OPEN 事件的延續）。給 topicSlug（複製脈絡清單的 slug）、titleZh/En、domain、regions、importance(0~1)。\n2. follow_up：明顯是對上面某個 OPEN 事件的補充報導（同一件事的後續消息）。給 eventSlug（複製該事件的 slug）。\n3. mainline_fastgate：不符合任何既有脈絡，但重要性非常明確——同時考慮規模/不可逆性、意外性、是否牽動其他已追蹤脈絡、行為者層級，只有清楚達到「值得立刻獨立成一條新脈絡追蹤」才用這類，不確定就別用。給 titleZh/En（首個事件標題）、domain、regions、importance、topicTitleZh/En（新脈絡標題）、charterWhyZh/En（為什麼重要）、charterCriteriaZh/En（收錄判準：以後這條脈絡要收哪些後續發展、不收哪些）、charterActorsZh/En（關鍵行為者陣列）。\n4. candidate：不符合任何既有脈絡，重要性不到 mainline_fastgate 門檻，但也非顯然無關緊要，值得先觀察。給 titleZh/En、signalZh/En（一句話說明為什麼值得觀察）、domain、regions。\n5. noise：以上皆非。\n\n領域只能用：INTL, POLITICS, BIZ, TECH（其餘領域一律歸類 noise）。\n地區只能用：MIDEAST, EAST_ASIA, SE_ASIA, SOUTH_ASIA, CENTRAL_ASIA, EUROPE, NORTH_AMERICA, SOUTH_AMERICA, AFRICA, OCEANIA, GLOBAL。\n\n只回 JSON：{"items":[{"kind":"mainline_existing|follow_up|mainline_fastgate|candidate|noise","articleIndexes":[0],"topicSlug":"","eventSlug":"","titleZh":"","titleEn":"","domain":"","regions":[],"importance":0.0,"topicTitleZh":"","topicTitleEn":"","charterWhyZh":"","charterWhyEn":"","charterCriteriaZh":"","charterCriteriaEn":"","charterActorsZh":[],"charterActorsEn":[],"signalZh":"","signalEn":""}]}`
+	const prompt = `【既有追蹤中的脈絡】（每個脈絡列出收錄判準與目前開放中的事件；不符合任何脈絡收錄判準的新聞才需要另外評估）\n${topicContext}\n\n【新文章清單】（index. 標題）\n${articleList}\n\n對每篇文章判斷屬於下列哪一類，同一類且同一具體事件的文章可合併成一個 item：\n\n1. mainline_existing：符合上面某脈絡的收錄判準，且是該脈絡底下一則新的具體事件（不是任何既有 OPEN 事件的延續）。給 topicSlug（複製脈絡清單的 slug）、titleZh/En、domain、regions、importance(0~1)。\n2. follow_up：明顯是對上面某個 OPEN 事件的補充報導（同一件事的後續消息）。給 eventSlug（複製該事件的 slug）。\n3. mainline_fastgate：不符合任何既有脈絡，但重要性非常明確——同時考慮規模/不可逆性、意外性、是否牽動其他已追蹤脈絡、行為者層級，只有清楚達到「值得立刻獨立成一條新脈絡追蹤」才用這類，不確定就別用。給 titleZh/En（首個事件標題）、domain、regions、importance、topicTitleZh/En（新脈絡標題）、charterWhyZh/En（為什麼重要）、charterCriteriaZh/En（收錄判準：以後這條脈絡要收哪些後續發展、不收哪些）、charterActorsZh/En（關鍵行為者陣列）。\n4. candidate：不符合任何既有脈絡，重要性不到 mainline_fastgate 門檻，但也非顯然無關緊要，值得先觀察。給 titleZh/En、signalZh/En（一句話說明為什麼值得觀察）、domain、regions。\n5. noise：以上皆非。\n\n領域只能用：INTL, POLITICS, BIZ, TECH（其餘領域一律歸類 noise）。\n地區只能用：MIDEAST, EAST_ASIA, SE_ASIA, SOUTH_ASIA, CENTRAL_ASIA, EUROPE, NORTH_AMERICA, SOUTH_AMERICA, AFRICA, OCEANIA, GLOBAL。\n\n凡是要求 titleZh/En、topicTitleZh/En、charterXxxZh/En、signalZh/En 的欄位，中英文兩個版本都必填，不可只給中文或只給英文。\n\n只回 JSON：{"items":[{"kind":"mainline_existing|follow_up|mainline_fastgate|candidate|noise","articleIndexes":[0],"topicSlug":"","eventSlug":"","titleZh":"","titleEn":"","domain":"","regions":[],"importance":0.0,"topicTitleZh":"","topicTitleEn":"","charterWhyZh":"","charterWhyEn":"","charterCriteriaZh":"","charterCriteriaEn":"","charterActorsZh":[],"charterActorsEn":[],"signalZh":"","signalEn":""}]}`
 
 	const { data: parsed, usage } = await generateJson<RoutingResult>({ model: MODEL.CLUSTER, system, prompt })
 	await logAiRun({ stage: 'CLUSTER', model: MODEL.CLUSTER, usage })
@@ -128,12 +128,13 @@ export async function runRouting(limit = 50) {
 			: (await createFastGateTopic(item)).id
 
 		const importance = typeof item.importance === 'number' ? item.importance : 0
+		const titleEn = item.titleEn || item.titleZh || ''
 		const event = await prisma.event.create({
 			data: {
-				slug: `${slugify(item.titleEn ?? '') || 'event'}-${Date.now().toString(36)}-${mainline}`,
+				slug: `${slugify(titleEn) || 'event'}-${Date.now().toString(36)}-${mainline}`,
 				topicId,
-				titleZh: toTraditionalZh(item.titleZh ?? ''),
-				titleEn: item.titleEn ?? '',
+				titleZh: toTraditionalZh(item.titleZh || item.titleEn || ''),
+				titleEn,
 				domain,
 				regions: normalizeRegions(item.regions ?? []),
 				importanceScore: importance,
@@ -239,12 +240,14 @@ async function applyFollowUp(event: ContextEvent, articleIds: string[]) {
 }
 
 async function createFastGateTopic(item: RoutingItem) {
-	const slug = `${slugify(item.topicTitleEn ?? item.titleEn ?? '') || 'thread'}-${Date.now().toString(36)}`
+	const titleZh = item.topicTitleZh || item.titleZh || item.topicTitleEn || item.titleEn || ''
+	const titleEn = item.topicTitleEn || item.titleEn || item.topicTitleZh || item.titleZh || ''
+	const slug = `${slugify(titleEn) || 'thread'}-${Date.now().toString(36)}`
 	return prisma.topic.create({
 		data: {
 			slug,
-			titleZh: toTraditionalZh(item.topicTitleZh ?? item.titleZh ?? ''),
-			titleEn: item.topicTitleEn ?? item.titleEn ?? '',
+			titleZh: toTraditionalZh(titleZh),
+			titleEn,
 			domain: normalizeDomain(item.domain ?? ''),
 			regions: normalizeRegions(item.regions ?? []),
 			lifecycle: 'ACTIVE',
@@ -262,8 +265,9 @@ async function createFastGateTopic(item: RoutingItem) {
 // 候選池目前用「標題完全相同（忽略大小寫）」去重：候選是低風險的觀察名單，
 // 重複幾筆不會造成誤導，換取不必為此另外呼叫 AI 做語意去重的成本。
 async function upsertCandidate(item: RoutingItem) {
-	const titleEn = item.titleEn ?? ''
-	if (!titleEn) return
+	const titleZh = item.titleZh || item.titleEn || ''
+	const titleEn = item.titleEn || item.titleZh || ''
+	if (!titleZh && !titleEn) return
 
 	const existing = await prisma.threadCandidate.findFirst({
 		where: { status: 'WATCHING', titleEn: { equals: titleEn, mode: 'insensitive' } },
@@ -278,7 +282,7 @@ async function upsertCandidate(item: RoutingItem) {
 
 	await prisma.threadCandidate.create({
 		data: {
-			titleZh: toTraditionalZh(item.titleZh ?? titleEn),
+			titleZh: toTraditionalZh(titleZh),
 			titleEn,
 			signalZh: item.signalZh ? toTraditionalZh(item.signalZh) : null,
 			signalEn: item.signalEn ?? null,

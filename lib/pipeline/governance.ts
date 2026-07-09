@@ -81,7 +81,7 @@ export async function runEditorialMeeting() {
 
 	const system =
 		'你是新聞編輯台的每日盤點會議，負責兩件事：(1) 判斷休眠中的脈絡是否已有明確終局、可以封存；(2) 判斷候選觀察名單裡哪些已累積足夠多日、多來源證據，值得升格為正式追蹤的脈絡。中文一律使用正體中文（臺灣用語）。'
-	const prompt = `【休眠中的脈絡】（不是單純看天數，請判斷是否已有明確終局——如停火協議簽署、選舉結果確定、併購案完成——天數不足也可以因為明確終局而封存）\n${dormantContext}\n\n【候選觀察名單】\n${candidateContext}\n\n輸出：archiveSlugs（判定已有明確終局可封存的休眠脈絡 slug）、promote（判定已累積足夠證據值得升格的候選，每筆給 candidateIndex、evidenceStrength(0~1，名額不足時優先保留高分者)、topicTitleZh/En、charterWhyZh/En、charterCriteriaZh/En、charterActorsZh/En）、dismissIndexes（訊號已消退——很久沒有新提及、提及次數沒有成長——該淘汰的候選 index）。\n\n只回 JSON：{"archiveSlugs":[],"promote":[{"candidateIndex":0,"evidenceStrength":0.0,"topicTitleZh":"","topicTitleEn":"","charterWhyZh":"","charterWhyEn":"","charterCriteriaZh":"","charterCriteriaEn":"","charterActorsZh":[],"charterActorsEn":[]}],"dismissIndexes":[]}`
+	const prompt = `【休眠中的脈絡】（不是單純看天數，請判斷是否已有明確終局——如停火協議簽署、選舉結果確定、併購案完成——天數不足也可以因為明確終局而封存）\n${dormantContext}\n\n【候選觀察名單】\n${candidateContext}\n\n每個候選預設就是「繼續觀察」，不需要也不應該每筆都做出 promote 或 dismiss 的決定——大多數候選在大多數日子都應該兩邊都不列入，維持觀察即可。\n\n輸出：archiveSlugs（判定已有明確終局可封存的休眠脈絡 slug）、promote（判定已累積足夠多日、多來源證據，值得升格為正式脈絡的候選，每筆給 candidateIndex、evidenceStrength(0~1，名額不足時優先保留高分者)、topicTitleZh/En、charterWhyZh/En、charterCriteriaZh/En、charterActorsZh/En）、dismissIndexes（訊號已明確消退才淘汰——很久沒有新提及、提及次數沒有成長；首次偵測未滿 7 天的候選還沒有足夠時間證明自己，除非內容本身明顯不具重要性，否則不要僅因為「還不到升格門檻」就淘汰）。\n\n只回 JSON：{"archiveSlugs":[],"promote":[{"candidateIndex":0,"evidenceStrength":0.0,"topicTitleZh":"","topicTitleEn":"","charterWhyZh":"","charterWhyEn":"","charterCriteriaZh":"","charterCriteriaEn":"","charterActorsZh":[],"charterActorsEn":[]}],"dismissIndexes":[]}`
 
 	const { data: parsed, usage } = await generateJson<EditorialMeetingResult>({
 		model: MODEL.CLUSTER,
