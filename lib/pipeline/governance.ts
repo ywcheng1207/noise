@@ -33,9 +33,22 @@ function daysSince(date: Date) {
 	return Math.floor((Date.now() - date.getTime()) / (24 * 60 * 60 * 1000))
 }
 
+async function hasRunToday(): Promise<boolean> {
+	const startOfDayUtc = new Date()
+	startOfDayUtc.setUTCHours(0, 0, 0, 0)
+	const existing = await prisma.aiRun.findFirst({
+		where: { stage: 'GOVERNANCE', createdAt: { gte: startOfDayUtc } },
+		select: { id: true },
+	})
+	return Boolean(existing)
+}
+
 /**
- * 每日一次的脈絡治理：ACTIVE→DORMANT 是純規則（不呼叫 AI，只看 lastActivityAt）；
- * DORMANT→ARCHIVED（含終局判定）與候選池轉正/淘汰需要判斷力，交給一次 AI 呼叫；
+ * 脈絡治理，設計為每日一次，但呼叫方（手動觸發腳本）目前是每輪高頻 tick 都會打——
+ * 靠這裡自行判斷「今天(UTC)是否已經跑過需要 AI 判斷的部分」來達到「實際上每日一次」，
+ * 而不是依賴呼叫方的排程頻率。ACTIVE→DORMANT 是純規則（不呼叫 AI，只看 lastActivityAt），
+ * 每次呼叫都執行也無妨（本身就是 idempotent 的條件查詢）；DORMANT→ARCHIVED（含終局判定）
+ * 與候選池轉正/淘汰需要判斷力，交給一次 AI 呼叫，這部分才是真正要限制頻率的地方；
  * 在用脈絡上限由程式邏輯（非 AI）事後硬性把關。
  */
 export async function runEditorialMeeting() {
@@ -43,6 +56,10 @@ export async function runEditorialMeeting() {
 		where: { lifecycle: 'ACTIVE', lastActivityAt: { lt: daysAgo(THREAD_CONFIG.TOPIC_DORMANT_DAYS) } },
 		data: { lifecycle: 'DORMANT', dormantAt: new Date() },
 	})
+
+	if (await hasRunToday()) {
+		return { decayedToDormant: decayed.count, archived: 0, promoted: 0, dismissed: 0, alreadyRanToday: true }
+	}
 
 	if (await isOverDailyBudget()) {
 		return { decayedToDormant: decayed.count, archived: 0, promoted: 0, dismissed: 0, skippedByBudget: true }
@@ -88,7 +105,7 @@ export async function runEditorialMeeting() {
 		system,
 		prompt,
 	})
-	await logAiRun({ stage: 'CLUSTER', model: MODEL.CLUSTER, usage })
+	await logAiRun({ stage: 'GOVERNANCE', model: MODEL.CLUSTER, usage })
 
 	const dormantBySlug = new Map(dormantTopics.map((t) => [t.slug, t]))
 	let archived = 0
