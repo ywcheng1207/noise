@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import Image from 'next/image'
 import { Link2, Scale, ShieldCheck, Tags, Workflow } from 'lucide-react'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
@@ -9,12 +10,21 @@ import { RELIABILITIES, TIERS } from '@/lib/enums'
 
 export async function IntroContent({ lng }: { lng: string }) {
 	const { t } = await getT(lng)
+	const isZh = lng.startsWith('zh')
+	const localeSuffix = isZh ? 'zh-hant' : 'en'
 
 	const slides: CarouselSlide[] = [
 		{
 			key: 'pipeline',
 			content: (
 				<IntroSlide icon={<Workflow className='text-primary size-4' />} heading={t('intro.pipelineHeading')}>
+					<Image
+						src={`/intro/topics-overview-${localeSuffix}.png`}
+						alt={t('intro.pipelineImageAlt')}
+						width={832}
+						height={381}
+						className='border-border h-auto w-full rounded-lg border'
+					/>
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.pipelineBody')}</p>
 				</IntroSlide>
 			),
@@ -34,6 +44,13 @@ export async function IntroContent({ lng }: { lng: string }) {
 					icon={<ShieldCheck className='text-primary size-4' />}
 					heading={t('intro.credibilityHeading')}
 				>
+					<Image
+						src={`/intro/event-sources-${localeSuffix}.png`}
+						alt={t('intro.credibilityImageAlt')}
+						width={400}
+						height={isZh ? 296 : 336}
+						className='border-border h-auto w-full rounded-lg border'
+					/>
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.credibilityIntro')}</p>
 				</IntroSlide>
 			),
@@ -90,7 +107,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 
 function IntroSlide({ icon, heading, children }: { icon: ReactNode; heading: string; children: ReactNode }) {
 	return (
-		<section className='bg-secondary/30 flex min-h-44 flex-col gap-3 rounded-lg p-4 sm:p-5'>
+		<section className='bg-secondary/30 flex h-full min-h-44 flex-col gap-3 rounded-lg p-4 sm:p-5'>
 			<h2 className='flex items-center gap-2 text-base font-medium'>
 				{icon}
 				{heading}

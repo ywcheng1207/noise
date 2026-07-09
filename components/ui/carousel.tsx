@@ -41,7 +41,7 @@ export function Carousel({ slides }: { slides: CarouselSlide[] }) {
 	return (
 		<div aria-roledescription='carousel' className='flex flex-col gap-3'>
 			<div ref={emblaRef} className='overflow-hidden'>
-				<div className='flex items-start'>
+				<div className='flex items-stretch'>
 					{slides.map((slide, index) => (
 						<div
 							key={slide.key}

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { fallbackLng, languages, cookieName } from '@/i18n/settings'
 
+// `.*\..*`(路徑含副檔名)排除所有靜態檔案——public/ 底下的資源(如 /intro/*.png)
+// 沒有語系前綴，少了這條會被誤判成缺語系的頁面路徑而 307 轉址，導致圖片打不開。
 export const config = {
-	matcher: ['/((?!api|_next/static|_next/image|assets|favicon.ico|icon.png).*)'],
+	matcher: ['/((?!api|_next/static|_next/image|assets|favicon.ico|icon.png|.*\\..*).*)'],
 }
 
 /**
