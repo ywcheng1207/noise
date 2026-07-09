@@ -21,5 +21,5 @@
 
 ### 驗證
 - [x] `pnpm build` 通過（型別：本次新增/觸及檔案皆 clean）
-- [ ] 部署後線上事件頁顯示麵包屑與來源徽章、總覽無離題議題
-- [ ] 合併後對 Neon 執行 `pnpm tsx scripts/purge-offdomain.ts`
+- [x] 部署後線上事件頁顯示麵包屑與來源徽章、總覽無離題議題
+- [x] 合併後對 Neon 執行 `pnpm tsx scripts/purge-offdomain.ts`（複查：目前資料庫僅剩 POLITICS/BIZ/INTL/TECH 四個網域，無 DISASTER/SOCIETY/OTHER 殘留）
