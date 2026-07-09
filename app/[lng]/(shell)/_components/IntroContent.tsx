@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import Image from 'next/image'
-import { Link2, Scale, ShieldCheck, Tags, Workflow } from 'lucide-react'
+import { CheckCircle2, Link2, Scale, Search, ShieldCheck, Tags, Telescope, Workflow } from 'lucide-react'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
 import { ReliabilityBadge } from '@/components/ReliabilityBadge'
@@ -12,18 +12,20 @@ export async function IntroContent({ lng }: { lng: string }) {
 	const { t } = await getT(lng)
 	const isZh = lng.startsWith('zh')
 	const localeSuffix = isZh ? 'zh-hant' : 'en'
+	const sourceCardHeight = isZh ? 132 : 152
+	const topicBadgeHeight = isZh ? 52 : 76
 
 	const slides: CarouselSlide[] = [
 		{
 			key: 'pipeline',
 			content: (
 				<IntroSlide icon={<Workflow className='text-primary size-4' />} heading={t('intro.pipelineHeading')}>
-					<Image
-						src={`/intro/topics-overview-${localeSuffix}.png`}
+					<IntroExample
+						src={`/intro/topic-card-${localeSuffix}.png`}
 						alt={t('intro.pipelineImageAlt')}
-						width={832}
-						height={381}
-						className='border-border h-auto w-full rounded-lg border'
+						width={828}
+						height={189}
+						caption={t('intro.pipelineCaption')}
 					/>
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.pipelineBody')}</p>
 				</IntroSlide>
@@ -33,6 +35,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 			key: 'link-check',
 			content: (
 				<IntroSlide icon={<Link2 className='text-primary size-4' />} heading={t('intro.linkCheckHeading')}>
+					<LinkCheckDiagram caption={t('intro.linkCheckCaption')} />
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.linkCheckBody')}</p>
 				</IntroSlide>
 			),
@@ -44,12 +47,12 @@ export async function IntroContent({ lng }: { lng: string }) {
 					icon={<ShieldCheck className='text-primary size-4' />}
 					heading={t('intro.credibilityHeading')}
 				>
-					<Image
-						src={`/intro/event-sources-${localeSuffix}.png`}
+					<IntroExample
+						src={`/intro/source-card-${localeSuffix}.png`}
 						alt={t('intro.credibilityImageAlt')}
-						width={400}
-						height={isZh ? 296 : 336}
-						className='border-border h-auto w-full rounded-lg border'
+						width={396}
+						height={sourceCardHeight}
+						caption={t('intro.credibilityCaption')}
 					/>
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.credibilityIntro')}</p>
 				</IntroSlide>
@@ -59,6 +62,13 @@ export async function IntroContent({ lng }: { lng: string }) {
 			key: 'topic-tiers',
 			content: (
 				<IntroSlide icon={<Tags className='text-primary size-4' />} heading={t('intro.topicTiersHeading')}>
+					<IntroExample
+						src={`/intro/topic-badge-${localeSuffix}.png`}
+						alt={t('intro.topicTiersImageAlt')}
+						width={506}
+						height={topicBadgeHeight}
+						caption={t('intro.topicTiersCaption')}
+					/>
 					<ul className='flex flex-col gap-1.5'>
 						{RELIABILITIES.map((key) => (
 							<li key={key} className='flex items-start gap-2 text-sm'>
@@ -78,6 +88,13 @@ export async function IntroContent({ lng }: { lng: string }) {
 			key: 'source-tiers',
 			content: (
 				<IntroSlide icon={<Scale className='text-primary size-4' />} heading={t('intro.sourceTiersHeading')}>
+					<IntroExample
+						src={`/intro/source-card-${localeSuffix}.png`}
+						alt={t('intro.sourceTiersImageAlt')}
+						width={396}
+						height={sourceCardHeight}
+						caption={t('intro.sourceTiersCaption')}
+					/>
 					<ul className='flex flex-col gap-1.5'>
 						{TIERS.map((key) => {
 							const TierIcon = TIER_ICON[key] ?? TIER_ICON.UNVERIFIED
@@ -95,6 +112,21 @@ export async function IntroContent({ lng }: { lng: string }) {
 				</IntroSlide>
 			),
 		},
+		{
+			key: 'candidates',
+			content: (
+				<IntroSlide icon={<Telescope className='text-primary size-4' />} heading={t('intro.candidatesHeading')}>
+					<IntroExample
+						src={`/intro/candidate-card-${localeSuffix}.png`}
+						alt={t('intro.candidatesImageAlt')}
+						width={780}
+						height={128}
+						caption={t('intro.candidatesCaption')}
+					/>
+					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.candidatesBody')}</p>
+				</IntroSlide>
+			),
+		},
 	]
 
 	return (
@@ -107,12 +139,58 @@ export async function IntroContent({ lng }: { lng: string }) {
 
 function IntroSlide({ icon, heading, children }: { icon: ReactNode; heading: string; children: ReactNode }) {
 	return (
-		<section className='bg-secondary/30 flex h-full min-h-44 flex-col gap-3 rounded-lg p-4 sm:p-5'>
+		<section className='bg-secondary/30 flex min-h-44 flex-col gap-3 rounded-lg p-4 sm:p-5'>
 			<h2 className='flex items-center gap-2 text-base font-medium'>
 				{icon}
 				{heading}
 			</h2>
 			{children}
 		</section>
+	)
+}
+
+function IntroExample({
+	src,
+	alt,
+	width,
+	height,
+	caption,
+}: {
+	src: string
+	alt: string
+	width: number
+	height: number
+	caption: string
+}) {
+	return (
+		<figure className='flex flex-col items-center gap-1.5 self-center'>
+			<Image
+				src={src}
+				alt={alt}
+				width={width}
+				height={height}
+				className='border-border h-auto max-w-[220px] rounded-lg border shadow-sm sm:max-w-[260px]'
+			/>
+			<figcaption className='text-muted-foreground max-w-[240px] text-center text-xs leading-snug'>
+				{caption}
+			</figcaption>
+		</figure>
+	)
+}
+
+function LinkCheckDiagram({ caption }: { caption: string }) {
+	return (
+		<figure className='flex flex-col items-center gap-2 self-center'>
+			<div className='border-border bg-card flex items-center gap-3 rounded-lg border px-5 py-4 shadow-sm'>
+				<Link2 className='text-muted-foreground size-5' />
+				<span className='text-muted-foreground text-xs'>···</span>
+				<Search className='text-muted-foreground size-5' />
+				<span className='text-muted-foreground text-xs'>···</span>
+				<CheckCircle2 className='text-success size-5' />
+			</div>
+			<figcaption className='text-muted-foreground max-w-[240px] text-center text-xs leading-snug'>
+				{caption}
+			</figcaption>
+		</figure>
 	)
 }

@@ -19,18 +19,25 @@
 		"reliability": "可信度",
 		"empty": "目前沒有符合條件的議題",
 		"updated": "有更新",
-		"searchPlaceholder": "搜尋議題關鍵字..."
+		"searchPlaceholder": "搜尋議題關鍵字...",
+		"showArchived": "顯示已封存",
+		"candidatePool": "候選池"
 	},
 	"intro": {
 		"pipelineHeading": "我們怎麼整理資訊",
 		"pipelineBody": "系統會持續追蹤多個公開新聞與財經資訊來源，把描述同一件事的報導自動歸類成一個「議題」，並在議題之下依時間排出個別「事件」。針對每個事件，AI 會跨來源（不限中英文）交叉查證、搜尋公開資訊，整理出事件的摘要與時間序列，同時記錄每個消息來源、標出可信度。",
-		"pipelineImageAlt": "議題清單畫面，顯示議題標題、可信度標記、領域地區標籤與世界地圖",
+		"pipelineImageAlt": "議題卡片畫面，顯示標題、可信度標記、領域地區標籤與世界地圖",
+		"pipelineCaption": "議題卡片：標題、可信度標記、地區與統計一目了然",
 		"linkCheckHeading": "來源連結先驗證再上架",
 		"linkCheckBody": "AI 查證時引用的每一條外部連結，寫入前都會實際發出請求確認頁面存在；確認失效的連結會換成查證當下真正瀏覽過的頁面，找不到可靠替代就不顯示——避免你點到打不開的頁面。",
+		"linkCheckCaption": "每個外部連結，寫入前都先實際打開確認",
 		"credibilityHeading": "可信度怎麼判斷",
 		"credibilityIntro": "可信度評分是針對「單篇報導」或「單一說法」的查證結果，不是對媒體機構或記者個人的整體評價。判斷依據包含消息來源是否為官方／權威、是否具名，以及跟其他來源交叉比對後是否一致。",
-		"credibilityImageAlt": "事件頁面的來源可信度排名畫面，顯示個別來源與其可信度標記",
+		"credibilityImageAlt": "來源卡片畫面，顯示來源名稱、可信度標記與評分理由",
+		"credibilityCaption": "每個來源的可信度評分，都附上具體理由",
 		"topicTiersHeading": "議題的可信度標記",
+		"topicTiersImageAlt": "議題卡片右上角的可信度標記特寫",
+		"topicTiersCaption": "議題卡片右上角的標記，代表目前的查證狀態",
 		"topicTier": {
 			"VERIFIED": "事件經多方來源交叉比對，內容一致且有足夠佐證。",
 			"DEVELOPING": "事件仍在持續追蹤中，目前資訊尚未完整或仍有變動。",
@@ -38,13 +45,19 @@
 			"UNVERIFIED": "目前僅有單一或少數來源，尚未完成跨來源查證。"
 		},
 		"sourceTiersHeading": "個別來源的可信度分級",
+		"sourceTiersImageAlt": "來源卡片畫面，顯示可信度分級標記",
+		"sourceTiersCaption": "個別來源依可信度分級排序",
 		"sourceTier": {
 			"OFFICIAL": "官方機關、當事人或第一手權威來源直接發布的資訊。",
 			"HIGH": "具名記者／機構具名報導，且內容與其他來源交叉比對一致。",
 			"MEDIUM": "有具名來源，但尚未有足夠其他來源交叉佐證。",
 			"LOW": "來源不夠明確具名，或內容與其他來源有出入。",
 			"UNVERIFIED": "尚待進一步查證的來源或說法。"
-		}
+		},
+		"candidatesHeading": "候選池",
+		"candidatesBody": "有些新聞訊號還不足以獨立成一個議題，但也不是完全無關緊要——這些會先進入候選池觀察，持續留意是否有更多天、更多來源佐證。累積到一定強度才會升格成正式追蹤的議題；你隨時可以在候選池看到「為什麼這個還沒上」。",
+		"candidatesImageAlt": "候選池卡片畫面，顯示標題、觀察理由與累積提及次數",
+		"candidatesCaption": "候選卡片：標題、觀察理由與累積提及次數"
 	},
 	"region": {
 		"all": "全部"
@@ -83,7 +96,22 @@
 		"backToOverview": "返回焦點總覽",
 		"searchPlaceholder": "搜尋事件關鍵字...",
 		"searchEmpty": "沒有符合條件的事件",
-		"dateRange": "時間範圍"
+		"dateRange": "時間範圍",
+		"digestHeading": "目前態勢",
+		"whyHeading": "為什麼重要",
+		"criteriaHeading": "收錄判準",
+		"actorsHeading": "關鍵行為者",
+		"linksHeading": "連動脈絡",
+		"lifecycle": {
+			"ACTIVE": "追蹤中",
+			"DORMANT": "休眠中",
+			"ARCHIVED": "已封存"
+		}
+	},
+	"candidates": {
+		"intro": "候選池是還沒累積到足夠證據、尚未成為正式追蹤脈絡的觀察名單。系統持續留意這些訊號，累積到多日、多來源的佐證後才會升格成脈絡；你隨時可以在這裡看到「為什麼這個還沒上」。",
+		"empty": "目前候選池是空的",
+		"mentionCount": "累積提及 {{count}} 次"
 	},
 	"event": {
 		"background": "摘要",
@@ -97,7 +125,8 @@
 		"appeal": "提出更正",
 		"backToTopic": "返回議題",
 		"researching": "研究中",
-		"researchingHint": "此事件仍在跨來源查證，稍後再回來查看完整摘要與來源排名。"
+		"researchingHint": "此事件仍在跨來源查證，稍後再回來查看完整摘要與來源排名。",
+		"corroborationCount": "另有 {{count}} 則後續報導佐證"
 	},
 	"footer": {
 		"terms": "服務條款",
@@ -105,13 +134,15 @@
 	},
 	"log": {
 		"heading": "日誌",
-		"pageIntro": "逆風長期關注多個公開新聞與財經資訊平台，以自動化方式定期整理其公開發布的標題與摘要，做為後續跨來源比對、事實查核與可信度評估的參考素材。以下為每日彙整紀錄，點擊進入即可查看當天的詳細來源與 AI 查證內容。",
+		"pageIntro": "逆風長期關注多個公開新聞與財經資訊平台，以自動化方式定期整理其公開發布的標題與摘要，做為後續跨來源比對、事實查核與可信度評估的參考素材。以下為每日彙整紀錄，點擊進入即可查看當天的詳細參考資料與延伸探討內容。",
 		"empty": "目前還沒有日誌紀錄",
 		"summaryLine": "彙整 {{articleCount}} 則參考資料 ‧ 深入查證 {{researchCount}} 起事件",
-		"sourcesHeading": "參考資料來源",
-		"aiHeading": "AI 延伸查證",
-		"aiEmpty": "當天沒有 AI 延伸查證紀錄",
-		"webSearches": "查了 {{count}} 次網路搜尋"
+		"sourcesHeading": "參考資料",
+		"aiHeading": "延伸探討",
+		"aiEmpty": "當天沒有延伸探討紀錄",
+		"webSearches": "查了 {{count}} 次網路搜尋",
+		"lastUpdated": "最後更新",
+		"backToLog": "回到日誌"
 	},
 	"terms": {
 		"heading": "服務條款",

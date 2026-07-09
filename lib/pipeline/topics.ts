@@ -1,14 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { MODEL, logAiRun, generateJson } from '@/lib/gemini'
-import { normalizeDomain, normalizeRegions, normalizeReliability } from '@/lib/enums'
-import { slugify } from '@/lib/utils'
-import { toTraditionalZh } from '@/lib/zh'
-
-interface TopicAssignment {
-	topicSlug: string
-	topicTitleZh: string
-	topicTitleEn: string
-}
+import { normalizeRegions, normalizeReliability } from '@/lib/enums'
 
 const RELIABILITY_RANK: Record<string, number> = {
 	VERIFIED: 0,
@@ -17,54 +9,17 @@ const RELIABILITY_RANK: Record<string, number> = {
 	UNVERIFIED: 3,
 }
 
-/** 用 Gemini 把事件歸入既有或新建的核心議題，並更新議題統計。 */
-export async function assignEventToTopic(eventId: string) {
-	const event = await prisma.event.findUnique({ where: { id: eventId } })
-	if (!event) throw new Error('event not found')
-
-	const existing = await prisma.topic.findMany({
-		select: { slug: true, titleZh: true, titleEn: true, domain: true },
-	})
-	const known =
-		existing.map((t) => `${t.slug} [${t.domain}]: ${t.titleZh} / ${t.titleEn}`).join('\n') || '(無)'
-
-	const system =
-		'你把單一新聞事件歸入一個跨時間的「核心議題」。強烈優先沿用既有議題：只要事件與某議題屬於同一條故事線（同一場衝突、同一個政策議程、同一組國家或公司間的角力），就沿用該議題的 slug，即使標題措辭不同。僅在與所有既有議題都明顯無關時才建立新議題。中文一律使用正體中文（臺灣用語）。'
-	const prompt = `事件：${event.titleZh} / ${event.titleEn}\n既有核心議題（slug [領域]: 標題）：\n${known}\n\n只回 JSON：{"topicSlug":"kebab-slug","topicTitleZh":"","topicTitleEn":""}`
-
-	const { data: assignment, usage } = await generateJson<TopicAssignment>({
-		model: MODEL.CLUSTER,
-		system,
-		prompt,
-	})
-	await logAiRun({ eventId, stage: 'CLUSTER', model: MODEL.CLUSTER, usage })
-
-	const slug = slugify(assignment.topicSlug || assignment.topicTitleEn) || 'topic'
-
-	const topic = await prisma.topic.upsert({
-		where: { slug },
-		create: {
-			slug,
-			titleZh: toTraditionalZh(assignment.topicTitleZh),
-			titleEn: assignment.topicTitleEn,
-			domain: normalizeDomain(event.domain),
-			regions: event.regions,
-		},
-		update: {},
-	})
-
-	await prisma.event.update({ where: { id: eventId }, data: { topicId: topic.id } })
-	await refreshTopicStats(topic.id)
-	return { eventId, topicSlug: slug }
-}
-
 interface ConsolidationResult {
 	merges: Array<{ keepSlug: string; mergeSlugs: string[] }>
 }
 
-/** 用 Gemini 找出描述同一故事線的重複議題並合併（事件移轉 → 刪除重複議題 → 重算統計）。 */
+/**
+ * 用 Gemini 找出描述同一故事線的重複脈絡並合併（事件移轉 → 刪除重複脈絡 → 重算統計）。
+ * 只比對 ACTIVE/DORMANT：ARCHIVED 已凍結，比對成本不該隨歷史封存數量累積。
+ */
 export async function consolidateTopics() {
 	const topics = await prisma.topic.findMany({
+		where: { lifecycle: { in: ['ACTIVE', 'DORMANT'] } },
 		select: {
 			id: true,
 			slug: true,

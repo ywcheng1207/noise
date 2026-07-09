@@ -55,6 +55,11 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 							{t('event.researching')}
 						</Badge>
 					)}
+					{event.corroborationCount > 0 ? (
+						<span className='text-muted-foreground text-xs'>
+							{t('event.corroborationCount', { count: event.corroborationCount })}
+						</span>
+					) : null}
 				</div>
 			</div>
 

@@ -84,6 +84,19 @@ enum PipelineStage {
   CLUSTER
   RESEARCH
   SCORE
+  GOVERNANCE
+}
+
+enum TopicLifecycle {
+  ACTIVE
+  DORMANT
+  ARCHIVED
+}
+
+enum CandidateStatus {
+  WATCHING
+  PROMOTED
+  DISMISSED
 }
 
 model Source {
@@ -122,25 +135,74 @@ model Article {
 }
 
 model Topic {
-  id                 String       @id @default(uuid()) @db.Uuid
-  slug               String       @unique
+  id                 String            @id @default(uuid()) @db.Uuid
+  slug               String            @unique
   titleZh            String
   titleEn            String
-  domain             Domain       @default(OTHER)
-  interval           TimeInterval @default(ONGOING)
-  regions            Region[]     @default([])
-  overallReliability Reliability  @default(DEVELOPING)
-  eventCount         Int          @default(0)
-  sourceCount        Int          @default(0)
-  languageCount      Int          @default(0)
+  domain             Domain            @default(OTHER)
+  interval           TimeInterval      @default(ONGOING)
+  regions            Region[]          @default([])
+  overallReliability Reliability       @default(DEVELOPING)
+  eventCount         Int               @default(0)
+  sourceCount        Int               @default(0)
+  languageCount      Int               @default(0)
   spanStart          DateTime?
   spanEnd            DateTime?
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
+  lifecycle          TopicLifecycle    @default(ACTIVE)
+  charterWhyZh       String?
+  charterWhyEn       String?
+  charterCriteriaZh  String?
+  charterCriteriaEn  String?
+  charterActorsZh    String[]          @default([])
+  charterActorsEn    String[]          @default([])
+  digestZh           String?
+  digestEn           String?
+  lastActivityAt     DateTime?
+  dormantAt          DateTime?
+  archivedAt         DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
   events             Event[]
+  linksFrom          TopicLink[]       @relation("LinkFrom")
+  linksTo            TopicLink[]       @relation("LinkTo")
+  candidates         ThreadCandidate[]
 
   @@index([interval])
   @@index([domain])
+  @@index([lifecycle])
+}
+
+model TopicLink {
+  id          String   @id @default(uuid()) @db.Uuid
+  fromTopicId String   @db.Uuid
+  fromTopic   Topic    @relation("LinkFrom", fields: [fromTopicId], references: [id], onDelete: Cascade)
+  toTopicId   String   @db.Uuid
+  toTopic     Topic    @relation("LinkTo", fields: [toTopicId], references: [id], onDelete: Cascade)
+  noteZh      String?
+  noteEn      String?
+  createdAt   DateTime @default(now())
+
+  @@unique([fromTopicId, toTopicId])
+}
+
+model ThreadCandidate {
+  id              String          @id @default(uuid()) @db.Uuid
+  titleZh         String
+  titleEn         String
+  signalZh        String?
+  signalEn        String?
+  domain          Domain          @default(OTHER)
+  regions         Region[]        @default([])
+  mentionCount    Int             @default(1)
+  firstSpottedAt  DateTime        @default(now())
+  lastSpottedAt   DateTime        @default(now())
+  status          CandidateStatus @default(WATCHING)
+  promotedTopicId String?         @db.Uuid
+  promotedTopic   Topic?          @relation(fields: [promotedTopicId], references: [id])
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([status])
 }
 
 model Event {
@@ -158,6 +220,9 @@ model Event {
   narrativeEn        String?
   rubricVersion      String?
   status             EventStatus     @default(CANDIDATE)
+  closedAt           DateTime?
+  corroborationCount Int             @default(0)
+  refreshedAt        DateTime?
   firstSeenAt        DateTime        @default(now())
   lastUpdatedAt      DateTime        @updatedAt
   articles           Article[]
@@ -167,6 +232,7 @@ model Event {
   @@index([status])
   @@index([topicId])
   @@index([importanceScore])
+  @@index([status, closedAt])
 }
 
 model EventTimeline {
@@ -176,36 +242,36 @@ model EventTimeline {
   occurredAt        DateTime?
   occurredPrecision String?
   occurredLabel     String?
-  descZh        String
-  descEn        String
-  sourceUrl     String?
-  sourceLabel   String?
-  isConflicting Boolean  @default(false)
-  rank          Int      @default(0)
-  createdAt     DateTime @default(now())
+  descZh            String
+  descEn            String
+  sourceUrl         String?
+  sourceLabel       String?
+  isConflicting     Boolean   @default(false)
+  rank              Int       @default(0)
+  createdAt         DateTime  @default(now())
 
   @@index([eventId])
 }
 
 model EventSource {
-  id              String          @id @default(uuid()) @db.Uuid
-  eventId         String          @db.Uuid
-  event           Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  articleId       String?         @db.Uuid
-  sourceId        String?         @db.Uuid
-  source          Source?         @relation(fields: [sourceId], references: [id])
-  sourceName      String
-  externalUrl     String?
-  language        String?
-  mediaType       String?
+  id               String          @id @default(uuid()) @db.Uuid
+  eventId          String          @db.Uuid
+  event            Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  articleId        String?         @db.Uuid
+  sourceId         String?         @db.Uuid
+  source           Source?         @relation(fields: [sourceId], references: [id])
+  sourceName       String
+  externalUrl      String?
+  language         String?
+  mediaType        String?
   credibilityScore Float?
-  credibilityTier CredibilityTier @default(UNVERIFIED)
-  isAuthoritative Boolean         @default(false)
-  reasoningZh     String?
-  reasoningEn     String?
-  rubricVersion   String?
-  rank            Int             @default(0)
-  createdAt       DateTime        @default(now())
+  credibilityTier  CredibilityTier @default(UNVERIFIED)
+  isAuthoritative  Boolean         @default(false)
+  reasoningZh      String?
+  reasoningEn      String?
+  rubricVersion    String?
+  rank             Int             @default(0)
+  createdAt        DateTime        @default(now())
 
   @@index([eventId])
 }

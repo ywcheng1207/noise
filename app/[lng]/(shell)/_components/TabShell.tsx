@@ -55,7 +55,7 @@ export function TabShell({
 	const activeTab =
 		secondSegment === 'log'
 			? 'log'
-			: secondSegment === 'topic' || secondSegment === 'event'
+			: secondSegment === 'topic' || secondSegment === 'event' || secondSegment === 'candidates'
 				? 'topics'
 				: rootTab
 
@@ -95,7 +95,13 @@ export function TabShell({
 					<div className='flex flex-col gap-4'>
 						{/* 麵包屑 parallel route 在跨路由樹導航時偶爾不會正確 fallback 回 default.tsx(Next.js 已知限制),
 						    根路徑一律不該有麵包屑,直接用當下路徑主動擋掉,不依賴 slot 是否過期。 */}
-						{isAtRoot ? null : breadcrumb}
+						{isAtRoot ? null : (
+							<div className='sticky top-0 z-10'>
+								<div className='bg-card pb-2'>{breadcrumb}</div>
+								{/* 內容捲動到麵包屑下方時用漸層淡出,避免文字被硬生生切一半的觀感 */}
+								<div className='from-card h-4 bg-gradient-to-b to-transparent' />
+							</div>
+						)}
 						{content}
 					</div>
 				</ScrollContainerProvider>

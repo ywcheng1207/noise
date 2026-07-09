@@ -1,5 +1,6 @@
 import {
 	AlertTriangle,
+	Archive,
 	CheckCircle2,
 	Clock,
 	Cpu,
@@ -7,6 +8,7 @@ import {
 	HelpCircle,
 	Landmark,
 	type LucideIcon,
+	Moon,
 	MoreHorizontal,
 	Shield,
 	ShieldAlert,
@@ -60,4 +62,16 @@ export const DOMAIN_ICON: Record<string, LucideIcon> = {
 	DISASTER: AlertTriangle,
 	SOCIETY: Users,
 	OTHER: MoreHorizontal,
+}
+
+/** TopicLifecycle enum 值 → badge 變體（ACTIVE 是預設狀態，不需要特別標記）。 */
+export const LIFECYCLE_VARIANT: Record<string, BadgeVariant> = {
+	DORMANT: 'muted',
+	ARCHIVED: 'muted',
+}
+
+/** TopicLifecycle enum 值 → icon。 */
+export const LIFECYCLE_ICON: Record<string, LucideIcon> = {
+	DORMANT: Moon,
+	ARCHIVED: Archive,
 }

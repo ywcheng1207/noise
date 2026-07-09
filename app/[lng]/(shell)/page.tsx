@@ -37,6 +37,8 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 		languageCount: tp.languageCount,
 		updatedAt: tp.updatedAt.toISOString(),
 		latestEventTitles: tp.events.map((ev) => (isZh ? ev.titleZh : ev.titleEn)),
+		lifecycle: tp.lifecycle,
+		lifecycleLabel: t(`topic.lifecycle.${tp.lifecycle}`),
 	}))
 
 	const domainsPresent = new Set(topics.map((tp) => tp.domain))
@@ -71,6 +73,8 @@ export default async function OverviewPage({ params }: { params: Promise<{ lng: 
 		updated: t('overview.updated'),
 		empty: t('overview.empty'),
 		searchPlaceholder: t('overview.searchPlaceholder'),
+		showArchived: t('overview.showArchived'),
+		candidatePool: t('overview.candidatePool'),
 		stats: {
 			events: t('stats.events'),
 			sources: t('stats.sources'),

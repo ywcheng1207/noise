@@ -3,9 +3,11 @@ import { MapPin } from 'lucide-react'
 import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { ReliabilityBadge } from '@/components/ReliabilityBadge'
+import { LifecycleBadge } from '@/components/LifecycleBadge'
 import { REGION_LABELS } from '@/lib/regions'
 import { formatOccurred } from '@/lib/dates'
 import { TopicPageEventsList, type TopicPageEventData } from './_components/TopicPageEventsList'
+import { TopicPageCharter, type TopicLinkData } from './_components/TopicPageCharter'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,7 +18,11 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 
 	const topic = await prisma.topic.findUnique({
 		where: { slug },
-		include: { events: { orderBy: { firstSeenAt: 'desc' } } },
+		include: {
+			events: { orderBy: { firstSeenAt: 'desc' } },
+			linksFrom: { include: { toTopic: { select: { slug: true, titleZh: true, titleEn: true } } } },
+			linksTo: { include: { fromTopic: { select: { slug: true, titleZh: true, titleEn: true } } } },
+		},
 	})
 	if (!topic) notFound()
 
@@ -36,6 +42,21 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 		seenAt: ev.firstSeenAt.toISOString(),
 	}))
 
+	const links: TopicLinkData[] = [
+		...topic.linksFrom.map((l) => ({
+			slug: l.toTopic.slug,
+			title: isZh ? l.toTopic.titleZh : l.toTopic.titleEn,
+			note: isZh ? l.noteZh : l.noteEn,
+		})),
+		...topic.linksTo.map((l) => ({
+			slug: l.fromTopic.slug,
+			title: isZh ? l.fromTopic.titleZh : l.fromTopic.titleEn,
+			note: isZh ? l.noteZh : l.noteEn,
+		})),
+	]
+
+	const hasCharter = Boolean(topic.charterWhyZh || topic.charterCriteriaZh || topic.digestZh)
+
 	return (
 		<div className='mx-auto flex w-full max-w-3xl flex-col gap-5'>
 			<div>
@@ -45,6 +66,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 						reliability={topic.overallReliability}
 						label={t(`reliability.${topic.overallReliability}`)}
 					/>
+					<LifecycleBadge lifecycle={topic.lifecycle} label={t(`topic.lifecycle.${topic.lifecycle}`)} />
 					{topic.regions.map((r) => (
 						<span
 							key={r}
@@ -60,6 +82,24 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 				</div>
 				<p className='text-muted-foreground mt-2 text-sm'>{t('topic.spread')}</p>
 			</div>
+
+			{hasCharter ? (
+				<TopicPageCharter
+					digest={isZh ? topic.digestZh : topic.digestEn}
+					why={isZh ? topic.charterWhyZh : topic.charterWhyEn}
+					criteria={isZh ? topic.charterCriteriaZh : topic.charterCriteriaEn}
+					actors={isZh ? topic.charterActorsZh : topic.charterActorsEn}
+					links={links}
+					lng={lng}
+					labels={{
+						digestHeading: t('topic.digestHeading'),
+						whyHeading: t('topic.whyHeading'),
+						criteriaHeading: t('topic.criteriaHeading'),
+						actorsHeading: t('topic.actorsHeading'),
+						linksHeading: t('topic.linksHeading'),
+					}}
+				/>
+			) : null}
 
 			<TopicPageEventsList
 				lng={lng}

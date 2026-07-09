@@ -19,18 +19,25 @@
 		"reliability": "Reliability",
 		"empty": "No topics match the current filters",
 		"updated": "Updated",
-		"searchPlaceholder": "Search topics..."
+		"searchPlaceholder": "Search topics...",
+		"showArchived": "Show archived",
+		"candidatePool": "Watchlist"
 	},
 	"intro": {
 		"pipelineHeading": "How we organize information",
 		"pipelineBody": "The system continuously tracks a range of public news and financial-information sources, automatically grouping reports that describe the same story into a single \"topic,\" and arranging individual \"events\" within it in chronological order. For each event, AI cross-checks across sources (regardless of language), searches public information, and produces a summary and timeline, while recording each source and rating its credibility.",
-		"pipelineImageAlt": "Topics list screen showing topic titles, credibility tags, domain/region tags, and a world map",
+		"pipelineImageAlt": "A topic card showing its title, credibility tag, domain/region tags, and a world map",
+		"pipelineCaption": "A topic card: title, credibility tag, regions, and stats at a glance",
 		"linkCheckHeading": "Links are verified before publishing",
 		"linkCheckBody": "Every external link cited during AI research is checked with a real request before it's saved. Dead links are swapped for the page actually visited during research — or dropped entirely if no reliable substitute exists — so you never land on a broken page.",
+		"linkCheckCaption": "Every external link is actually opened and checked before it's saved",
 		"credibilityHeading": "How credibility is judged",
 		"credibilityIntro": "Credibility ratings apply to an individual report or an individual claim — not to an overall judgment of a media outlet or journalist. Ratings weigh whether a source is official or authoritative, whether it's attributed by name, and whether it's corroborated by other independent sources.",
-		"credibilityImageAlt": "An event page's source credibility ranking, showing individual sources and their credibility tags",
+		"credibilityImageAlt": "A source card showing the source name, credibility tag, and the reasoning behind its rating",
+		"credibilityCaption": "Every source's rating comes with a concrete reason",
 		"topicTiersHeading": "Topic credibility tags",
+		"topicTiersImageAlt": "Close-up of the credibility tag in the corner of a topic card",
+		"topicTiersCaption": "The tag in a topic card's corner reflects where verification currently stands",
 		"topicTier": {
 			"VERIFIED": "Cross-checked across multiple sources with consistent, well-supported reporting.",
 			"DEVELOPING": "Still being actively tracked — information may be incomplete or still changing.",
@@ -38,13 +45,19 @@
 			"UNVERIFIED": "Currently based on only one or a few sources, not yet cross-checked."
 		},
 		"sourceTiersHeading": "Individual source credibility tiers",
+		"sourceTiersImageAlt": "A source card showing its credibility tier tag",
+		"sourceTiersCaption": "Individual sources ranked by credibility tier",
 		"sourceTier": {
 			"OFFICIAL": "Published directly by an official body, involved party, or first-hand authoritative source.",
 			"HIGH": "Named reporting from a named outlet, corroborated by other sources.",
 			"MEDIUM": "Has a named source, but not yet corroborated by enough other sources.",
 			"LOW": "Source isn't clearly named, or its account diverges from other sources.",
 			"UNVERIFIED": "A source or claim still awaiting further verification."
-		}
+		},
+		"candidatesHeading": "Watchlist",
+		"candidatesBody": "Some signals aren't yet substantial enough to become their own topic, but aren't irrelevant either — these go into a watchlist first, and we keep an eye on whether more days and more sources corroborate them. Once there's enough evidence, a signal gets promoted to a fully tracked topic; you can always see why something hasn't made the cut yet.",
+		"candidatesImageAlt": "A watchlist card showing its title, why it's being watched, and how many times it's been mentioned",
+		"candidatesCaption": "A candidate: title, why it's being watched, and how many times it's come up"
 	},
 	"region": {
 		"all": "All"
@@ -83,7 +96,22 @@
 		"backToOverview": "Back to overview",
 		"searchPlaceholder": "Search events...",
 		"searchEmpty": "No events match the current search",
-		"dateRange": "Date range"
+		"dateRange": "Date range",
+		"digestHeading": "Current state",
+		"whyHeading": "Why it matters",
+		"criteriaHeading": "What counts as part of this thread",
+		"actorsHeading": "Key actors",
+		"linksHeading": "Related threads",
+		"lifecycle": {
+			"ACTIVE": "Active",
+			"DORMANT": "Dormant",
+			"ARCHIVED": "Archived"
+		}
+	},
+	"candidates": {
+		"intro": "The watchlist tracks signals that haven't yet accumulated enough evidence to become a fully tracked thread. The system keeps an eye on them and promotes a signal to a thread once it's been corroborated across multiple days and sources — so you can always see why something hasn't made the cut yet.",
+		"empty": "The watchlist is empty right now",
+		"mentionCount": "Mentioned {{count}} times"
 	},
 	"event": {
 		"background": "Summary",
@@ -97,7 +125,8 @@
 		"appeal": "Request correction",
 		"backToTopic": "Back to topic",
 		"researching": "Researching",
-		"researchingHint": "This event is still being cross-checked across sources. Check back soon for the full summary and ranked sources."
+		"researchingHint": "This event is still being cross-checked across sources. Check back soon for the full summary and ranked sources.",
+		"corroborationCount": "Corroborated by {{count}} follow-up report(s)"
 	},
 	"footer": {
 		"terms": "Terms of Service",
@@ -105,13 +134,15 @@
 	},
 	"log": {
 		"heading": "Log",
-		"pageIntro": "逆風 continuously monitors a range of public news and financial-information platforms, periodically compiling their publicly published headlines and summaries through an automated process, as reference material for later cross-source comparison, fact-checking, and credibility assessment. Below is the daily activity log — click into a day to see its sources and AI research in detail.",
+		"pageIntro": "逆風 continuously monitors a range of public news and financial-information platforms, periodically compiling their publicly published headlines and summaries through an automated process, as reference material for later cross-source comparison, fact-checking, and credibility assessment. Below is the daily activity log — click into a day to see its reference materials and extended discussion in detail.",
 		"empty": "No log entries yet",
 		"summaryLine": "Compiled {{articleCount}} reference items ‧ researched {{researchCount}} events in depth",
-		"sourcesHeading": "Reference sources",
-		"aiHeading": "AI research expansions",
-		"aiEmpty": "No AI research activity that day",
-		"webSearches": "Ran {{count}} web searches"
+		"sourcesHeading": "Reference materials",
+		"aiHeading": "Extended discussion",
+		"aiEmpty": "No extended discussion that day",
+		"webSearches": "Ran {{count}} web searches",
+		"lastUpdated": "Last updated",
+		"backToLog": "Back to log"
 	},
 	"terms": {
 		"heading": "Terms of Service",
