@@ -25,7 +25,7 @@ export function Collapsible({
 			<button
 				type='button'
 				onClick={handleToggle}
-				className='flex w-full cursor-pointer items-center justify-between gap-2 text-left'
+				className='hover:bg-secondary/60 -mx-2 flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-left transition-colors duration-200'
 			>
 				<h2 className='text-sm font-medium'>{title}</h2>
 				<ChevronDown

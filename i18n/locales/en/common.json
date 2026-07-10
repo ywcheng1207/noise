@@ -2,7 +2,7 @@
 	"appName": "逆風",
 	"tagline": "News event filtering & credibility",
 	"nav": {
-		"overview": "Overview",
+		"overview": "Topics",
 		"log": "Log"
 	},
 	"source": {
@@ -29,7 +29,7 @@
 		"pipelineImageAlt": "A topic card showing its title, credibility tag, domain/region tags, and a world map",
 		"pipelineCaption": "A topic card: title, credibility tag, regions, and stats at a glance",
 		"charterHeading": "A topic's charter",
-		"charterBody": "Every actively-tracked topic carries a compact \"charter\": its current state in one line, why it matters, what should (and shouldn't) count as a continuation of it, and the key actors involved. New reports are matched against these criteria to decide where they belong, and the criteria themselves are refreshed as the story develops. A topic that's gone quiet for a while is marked \"dormant,\" and eventually archived if nothing new comes in — you'll see the matching tag in the corner of its card.",
+		"charterBody": "Every actively-tracked topic carries a compact \"charter\": its current state in one line, why it matters, what should (and shouldn't) count as a continuation of it, and the key actors involved — plus a list of related threads when a topic is clearly connected to others. New reports are matched against these criteria to decide where they belong, and the criteria themselves are refreshed as the story develops.",
 		"charterImageAlt": "A topic page's charter block, showing the current state, why it matters, inclusion criteria, and key actors sections",
 		"charterCaption": "A topic's charter: current state, why it matters, inclusion criteria, key actors",
 		"linkCheckHeading": "Links are verified before publishing",
@@ -47,6 +47,14 @@
 			"DEVELOPING": "Still being actively tracked — information may be incomplete or still changing.",
 			"DISPUTED": "Sources give noticeably inconsistent or conflicting accounts of the same event.",
 			"UNVERIFIED": "Currently based on only one or a few sources, not yet cross-checked."
+		},
+		"lifecycleHeading": "Topic lifecycle",
+		"lifecycleImageAlt": "A topic card showing both a dormant tag and a credibility tag",
+		"lifecycleCaption": "The dormant tag appears just to the left of the credibility tag",
+		"lifecycleState": {
+			"ACTIVE": "New events or follow-up reports keep coming in — no extra tag shows on the card. This is the default state.",
+			"DORMANT": "Automatically marked dormant after 14 days with no new activity; it springs back to active the moment a new report comes in.",
+			"ARCHIVED": "Dormant topics are reviewed periodically and archived once the story appears to have reached a clear conclusion (a ceasefire signed, an election result confirmed) — not simply after a fixed amount of time; some stay dormant indefinitely."
 		},
 		"sourceTiersHeading": "Individual source credibility tiers",
 		"sourceTiersImageAlt": "A source card showing its credibility tier tag",
@@ -97,7 +105,7 @@
 	},
 	"topic": {
 		"spread": "Events radiate over time",
-		"backToOverview": "Back to overview",
+		"backToOverview": "Back to topics",
 		"searchPlaceholder": "Search events...",
 		"searchEmpty": "No events match the current search",
 		"dateRange": "Date range",

@@ -1,12 +1,25 @@
 import type { ReactNode } from 'react'
 import Image from 'next/image'
-import { CheckCircle2, Link2, Scale, ScrollText, Search, ShieldCheck, Tags, Telescope, Workflow } from 'lucide-react'
+import {
+	CheckCircle2,
+	Link2,
+	Radio,
+	Scale,
+	ScrollText,
+	Search,
+	ShieldCheck,
+	Tags,
+	Telescope,
+	Workflow,
+} from 'lucide-react'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
 import { ReliabilityBadge } from '@/components/ReliabilityBadge'
 import { Carousel, type CarouselSlide } from '@/components/ui/carousel'
-import { TIER_ICON, TIER_VARIANT } from '@/lib/ui'
+import { LIFECYCLE_ICON, LIFECYCLE_VARIANT, TIER_ICON, TIER_VARIANT } from '@/lib/ui'
 import { RELIABILITIES, TIERS } from '@/lib/enums'
+
+const LIFECYCLE_STATES = ['DORMANT', 'ARCHIVED'] as const
 
 export async function IntroContent({ lng }: { lng: string }) {
 	const { t } = await getT(lng)
@@ -15,6 +28,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 	const sourceCardHeight = isZh ? 132 : 152
 	const topicBadgeHeight = isZh ? 52 : 76
 	const charterCardHeight = isZh ? 364 : 470
+	const lifecycleBadgeWidth = isZh ? 142 : 165
 
 	const slides: CarouselSlide[] = [
 		{
@@ -101,6 +115,40 @@ export async function IntroContent({ lng }: { lng: string }) {
 			),
 		},
 		{
+			key: 'lifecycle',
+			content: (
+				<IntroSlide icon={<Radio className='text-primary size-4' />} heading={t('intro.lifecycleHeading')}>
+					<IntroExample
+						src={`/intro/lifecycle-badge-${localeSuffix}.png`}
+						alt={t('intro.lifecycleImageAlt')}
+						width={lifecycleBadgeWidth}
+						height={20}
+						caption={t('intro.lifecycleCaption')}
+					/>
+					<ul className='flex flex-col gap-1.5'>
+						<li className='flex items-start gap-2 text-sm'>
+							<span className='border-muted-foreground/40 text-muted-foreground mt-0.5 inline-flex shrink-0 items-center rounded-lg border border-dashed px-2 py-0.5 text-xs font-medium'>
+								{t('topic.lifecycle.ACTIVE')}
+							</span>
+							<span className='text-muted-foreground'>{t('intro.lifecycleState.ACTIVE')}</span>
+						</li>
+						{LIFECYCLE_STATES.map((key) => {
+							const LifecycleIcon = LIFECYCLE_ICON[key]
+							return (
+								<li key={key} className='flex items-start gap-2 text-sm'>
+									<Badge variant={LIFECYCLE_VARIANT[key] ?? 'muted'} className='mt-0.5 shrink-0'>
+										<LifecycleIcon className='size-3' />
+										{t(`topic.lifecycle.${key}`)}
+									</Badge>
+									<span className='text-muted-foreground'>{t(`intro.lifecycleState.${key}`)}</span>
+								</li>
+							)
+						})}
+					</ul>
+				</IntroSlide>
+			),
+		},
+		{
 			key: 'source-tiers',
 			content: (
 				<IntroSlide icon={<Scale className='text-primary size-4' />} heading={t('intro.sourceTiersHeading')}>
@@ -157,12 +205,17 @@ export async function IntroContent({ lng }: { lng: string }) {
 
 function IntroSlide({ icon, heading, children }: { icon: ReactNode; heading: string; children: ReactNode }) {
 	return (
-		<section className='bg-secondary/30 flex h-full flex-col justify-center gap-3 rounded-lg p-4 sm:p-5'>
-			<h2 className='flex items-center gap-2 text-base font-medium'>
-				{icon}
-				{heading}
-			</h2>
-			{children}
+		<section className='bg-secondary/30 flex h-full flex-col items-center justify-center rounded-lg p-4 sm:p-5'>
+			{/* 卡片背景滿版延展沒問題,但文字內容在寬螢幕上不能跟著無限延展——
+			    一行太長不易閱讀。內容區塊另外設寬度上限並置中,窄螢幕(< max-w)
+			    則維持滿版,不會縮水。 */}
+			<div className='flex w-full max-w-2xl flex-col gap-3'>
+				<h2 className='flex items-center gap-2 text-base font-medium'>
+					{icon}
+					{heading}
+				</h2>
+				{children}
+			</div>
 		</section>
 	)
 }
