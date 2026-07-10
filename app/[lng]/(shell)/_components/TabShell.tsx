@@ -5,7 +5,6 @@ import { usePathname, useRouter } from 'next/navigation'
 
 import { ScrollContainerProvider } from '@/components/ScrollContainerContext'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { cn } from '@/lib/utils'
 
 type RootTab = 'intro' | 'topics'
 
@@ -90,16 +89,10 @@ export function TabShell({
 				key={activeTab}
 				ref={scrollContainerRef}
 				value={activeTab}
-				className={cn(
-					'scrollbar-thin overflow-y-auto pt-0 sm:pt-0',
-					// 議題/日誌分頁內容長度不定(可能上百則),需要固定高度撐滿可視範圍再內部捲動;
-					// 介紹分頁內容短且長度固定,硬撐滿同樣的高度只會在卡片底下留一大塊空白,
-					// 改成跟內容一樣高,捲動容器本身也就用不到了。
-					activeTab === 'intro' ? 'flex-none' : 'min-h-0 flex-1',
-				)}
+				className='min-h-0 flex-1 scrollbar-thin overflow-y-auto pt-0 sm:pt-0'
 			>
 				<ScrollContainerProvider value={scrollContainerRef}>
-					<div className='flex flex-col gap-4'>
+					<div className='flex h-full flex-col gap-4'>
 						{/* overflow 容器的 clip 邊界在 padding box 外緣,不是內容邊緣——面板本身若留
 						    top padding,sticky 子元素的 top:0 只會貼齊 padding 內緣,兩者之間就會空出
 						    一段「已捲動但還沒被裁掉」的內容可見縫隙。做法是把面板的 top padding 歸零,
@@ -109,7 +102,7 @@ export function TabShell({
 						    (Next.js 已知限制),根路徑一律不該有麵包屑,直接用當下路徑主動擋掉,
 						    不依賴 slot 是否過期。 */}
 						{isAtRoot ? (
-							<div className='pt-4 sm:pt-6'>{content}</div>
+							<div className='h-full pt-4 sm:pt-6'>{content}</div>
 						) : (
 							<>
 								<div className='bg-card sticky top-0 z-10 pt-4 pb-2 sm:pt-6'>{breadcrumb}</div>

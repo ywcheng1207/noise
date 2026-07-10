@@ -146,16 +146,18 @@ export async function IntroContent({ lng }: { lng: string }) {
 	]
 
 	return (
-		<div className='flex flex-col gap-6'>
+		<div className='flex h-full flex-col gap-6'>
 			<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('overview.subtitle')}</p>
-			<Carousel slides={slides} />
+			<div className='min-h-0 flex-1'>
+				<Carousel slides={slides} />
+			</div>
 		</div>
 	)
 }
 
 function IntroSlide({ icon, heading, children }: { icon: ReactNode; heading: string; children: ReactNode }) {
 	return (
-		<section className='bg-secondary/30 flex min-h-44 flex-col gap-3 rounded-lg p-4 sm:p-5'>
+		<section className='bg-secondary/30 flex h-full flex-col justify-center gap-3 rounded-lg p-4 sm:p-5'>
 			<h2 className='flex items-center gap-2 text-base font-medium'>
 				{icon}
 				{heading}
