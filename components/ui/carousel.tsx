@@ -62,12 +62,26 @@ export function Carousel({ slides }: { slides: CarouselSlide[] }) {
 	}, [emblaApi])
 
 	return (
-		<div aria-roledescription='carousel' className='relative'>
+		<div aria-roledescription='carousel' className='flex items-center gap-2'>
+			{/* 按鈕放在輪播圖左右兩側、垂直置中,不疊在卡片內容上——就不會有蓋住文字的問題,
+			    也不需要再另外為手機隱藏。 */}
+			<button
+				type='button'
+				onClick={handlePrev}
+				aria-label='previous slide'
+				className={cn(
+					'bg-secondary text-secondary-foreground flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full shadow-sm transition-all duration-200 hover:scale-110 hover:bg-secondary/80',
+					!canScrollPrev && 'pointer-events-none opacity-0',
+				)}
+			>
+				<ChevronLeft className='size-5' />
+			</button>
+
 			{/* 外層負責裁切高度(隨目前分頁動畫調整),內層才是 embla 真正量測/監看的 viewport——
 			    兩者疊在同一個 DOM 節點的話,改高度會觸發 embla 自己的 resize 偵測進而 reInit,
 			    reInit 又把捲動位置重算回去,點下一頁的效果當場被自己蓋掉,形成循環。 */}
 			<div
-				className='overflow-hidden transition-[height] duration-300 ease-out'
+				className='min-w-0 flex-1 overflow-hidden transition-[height] duration-300 ease-out'
 				style={height ? { height } : undefined}
 			>
 				<div ref={emblaRef} className='overflow-hidden'>
@@ -90,25 +104,12 @@ export function Carousel({ slides }: { slides: CarouselSlide[] }) {
 				</div>
 			</div>
 
-			{/* 手機用滑動切換即可,疊在內容上的按鈕在窄螢幕反而容易擋到文字;
-			    桌機版對齊標題列高度(而非整卡垂直置中),避免蓋到內文文字 */}
-			<button
-				type='button'
-				onClick={handlePrev}
-				aria-label='previous slide'
-				className={cn(
-					'bg-background/90 text-foreground absolute top-8 left-2 hidden size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full shadow-md backdrop-blur-sm transition-all duration-200 hover:scale-110 sm:flex',
-					!canScrollPrev && 'pointer-events-none opacity-0',
-				)}
-			>
-				<ChevronLeft className='size-5' />
-			</button>
 			<button
 				type='button'
 				onClick={handleNext}
 				aria-label='next slide'
 				className={cn(
-					'bg-background/90 text-foreground absolute top-8 right-2 hidden size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full shadow-md backdrop-blur-sm transition-all duration-200 hover:scale-110 sm:flex',
+					'bg-secondary text-secondary-foreground flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full shadow-sm transition-all duration-200 hover:scale-110 hover:bg-secondary/80',
 					!canScrollNext && 'pointer-events-none opacity-0',
 				)}
 			>

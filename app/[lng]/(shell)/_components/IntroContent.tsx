@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import Image from 'next/image'
-import { CheckCircle2, Link2, Scale, Search, ShieldCheck, Tags, Telescope, Workflow } from 'lucide-react'
+import { CheckCircle2, Link2, Scale, ScrollText, Search, ShieldCheck, Tags, Telescope, Workflow } from 'lucide-react'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
 import { ReliabilityBadge } from '@/components/ReliabilityBadge'
@@ -14,6 +14,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 	const localeSuffix = isZh ? 'zh-hant' : 'en'
 	const sourceCardHeight = isZh ? 132 : 152
 	const topicBadgeHeight = isZh ? 52 : 76
+	const charterCardHeight = isZh ? 364 : 470
 
 	const slides: CarouselSlide[] = [
 		{
@@ -28,6 +29,21 @@ export async function IntroContent({ lng }: { lng: string }) {
 						caption={t('intro.pipelineCaption')}
 					/>
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.pipelineBody')}</p>
+				</IntroSlide>
+			),
+		},
+		{
+			key: 'charter',
+			content: (
+				<IntroSlide icon={<ScrollText className='text-primary size-4' />} heading={t('intro.charterHeading')}>
+					<IntroExample
+						src={`/intro/charter-card-${localeSuffix}.png`}
+						alt={t('intro.charterImageAlt')}
+						width={604}
+						height={charterCardHeight}
+						caption={t('intro.charterCaption')}
+					/>
+					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.charterBody')}</p>
 				</IntroSlide>
 			),
 		},
