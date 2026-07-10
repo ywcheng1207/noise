@@ -1,21 +1,9 @@
-import type { ReactNode } from 'react'
 import Image from 'next/image'
-import {
-	CheckCircle2,
-	Link2,
-	Radio,
-	Scale,
-	ScrollText,
-	Search,
-	ShieldCheck,
-	Tags,
-	Telescope,
-	Workflow,
-} from 'lucide-react'
+import { CheckCircle2, Link2, Search } from 'lucide-react'
 import { getT } from '@/i18n'
 import { Badge } from '@/components/Badge'
 import { ReliabilityBadge } from '@/components/ReliabilityBadge'
-import { Carousel, type CarouselSlide } from '@/components/ui/carousel'
+import { IntroStepNavigator, type IntroStep } from './IntroStepNavigator'
 import { LIFECYCLE_ICON, LIFECYCLE_VARIANT, TIER_ICON, TIER_VARIANT } from '@/lib/ui'
 import { RELIABILITIES, TIERS } from '@/lib/enums'
 
@@ -30,11 +18,12 @@ export async function IntroContent({ lng }: { lng: string }) {
 	const charterCardHeight = isZh ? 364 : 470
 	const lifecycleBadgeWidth = isZh ? 142 : 165
 
-	const slides: CarouselSlide[] = [
+	const steps: IntroStep[] = [
 		{
 			key: 'pipeline',
+			title: t('intro.pipelineHeading'),
 			content: (
-				<IntroSlide icon={<Workflow className='text-primary size-4' />} heading={t('intro.pipelineHeading')}>
+				<>
 					<IntroExample
 						src={`/intro/topic-card-${localeSuffix}.png`}
 						alt={t('intro.pipelineImageAlt')}
@@ -43,13 +32,14 @@ export async function IntroContent({ lng }: { lng: string }) {
 						caption={t('intro.pipelineCaption')}
 					/>
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.pipelineBody')}</p>
-				</IntroSlide>
+				</>
 			),
 		},
 		{
 			key: 'charter',
+			title: t('intro.charterHeading'),
 			content: (
-				<IntroSlide icon={<ScrollText className='text-primary size-4' />} heading={t('intro.charterHeading')}>
+				<>
 					<IntroExample
 						src={`/intro/charter-card-${localeSuffix}.png`}
 						alt={t('intro.charterImageAlt')}
@@ -58,25 +48,24 @@ export async function IntroContent({ lng }: { lng: string }) {
 						caption={t('intro.charterCaption')}
 					/>
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.charterBody')}</p>
-				</IntroSlide>
+				</>
 			),
 		},
 		{
 			key: 'link-check',
+			title: t('intro.linkCheckHeading'),
 			content: (
-				<IntroSlide icon={<Link2 className='text-primary size-4' />} heading={t('intro.linkCheckHeading')}>
+				<>
 					<LinkCheckDiagram caption={t('intro.linkCheckCaption')} />
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.linkCheckBody')}</p>
-				</IntroSlide>
+				</>
 			),
 		},
 		{
 			key: 'credibility',
+			title: t('intro.credibilityHeading'),
 			content: (
-				<IntroSlide
-					icon={<ShieldCheck className='text-primary size-4' />}
-					heading={t('intro.credibilityHeading')}
-				>
+				<>
 					<IntroExample
 						src={`/intro/source-card-${localeSuffix}.png`}
 						alt={t('intro.credibilityImageAlt')}
@@ -85,13 +74,14 @@ export async function IntroContent({ lng }: { lng: string }) {
 						caption={t('intro.credibilityCaption')}
 					/>
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.credibilityIntro')}</p>
-				</IntroSlide>
+				</>
 			),
 		},
 		{
 			key: 'topic-tiers',
+			title: t('intro.topicTiersHeading'),
 			content: (
-				<IntroSlide icon={<Tags className='text-primary size-4' />} heading={t('intro.topicTiersHeading')}>
+				<>
 					<IntroExample
 						src={`/intro/topic-badge-${localeSuffix}.png`}
 						alt={t('intro.topicTiersImageAlt')}
@@ -102,22 +92,19 @@ export async function IntroContent({ lng }: { lng: string }) {
 					<ul className='flex flex-col gap-1.5'>
 						{RELIABILITIES.map((key) => (
 							<li key={key} className='flex items-start gap-2 text-sm'>
-								<ReliabilityBadge
-									reliability={key}
-									label={t(`reliability.${key}`)}
-									className='mt-0.5 shrink-0'
-								/>
+								<ReliabilityBadge reliability={key} label={t(`reliability.${key}`)} className='mt-0.5 shrink-0' />
 								<span className='text-muted-foreground'>{t(`intro.topicTier.${key}`)}</span>
 							</li>
 						))}
 					</ul>
-				</IntroSlide>
+				</>
 			),
 		},
 		{
 			key: 'lifecycle',
+			title: t('intro.lifecycleHeading'),
 			content: (
-				<IntroSlide icon={<Radio className='text-primary size-4' />} heading={t('intro.lifecycleHeading')}>
+				<>
 					<IntroExample
 						src={`/intro/lifecycle-badge-${localeSuffix}.png`}
 						alt={t('intro.lifecycleImageAlt')}
@@ -145,13 +132,14 @@ export async function IntroContent({ lng }: { lng: string }) {
 							)
 						})}
 					</ul>
-				</IntroSlide>
+				</>
 			),
 		},
 		{
 			key: 'source-tiers',
+			title: t('intro.sourceTiersHeading'),
 			content: (
-				<IntroSlide icon={<Scale className='text-primary size-4' />} heading={t('intro.sourceTiersHeading')}>
+				<>
 					<IntroExample
 						src={`/intro/source-card-${localeSuffix}.png`}
 						alt={t('intro.sourceTiersImageAlt')}
@@ -173,13 +161,14 @@ export async function IntroContent({ lng }: { lng: string }) {
 							)
 						})}
 					</ul>
-				</IntroSlide>
+				</>
 			),
 		},
 		{
 			key: 'candidates',
+			title: t('intro.candidatesHeading'),
 			content: (
-				<IntroSlide icon={<Telescope className='text-primary size-4' />} heading={t('intro.candidatesHeading')}>
+				<>
 					<IntroExample
 						src={`/intro/candidate-card-${localeSuffix}.png`}
 						alt={t('intro.candidatesImageAlt')}
@@ -188,7 +177,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 						caption={t('intro.candidatesCaption')}
 					/>
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.candidatesBody')}</p>
-				</IntroSlide>
+				</>
 			),
 		},
 	]
@@ -197,26 +186,9 @@ export async function IntroContent({ lng }: { lng: string }) {
 		<div className='flex h-full flex-col gap-6'>
 			<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('overview.subtitle')}</p>
 			<div className='min-h-0 flex-1'>
-				<Carousel slides={slides} />
+				<IntroStepNavigator steps={steps} stepLabel={t('intro.stepLabel')} />
 			</div>
 		</div>
-	)
-}
-
-function IntroSlide({ icon, heading, children }: { icon: ReactNode; heading: string; children: ReactNode }) {
-	return (
-		<section className='bg-secondary/30 flex h-full flex-col items-center justify-center rounded-lg p-4 sm:p-5'>
-			{/* 卡片背景滿版延展沒問題,但文字內容在寬螢幕上不能跟著無限延展——
-			    一行太長不易閱讀。內容區塊另外設寬度上限並置中,窄螢幕(< max-w)
-			    則維持滿版,不會縮水。 */}
-			<div className='flex w-full max-w-2xl flex-col gap-3'>
-				<h2 className='flex items-center gap-2 text-base font-medium'>
-					{icon}
-					{heading}
-				</h2>
-				{children}
-			</div>
-		</section>
 	)
 }
 
@@ -240,9 +212,9 @@ function IntroExample({
 				alt={alt}
 				width={width}
 				height={height}
-				className='border-border h-auto max-w-[220px] rounded-lg border shadow-sm sm:max-w-[260px]'
+				className='border-border h-auto max-w-[280px] rounded-lg border shadow-sm sm:max-w-[340px]'
 			/>
-			<figcaption className='text-muted-foreground max-w-[240px] text-center text-xs leading-snug'>
+			<figcaption className='text-muted-foreground max-w-[300px] text-center text-xs leading-snug'>
 				{caption}
 			</figcaption>
 		</figure>

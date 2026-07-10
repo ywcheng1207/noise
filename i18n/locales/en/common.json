@@ -24,6 +24,7 @@
 		"candidatePool": "Watchlist"
 	},
 	"intro": {
+		"stepLabel": "STEP",
 		"pipelineHeading": "How we organize information",
 		"pipelineBody": "Every new report is checked against what's already being tracked: it might continue a thread we're already following (a new event, or just corroboration of one already reported — no extra AI research spent), or it might be significant enough to start a thread of its own; anything less certain goes into a watchlist first. For each new event, AI cross-checks across sources (regardless of language), searches public information, and produces a summary and timeline, while recording each source and rating its credibility.",
 		"pipelineImageAlt": "A topic card showing its title, credibility tag, domain/region tags, and a world map",
