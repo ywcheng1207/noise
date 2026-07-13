@@ -161,15 +161,17 @@
 	},
 	"latest": {
 		"heading": "最新",
-		"pageIntro": "顯示系統最近收集到的原始新聞，可以看到每一則新聞目前的處理狀態——是否已經收攏進某個議題，或者還在等待處理。",
-		"empty": "目前沒有最新資料",
+		"pageIntro": "AI 每天從最近收集到的新聞中，挑選出對全球讀者而言最重要的最多十則，並說明為什麼重要、需要哪些背景知識才能看懂——實際新聞內容仍請參考原文。",
+		"empty": "目前沒有符合條件的精選新聞",
 		"statusNew": "尚未分類",
 		"statusSkipped": "未收錄",
 		"eventLabel": "所屬事件",
 		"viewTopic": "查看議題",
 		"originalLink": "原文連結",
 		"pendingHint": "尚未進入分類流程，稍後會自動處理。",
-		"skippedHint": "系統判斷這則新聞不屬於任何追蹤中的議題，未收錄。"
+		"skippedHint": "系統判斷這則新聞不屬於任何追蹤中的議題，未收錄。",
+		"whyHeading": "為什麼重要",
+		"searchPlaceholder": "搜尋重點新聞..."
 	},
 	"disclaimerModal": {
 		"title": "使用須知",
