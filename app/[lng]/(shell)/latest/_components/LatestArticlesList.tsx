@@ -23,11 +23,16 @@ export interface LatestArticleSource {
 	languageLabel: string | null
 }
 
+export interface LatestArticleLink {
+	url: string
+	label: string
+}
+
 export interface LatestArticleData {
 	id: string
 	rank: number
 	title: string
-	canonicalUrl: string
+	originalLinks: LatestArticleLink[]
 	fetchedAtLabel: string | null
 	status: 'NEW' | 'CLUSTERED' | 'SKIPPED'
 	why: string | null
@@ -44,7 +49,6 @@ interface LatestArticlesListLabels {
 	statusSkipped: string
 	eventLabel: string
 	viewTopic: string
-	originalLink: string
 	pendingHint: string
 	skippedHint: string
 	whyHeading: string
@@ -169,15 +173,18 @@ const LatestArticleRow = memo(
 								<p className='text-muted-foreground text-xs'>{labels.skippedHint}</p>
 							) : null}
 							<div className='flex flex-wrap items-center gap-3 pt-1'>
-								<a
-									href={article.canonicalUrl}
-									target='_blank'
-									rel='noopener noreferrer'
-									className='text-info inline-flex items-center gap-1 text-xs hover:underline'
-								>
-									<ExternalLink className='size-3' />
-									{labels.originalLink}
-								</a>
+								{article.originalLinks.map((link) => (
+									<a
+										key={link.url}
+										href={link.url}
+										target='_blank'
+										rel='noopener noreferrer'
+										className='text-info inline-flex items-center gap-1 text-xs hover:underline'
+									>
+										<ExternalLink className='size-3' />
+										{link.label}
+									</a>
+								))}
 								{article.topic ? (
 									<Link
 										href={`/${lng}/topic/${article.topic.slug}`}

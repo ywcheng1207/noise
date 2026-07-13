@@ -172,6 +172,7 @@
 		"eventLabel": "所屬事件",
 		"viewTopic": "查看議題",
 		"originalLink": "原文連結",
+		"originalLinkWithLanguage": "{{language}}原文連結",
 		"pendingHint": "尚未進入分類流程，稍後會自動處理。",
 		"skippedHint": "系統判斷這則新聞不屬於任何追蹤中的議題，未收錄。",
 		"whyHeading": "為什麼重要",

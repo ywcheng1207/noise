@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { getT } from '@/i18n'
 import { formatDateTime } from '@/lib/dates'
 import { languageLabel } from '@/lib/languages'
-import { LatestArticlesList, type LatestArticleData } from './_components/LatestArticlesList'
+import { LatestArticlesList, type LatestArticleData, type LatestArticleLink } from './_components/LatestArticlesList'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,11 +23,18 @@ export default async function LatestPage({ params }: { params: Promise<{ lng: st
 					topic: {
 						select: { slug: true, titleZh: true, titleEn: true, domain: true, overallReliability: true },
 					},
-					sources: { select: { sourceName: true, language: true }, orderBy: { rank: 'asc' } },
+					sources: {
+						select: { sourceName: true, language: true, externalUrl: true },
+						orderBy: { rank: 'asc' },
+					},
 				},
 			},
 		},
 	})
+
+	function buildOriginalLinkLabel(language: string | null) {
+		return language ? t('latest.originalLinkWithLanguage', { language }) : t('latest.originalLink')
+	}
 
 	const rows: LatestArticleData[] = articles.map((article) => {
 		const verifiedSources = (article.event?.sources ?? []).map((s) => ({
@@ -36,11 +43,28 @@ export default async function LatestPage({ params }: { params: Promise<{ lng: st
 		}))
 		const rawSourceLanguage = languageLabel(article.language, lng)
 
+		// 每個查證過的來源語言只挑一則代表連結（已按可信度排序,故取每個語言第一則),
+		// 讓讀者能同時看到中文與英文的原文,而不是隨機只留一個。
+		const sourcesWithUrl = (article.event?.sources ?? []).filter(
+			(s): s is typeof s & { externalUrl: string } => Boolean(s.externalUrl),
+		)
+		const seenLanguages = new Set<string>()
+		const originalLinks: LatestArticleLink[] = []
+		for (const s of sourcesWithUrl) {
+			const langKey = (s.language ?? '').toLowerCase()
+			if (seenLanguages.has(langKey)) continue
+			seenLanguages.add(langKey)
+			originalLinks.push({ url: s.externalUrl, label: buildOriginalLinkLabel(languageLabel(s.language, lng)) })
+		}
+		if (originalLinks.length === 0) {
+			originalLinks.push({ url: article.canonicalUrl, label: buildOriginalLinkLabel(rawSourceLanguage) })
+		}
+
 		return {
 			id: article.id,
 			rank: article.highlightRank ?? 0,
 			title: article.title,
-			canonicalUrl: article.canonicalUrl,
+			originalLinks,
 			fetchedAtLabel: formatDateTime({ lng, date: article.fetchedAt }),
 			status: article.status,
 			why: isZh ? article.highlightWhyZh : article.highlightWhyEn,
@@ -80,7 +104,6 @@ export default async function LatestPage({ params }: { params: Promise<{ lng: st
 					statusSkipped: t('latest.statusSkipped'),
 					eventLabel: t('latest.eventLabel'),
 					viewTopic: t('latest.viewTopic'),
-					originalLink: t('latest.originalLink'),
 					pendingHint: t('latest.pendingHint'),
 					skippedHint: t('latest.skippedHint'),
 					whyHeading: t('latest.whyHeading'),
