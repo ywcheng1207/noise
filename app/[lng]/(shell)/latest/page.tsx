@@ -60,10 +60,12 @@ export default async function LatestPage({ params }: { params: Promise<{ lng: st
 			originalLinks.push({ url: article.canonicalUrl, label: buildOriginalLinkLabel(rawSourceLanguage) })
 		}
 
+		const highlightTitle = isZh ? article.highlightTitleZh : article.highlightTitleEn
+
 		return {
 			id: article.id,
 			rank: article.highlightRank ?? 0,
-			title: article.title,
+			title: highlightTitle || article.title,
 			originalLinks,
 			fetchedAtLabel: formatDateTime({ lng, date: article.fetchedAt }),
 			status: article.status,

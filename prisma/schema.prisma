@@ -114,25 +114,27 @@ model Source {
 }
 
 model Article {
-  id             String        @id @default(uuid()) @db.Uuid
-  sourceId       String?       @db.Uuid
-  source         Source?       @relation(fields: [sourceId], references: [id])
-  canonicalUrl   String        @unique
-  title          String
-  snippet        String?
-  publishedAt    DateTime?
-  language       String?
-  rawContentRef  String?
-  rawExpiresAt   DateTime?
-  eventId        String?       @db.Uuid
-  event          Event?        @relation(fields: [eventId], references: [id])
-  duplicateOfId  String?       @db.Uuid
-  status         ArticleStatus @default(NEW)
-  fetchedAt      DateTime      @default(now())
-  highlightRank  Int?
-  highlightWhyZh String?
-  highlightWhyEn String?
-  highlightedAt  DateTime?
+  id               String        @id @default(uuid()) @db.Uuid
+  sourceId         String?       @db.Uuid
+  source           Source?       @relation(fields: [sourceId], references: [id])
+  canonicalUrl     String        @unique
+  title            String
+  snippet          String?
+  publishedAt      DateTime?
+  language         String?
+  rawContentRef    String?
+  rawExpiresAt     DateTime?
+  eventId          String?       @db.Uuid
+  event            Event?        @relation(fields: [eventId], references: [id])
+  duplicateOfId    String?       @db.Uuid
+  status           ArticleStatus @default(NEW)
+  fetchedAt        DateTime      @default(now())
+  highlightRank    Int?
+  highlightTitleZh String?
+  highlightTitleEn String?
+  highlightWhyZh   String?
+  highlightWhyEn   String?
+  highlightedAt    DateTime?
 
   @@index([status])
   @@index([eventId])
