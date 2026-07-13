@@ -41,6 +41,9 @@ export function TabShell({
 	// 誤判成不在子頁面而掉回本地 rootTab 狀態,導致切語言時畫面跳回介紹分頁。
 	const secondSegment = pathname.split('/')[2]
 	const isAtRoot = !secondSegment
+	// 「最新」分頁本身就是一個獨立的完整頁面（自己有標題與說明文字），不像議題/事件/日誌
+	// 單日頁那樣是從清單逐層點進去的下層內容，不需要麵包屑指出「從哪裡來」。
+	const hideBreadcrumb = isAtRoot || secondSegment === 'latest'
 	// 第一次掛載就已經在子頁面(議題/事件/日誌)代表使用者是從深連結進來的,
 	// 之後透過麵包屑「回總覽」應該回到議題清單而不是介紹頁。
 	const [rootTab, setRootTab] = useState<RootTab>(() => (isAtRoot ? 'intro' : 'topics'))
@@ -111,7 +114,7 @@ export function TabShell({
 						    麵包屑 parallel route 在跨路由樹導航時偶爾不會正確 fallback 回 default.tsx
 						    (Next.js 已知限制),根路徑一律不該有麵包屑,直接用當下路徑主動擋掉,
 						    不依賴 slot 是否過期。 */}
-						{isAtRoot ? (
+						{hideBreadcrumb ? (
 							<div className='h-full pt-4 sm:pt-6'>{content}</div>
 						) : (
 							<>

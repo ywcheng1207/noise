@@ -18,16 +18,23 @@ export interface LatestArticleTopic {
 	reliabilityLabel: string
 }
 
+export interface LatestArticleSource {
+	name: string
+	languageLabel: string | null
+}
+
 export interface LatestArticleData {
 	id: string
 	rank: number
 	title: string
 	canonicalUrl: string
-	sourceName: string | null
 	fetchedAtLabel: string | null
 	status: 'NEW' | 'CLUSTERED' | 'SKIPPED'
 	why: string | null
 	eventTitle: string | null
+	verifiedSources: LatestArticleSource[]
+	verifiedSourcesLabel: string | null
+	singleSourceHint: string | null
 	topic: LatestArticleTopic | null
 }
 
@@ -126,8 +133,23 @@ const LatestArticleRow = memo(
 								isOpen ? 'opacity-100 delay-100' : 'opacity-0',
 							)}
 						>
-							{article.sourceName ? (
-								<span className='text-muted-foreground text-xs'>{article.sourceName}</span>
+							{article.verifiedSources.length > 0 ? (
+								<div className='flex flex-col gap-1'>
+									<span className='text-muted-foreground text-xs'>{article.verifiedSourcesLabel}</span>
+									<div className='flex flex-wrap gap-1.5'>
+										{article.verifiedSources.map((source) => (
+											<span
+												key={source.name}
+												className='bg-secondary/60 text-muted-foreground rounded-lg px-2 py-0.5 text-xs'
+											>
+												{source.name}
+												{source.languageLabel ? ` · ${source.languageLabel}` : ''}
+											</span>
+										))}
+									</div>
+								</div>
+							) : article.singleSourceHint ? (
+								<span className='text-muted-foreground text-xs'>{article.singleSourceHint}</span>
 							) : null}
 							{article.why ? (
 								<div className='flex flex-col gap-1'>

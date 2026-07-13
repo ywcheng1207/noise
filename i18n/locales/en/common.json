@@ -174,7 +174,9 @@
 		"originalLink": "Original article",
 		"pendingHint": "Not yet run through classification — this happens automatically on the next pass.",
 		"skippedHint": "The system determined this doesn't belong to any tracked topic, so it wasn't adopted.",
-		"whyHeading": "Why it matters"
+		"whyHeading": "Why it matters",
+		"verifiedSourcesLabel": "Cross-verified across {{count}} sources",
+		"singleSourceHint": "Source: {{name}} ({{language}}) — not yet cross-verified across sources"
 	},
 	"disclaimerModal": {
 		"title": "Before You Start",
