@@ -1,24 +1,19 @@
 'use client'
 
-import { memo, useDeferredValue, useMemo, useState } from 'react'
+import { memo, useState } from 'react'
 import Link from 'next/link'
 import { ChevronDown, ExternalLink, SearchX } from 'lucide-react'
 
 import { DomainTag } from '@/components/DomainTag'
-import { FacetGroup, type FacetOption } from '@/components/FacetGroup'
 import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
 import { ReliabilityBadge } from '@/components/ReliabilityBadge'
-import { SearchInput } from '@/components/SearchInput'
-import { matchesKeyword } from '@/lib/search'
 import { cn } from '@/lib/utils'
-import type { RegionKey } from '@/lib/regions'
 
 export interface LatestArticleTopic {
 	slug: string
 	title: string
 	domain: string
 	domainLabel: string
-	regions: RegionKey[]
 	reliability: string
 	reliabilityLabel: string
 }
@@ -46,75 +41,31 @@ interface LatestArticlesListLabels {
 	pendingHint: string
 	skippedHint: string
 	whyHeading: string
-	searchPlaceholder: string
-	domain: string
-	region: string
-	reliability: string
 }
 
 export const LatestArticlesList = ({
 	lng,
 	articles,
-	domainOptions,
-	regionOptions,
-	reliabilityOptions,
 	labels,
 }: {
 	lng: string
 	articles: LatestArticleData[]
-	domainOptions: FacetOption[]
-	regionOptions: FacetOption[]
-	reliabilityOptions: FacetOption[]
 	labels: LatestArticlesListLabels
 }) => {
-	const [domain, setDomain] = useState('all')
-	const [region, setRegion] = useState('all')
-	const [reliability, setReliability] = useState('all')
-	const [keyword, setKeyword] = useState('')
-
-	const deferredKeyword = useDeferredValue(keyword)
-
-	const filtered = useMemo(
-		() =>
-			articles.filter(
-				(article) =>
-					(domain === 'all' || article.topic?.domain === domain) &&
-					(region === 'all' || article.topic?.regions.some((r) => r === region)) &&
-					(reliability === 'all' || article.topic?.reliability === reliability) &&
-					matchesKeyword(deferredKeyword, article.title, article.why, article.topic?.title),
-			),
-		[articles, domain, region, reliability, deferredKeyword],
-	)
+	if (articles.length === 0) {
+		return (
+			<div className='flex flex-col items-center gap-2 py-8 text-center'>
+				<SearchX className='text-muted-foreground/50 size-8' />
+				<p className='text-muted-foreground text-sm'>{labels.empty}</p>
+			</div>
+		)
+	}
 
 	return (
-		<div className='flex flex-col gap-5'>
-			<SearchInput value={keyword} onChange={setKeyword} placeholder={labels.searchPlaceholder} />
-
-			<div className='flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8'>
-				<aside className='flex flex-col gap-2 lg:sticky lg:top-6 lg:w-48 lg:shrink-0 lg:gap-5'>
-					<FacetGroup label={labels.domain} options={domainOptions} value={domain} onChange={setDomain} />
-					<FacetGroup label={labels.region} options={regionOptions} value={region} onChange={setRegion} />
-					<FacetGroup
-						label={labels.reliability}
-						options={reliabilityOptions}
-						value={reliability}
-						onChange={setReliability}
-					/>
-				</aside>
-
-				{filtered.length === 0 ? (
-					<div className='flex flex-1 flex-col items-center gap-2 py-8 text-center'>
-						<SearchX className='text-muted-foreground/50 size-8' />
-						<p className='text-muted-foreground text-sm'>{labels.empty}</p>
-					</div>
-				) : (
-					<div className='flex min-w-0 flex-1 flex-col gap-2'>
-						{filtered.map((article) => (
-							<LatestArticleRow key={article.id} lng={lng} article={article} labels={labels} />
-						))}
-					</div>
-				)}
-			</div>
+		<div className='flex flex-col gap-2'>
+			{articles.map((article) => (
+				<LatestArticleRow key={article.id} lng={lng} article={article} labels={labels} />
+			))}
 		</div>
 	)
 }

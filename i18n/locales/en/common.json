@@ -30,6 +30,10 @@
 		"pipelineBody": "Every new report is checked against what's already being tracked: it might continue a topic we're already following (a new event, or just corroboration of one already reported — no extra AI research spent), or it might be significant enough to start a topic of its own; anything less certain goes into a watchlist first. For each new event, AI cross-checks across sources (regardless of language), searches public information, and produces a summary and timeline, while recording each source and rating its credibility.",
 		"pipelineImageAlt": "A topic card showing its title, credibility tag, domain/region tags, and a world map",
 		"pipelineCaption": "A topic card: title, credibility tag, regions, and stats at a glance",
+		"latestHeading": "How highlighted news is chosen",
+		"latestBody": "The Latest tab gathers the most worthwhile stories from current news, each with a short write-up: first, the overall situation you need to understand going in; then, what impact the story is likely to have. If a story has already been folded into a topic, you can jump straight to it for the full picture; no link means the story is either still waiting to be processed or wasn't judged to belong to anything currently being tracked.",
+		"latestImageAlt": "An expanded story in the Latest tab, showing its title, tags, and why-it-matters write-up",
+		"latestCaption": "Every highlighted story, once expanded, comes with a write-up on background and impact",
 		"charterHeading": "How a topic's scope is defined",
 		"charterBody": "Every actively-tracked topic records a few things: its current state in one line, why it matters, its inclusion criteria (what kind of follow-up reporting still counts as part of it), and the key actors involved — plus a list of related topics when it's clearly connected to others. New reports are matched against the inclusion criteria to decide where they belong, and the criteria themselves are refreshed as the story develops.",
 		"charterImageAlt": "A topic page's info section, showing the current state, why it matters, inclusion criteria, and key actors",
@@ -161,8 +165,8 @@
 	},
 	"latest": {
 		"heading": "Latest",
-		"pageIntro": "Every day, AI picks out the most important stories — up to ten — from the news collected recently, and explains why each one matters and what background you need to understand it. For the actual reporting, always check the original article.",
-		"empty": "No highlighted stories match the current filters",
+		"pageIntro": "News never stops coming in, but only a handful of stories each day are actually worth stopping to understand — the ones that genuinely shape how things unfold. This page gathers the most important stories from what's been collected recently, along with a short write-up on what you need to know going in and what the news actually means going forward, so you don't have to sift through everything yourself. For the actual reporting, always check the original article.",
+		"empty": "No highlighted stories right now",
 		"statusNew": "Not yet classified",
 		"statusSkipped": "Not adopted",
 		"eventLabel": "Part of",
@@ -170,8 +174,7 @@
 		"originalLink": "Original article",
 		"pendingHint": "Not yet run through classification — this happens automatically on the next pass.",
 		"skippedHint": "The system determined this doesn't belong to any tracked topic, so it wasn't adopted.",
-		"whyHeading": "Why it matters",
-		"searchPlaceholder": "Search highlighted stories..."
+		"whyHeading": "Why it matters"
 	},
 	"disclaimerModal": {
 		"title": "Before You Start",

@@ -16,6 +16,8 @@ export async function IntroContent({ lng }: { lng: string }) {
 	const sourceCardHeight = isZh ? 132 : 152
 	const topicBadgeHeight = isZh ? 52 : 76
 	const charterCardHeight = isZh ? 364 : 470
+	const latestCardWidth = 1536
+	const latestCardHeight = isZh ? 592 : 634
 
 	const steps: IntroStep[] = [
 		{
@@ -31,6 +33,22 @@ export async function IntroContent({ lng }: { lng: string }) {
 						caption={t('intro.pipelineCaption')}
 					/>
 					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.pipelineBody')}</p>
+				</>
+			),
+		},
+		{
+			key: 'latest',
+			title: t('intro.latestHeading'),
+			content: (
+				<>
+					<IntroExample
+						src={`/intro/latest-card-${localeSuffix}.png`}
+						alt={t('intro.latestImageAlt')}
+						width={latestCardWidth}
+						height={latestCardHeight}
+						caption={t('intro.latestCaption')}
+					/>
+					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.latestBody')}</p>
 				</>
 			),
 		},
