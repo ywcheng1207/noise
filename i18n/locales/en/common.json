@@ -13,7 +13,7 @@
 	"overview": {
 		"heading": "Topics",
 		"introTab": "About",
-		"subtitle": "In an age of information overload, truth and rumor blur together — the same event can spark a dozen conflicting accounts. We gather reporting scattered across the globe, focus it into a coherent timeline, summarize what's known, and rate the credibility of every source we reference.",
+		"subtitle": "In an age of information overload, truth and rumor blur together — the same event can spark a dozen conflicting accounts. We gather reporting scattered across the globe, focus it into a coherent timeline, summarize what's known, and rate the credibility of every source we reference. The platform's role is simply to pull that context together, so you can make sense of the timeline and keep track of the topics you care about.",
 		"domain": "Domain",
 		"region": "Region",
 		"reliability": "Reliability",
@@ -157,6 +157,13 @@
 		"webSearches": "Ran {{count}} web searches",
 		"lastUpdated": "Last updated",
 		"backToLog": "Back to log"
+	},
+	"disclaimerModal": {
+		"title": "Before You Start",
+		"body": "逆風 respects the copyright of original publishers and authors: we never repost full articles — only headlines, summaries written by our own system, and links to the original source. Credibility scores are for reference only; always check the original article for the full story.",
+		"termsLink": "See the Terms of Service for details",
+		"dontShowToday": "Don't show again today",
+		"confirm": "Got it"
 	},
 	"terms": {
 		"heading": "Terms of Service",

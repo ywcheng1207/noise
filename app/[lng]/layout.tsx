@@ -4,6 +4,7 @@ import { getT } from '@/i18n'
 import { languages } from '@/i18n/settings'
 import { BrandLogo } from '@/components/BrandLogo'
 import { ScrollToTopButton } from '@/components/ScrollToTopButton'
+import { DisclaimerModal } from './_components/DisclaimerModal'
 import { LanguageSwitcher } from './_components/LanguageSwitcher'
 import { TermsBreadcrumbGate } from './_components/TermsBreadcrumbGate'
 import { ThemeToggle } from './_components/ThemeToggle'
@@ -49,6 +50,16 @@ export default async function LngLayout({
 				</span>
 			</footer>
 			<ScrollToTopButton />
+			<DisclaimerModal
+				lng={lng}
+				labels={{
+					title: t('disclaimerModal.title'),
+					body: t('disclaimerModal.body'),
+					termsLink: t('disclaimerModal.termsLink'),
+					dontShowToday: t('disclaimerModal.dontShowToday'),
+					confirm: t('disclaimerModal.confirm'),
+				}}
+			/>
 		</div>
 	)
 }
