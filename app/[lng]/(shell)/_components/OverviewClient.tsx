@@ -5,11 +5,11 @@ import Link from 'next/link'
 import { Archive, Loader2, MapPin, SearchX, Telescope } from 'lucide-react'
 
 import { WorldMap } from './WorldMap'
+import { DomainTag } from '@/components/DomainTag'
 import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
 import { ReliabilityBadge } from '@/components/ReliabilityBadge'
 import { LifecycleBadge } from '@/components/LifecycleBadge'
 import { SearchInput } from '@/components/SearchInput'
-import { DOMAIN_ICON } from '@/lib/ui'
 import { matchesKeyword } from '@/lib/search'
 import { useIncrementalReveal } from '@/lib/hooks/useIncrementalReveal'
 import { cn } from '@/lib/utils'
@@ -285,16 +285,6 @@ const TopicCard = memo(
 		)
 	},
 )
-
-function DomainTag({ domain, label }: { domain: string; label: string }) {
-	const Icon = DOMAIN_ICON[domain] ?? DOMAIN_ICON.OTHER
-	return (
-		<span className='bg-secondary/60 text-muted-foreground inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs'>
-			<Icon className='size-3' />
-			{label}
-		</span>
-	)
-}
 
 function FacetGroup({
 	label,

@@ -18,7 +18,12 @@ export default async function ShellLayout({
 	return (
 		<TabShell
 			lng={lng}
-			labels={{ intro: t('overview.introTab'), topics: t('overview.heading'), log: t('nav.log') }}
+			labels={{
+				intro: t('overview.introTab'),
+				latest: t('nav.latest'),
+				topics: t('overview.heading'),
+				log: t('nav.log'),
+			}}
 			breadcrumb={breadcrumb}
 			intro={<IntroContent lng={lng} />}
 		>
