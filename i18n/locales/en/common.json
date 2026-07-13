@@ -3,6 +3,7 @@
 	"tagline": "News event filtering & credibility",
 	"nav": {
 		"overview": "Topics",
+		"latest": "Latest",
 		"log": "Log"
 	},
 	"source": {
@@ -13,7 +14,7 @@
 	"overview": {
 		"heading": "Topics",
 		"introTab": "About",
-		"subtitle": "In an age of information overload, truth and rumor blur together — the same event can spark a dozen conflicting accounts. We gather reporting scattered across the globe, focus it into a coherent timeline, summarize what's known, and rate the credibility of every source we reference. The platform's role is simply to pull that context together, so you can make sense of the timeline and keep track of the topics you care about.",
+		"subtitle": "In an age of information overload, truth and rumor blur together — the same event can spark a dozen conflicting accounts. We gather reporting scattered across the globe, focus it into a coherent timeline, summarize what's known, and rate the credibility of every source we reference. The platform's role is simply to pull that context together, so you can make sense of the timeline and keep track of the topics you care about — for the actual reporting, always turn to the original source.",
 		"domain": "Domain",
 		"region": "Region",
 		"reliability": "Reliability",
@@ -157,6 +158,20 @@
 		"webSearches": "Ran {{count}} web searches",
 		"lastUpdated": "Last updated",
 		"backToLog": "Back to log"
+	},
+	"latest": {
+		"heading": "Latest",
+		"pageIntro": "Every day, AI picks out the most important stories — up to ten — from the news collected recently, and explains why each one matters and what background you need to understand it. For the actual reporting, always check the original article.",
+		"empty": "No highlighted stories match the current filters",
+		"statusNew": "Not yet classified",
+		"statusSkipped": "Not adopted",
+		"eventLabel": "Part of",
+		"viewTopic": "View topic",
+		"originalLink": "Original article",
+		"pendingHint": "Not yet run through classification — this happens automatically on the next pass.",
+		"skippedHint": "The system determined this doesn't belong to any tracked topic, so it wasn't adopted.",
+		"whyHeading": "Why it matters",
+		"searchPlaceholder": "Search highlighted stories..."
 	},
 	"disclaimerModal": {
 		"title": "Before You Start",

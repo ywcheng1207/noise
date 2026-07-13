@@ -12,6 +12,7 @@ const ROOT_TAB_STORAGE_KEY = 'noise-root-tab'
 
 export interface TabShellLabels {
 	intro: string
+	latest: string
 	topics: string
 	log: string
 }
@@ -55,13 +56,19 @@ export function TabShell({
 	const activeTab =
 		secondSegment === 'log'
 			? 'log'
-			: secondSegment === 'topic' || secondSegment === 'event' || secondSegment === 'candidates'
-				? 'topics'
-				: rootTab
+			: secondSegment === 'latest'
+				? 'latest'
+				: secondSegment === 'topic' || secondSegment === 'event' || secondSegment === 'candidates'
+					? 'topics'
+					: rootTab
 
 	function handleTabSelect(value: string) {
 		if (value === 'log') {
 			router.push(`${overviewHref}/log`)
+			return
+		}
+		if (value === 'latest') {
+			router.push(`${overviewHref}/latest`)
 			return
 		}
 		if (!isAtRoot) router.push(overviewHref)
@@ -77,6 +84,9 @@ export function TabShell({
 			<TabsList>
 				<TabsTrigger value='intro' onClick={() => handleTabSelect('intro')}>
 					{labels.intro}
+				</TabsTrigger>
+				<TabsTrigger value='latest' onClick={() => handleTabSelect('latest')}>
+					{labels.latest}
 				</TabsTrigger>
 				<TabsTrigger value='topics' onClick={() => handleTabSelect('topics')}>
 					{labels.topics}
