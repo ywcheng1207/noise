@@ -26,13 +26,13 @@
 	"intro": {
 		"stepLabel": "STEP",
 		"pipelineHeading": "How we organize information",
-		"pipelineBody": "Every new report is checked against what's already being tracked: it might continue a thread we're already following (a new event, or just corroboration of one already reported — no extra AI research spent), or it might be significant enough to start a thread of its own; anything less certain goes into a watchlist first. For each new event, AI cross-checks across sources (regardless of language), searches public information, and produces a summary and timeline, while recording each source and rating its credibility.",
+		"pipelineBody": "Every new report is checked against what's already being tracked: it might continue a topic we're already following (a new event, or just corroboration of one already reported — no extra AI research spent), or it might be significant enough to start a topic of its own; anything less certain goes into a watchlist first. For each new event, AI cross-checks across sources (regardless of language), searches public information, and produces a summary and timeline, while recording each source and rating its credibility.",
 		"pipelineImageAlt": "A topic card showing its title, credibility tag, domain/region tags, and a world map",
 		"pipelineCaption": "A topic card: title, credibility tag, regions, and stats at a glance",
-		"charterHeading": "A topic's charter",
-		"charterBody": "Every actively-tracked topic carries a compact \"charter\": its current state in one line, why it matters, what should (and shouldn't) count as a continuation of it, and the key actors involved — plus a list of related threads when a topic is clearly connected to others. New reports are matched against these criteria to decide where they belong, and the criteria themselves are refreshed as the story develops.",
-		"charterImageAlt": "A topic page's charter block, showing the current state, why it matters, inclusion criteria, and key actors sections",
-		"charterCaption": "A topic's charter: current state, why it matters, inclusion criteria, key actors",
+		"charterHeading": "How a topic's scope is defined",
+		"charterBody": "Every actively-tracked topic records a few things: its current state in one line, why it matters, its inclusion criteria (what kind of follow-up reporting still counts as part of it), and the key actors involved — plus a list of related topics when it's clearly connected to others. New reports are matched against the inclusion criteria to decide where they belong, and the criteria themselves are refreshed as the story develops.",
+		"charterImageAlt": "A topic page's info section, showing the current state, why it matters, inclusion criteria, and key actors",
+		"charterCaption": "A topic page's info section: current state, why it matters, inclusion criteria, key actors",
 		"linkCheckHeading": "Links are verified before publishing",
 		"linkCheckBody": "Every external link cited during AI research is checked with a real request before it's saved. Dead links are swapped for the page actually visited during research — or dropped entirely if no reliable substitute exists — so you never land on a broken page.",
 		"linkCheckCaption": "Every external link is actually opened and checked before it's saved",
@@ -50,12 +50,12 @@
 			"UNVERIFIED": "Currently based on only one or a few sources, not yet cross-checked."
 		},
 		"lifecycleHeading": "Topic lifecycle",
-		"lifecycleImageAlt": "A topic card showing both a dormant tag and a credibility tag",
+		"lifecycleImageAlt": "A topic card's title row, showing both a dormant tag and a credibility tag",
 		"lifecycleCaption": "The dormant tag appears just to the left of the credibility tag",
 		"lifecycleState": {
 			"ACTIVE": "New events or follow-up reports keep coming in — no extra tag shows on the card. This is the default state.",
 			"DORMANT": "Automatically marked dormant after 14 days with no new activity; it springs back to active the moment a new report comes in.",
-			"ARCHIVED": "Dormant topics are reviewed periodically and archived once the story appears to have reached a clear conclusion (a ceasefire signed, an election result confirmed) — not simply after a fixed amount of time; some stay dormant indefinitely."
+			"ARCHIVED": "Dormant topics are reviewed periodically and archived once the story appears to have reached a clear ending — a peace agreement gets signed, an election result comes in — not simply after a fixed amount of time; if there's no clear ending in sight, a topic can stay dormant indefinitely."
 		},
 		"sourceTiersHeading": "Individual source credibility tiers",
 		"sourceTiersImageAlt": "A source card showing its credibility tier tag",
@@ -112,9 +112,9 @@
 		"dateRange": "Date range",
 		"digestHeading": "Current state",
 		"whyHeading": "Why it matters",
-		"criteriaHeading": "What counts as part of this thread",
+		"criteriaHeading": "What counts as part of this topic",
 		"actorsHeading": "Key actors",
-		"linksHeading": "Related threads",
+		"linksHeading": "Related topics",
 		"lifecycle": {
 			"ACTIVE": "Active",
 			"DORMANT": "Dormant",
@@ -122,7 +122,7 @@
 		}
 	},
 	"candidates": {
-		"intro": "The watchlist tracks signals that haven't yet accumulated enough evidence to become a fully tracked thread. The system keeps an eye on them and promotes a signal to a thread once it's been corroborated across multiple days and sources — so you can always see why something hasn't made the cut yet.",
+		"intro": "The watchlist tracks signals that haven't yet accumulated enough evidence to become a fully tracked topic. The system keeps an eye on them and promotes a signal to a topic once it's been corroborated across multiple days and sources — so you can always see why something hasn't made the cut yet.",
 		"empty": "The watchlist is empty right now",
 		"mentionCount": "Mentioned {{count}} times"
 	},

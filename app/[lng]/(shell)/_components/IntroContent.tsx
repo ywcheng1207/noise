@@ -16,7 +16,6 @@ export async function IntroContent({ lng }: { lng: string }) {
 	const sourceCardHeight = isZh ? 132 : 152
 	const topicBadgeHeight = isZh ? 52 : 76
 	const charterCardHeight = isZh ? 364 : 470
-	const lifecycleBadgeWidth = isZh ? 142 : 165
 
 	const steps: IntroStep[] = [
 		{
@@ -108,8 +107,8 @@ export async function IntroContent({ lng }: { lng: string }) {
 					<IntroExample
 						src={`/intro/lifecycle-badge-${localeSuffix}.png`}
 						alt={t('intro.lifecycleImageAlt')}
-						width={lifecycleBadgeWidth}
-						height={20}
+						width={552}
+						height={36}
 						caption={t('intro.lifecycleCaption')}
 					/>
 					<ul className='flex flex-col gap-1.5'>
