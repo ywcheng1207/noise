@@ -6,6 +6,7 @@ import { ReliabilityBadge } from '@/components/ReliabilityBadge'
 import { LifecycleBadge } from '@/components/LifecycleBadge'
 import { REGION_LABELS } from '@/lib/regions'
 import { formatOccurred } from '@/lib/dates'
+import { RELIABILITIES } from '@/lib/enums'
 import { TopicPageEventsList, type TopicPageEventData } from './_components/TopicPageEventsList'
 import { TopicPageCharter, type TopicLinkData } from './_components/TopicPageCharter'
 
@@ -41,6 +42,17 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 		seenLabel: formatOccurred({ lng, occurredAt: ev.firstSeenAt }),
 		seenAt: ev.firstSeenAt.toISOString(),
 	}))
+
+	// 只列出這個議題底下實際出現過的狀態,不是每次都塞滿 5 個標記選項——
+	// 大部分議題不會同時涵蓋所有可信度分級。
+	const reliabilitiesPresent = new Set(
+		topic.events.filter((ev) => ev.status === 'RESEARCHED').map((ev) => ev.overallReliability),
+	)
+	const hasResearching = topic.events.some((ev) => ev.status !== 'RESEARCHED')
+	const eventStatusOptions = [
+		...(hasResearching ? [{ value: 'RESEARCHING', label: t('event.researching') }] : []),
+		...RELIABILITIES.filter((r) => reliabilitiesPresent.has(r)).map((r) => ({ value: r, label: t(`reliability.${r}`) })),
+	]
 
 	const links: TopicLinkData[] = [
 		...topic.linksFrom.map((l) => ({
@@ -105,6 +117,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 				lng={lng}
 				events={eventData}
 				dateBounds={dateBounds}
+				statusOptions={eventStatusOptions}
 				labels={{
 					searchPlaceholder: t('topic.searchPlaceholder'),
 					empty: t('topic.searchEmpty'),
@@ -112,6 +125,7 @@ export default async function TopicPage({ params }: { params: Promise<{ lng: str
 					researchingHint: t('event.researchingHint'),
 					viewEvent: t('event.viewEvent'),
 					dateRange: t('topic.dateRange'),
+					statusLabel: t('topic.eventStatusLabel'),
 				}}
 			/>
 		</div>

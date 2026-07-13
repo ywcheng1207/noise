@@ -24,6 +24,11 @@ export interface TopicPageEventData {
 	seenAt: string
 }
 
+interface StatusOption {
+	value: string
+	label: string
+}
+
 interface EventTimelineLabels {
 	researching: string
 	researchingHint: string
@@ -34,21 +39,38 @@ interface TopicPageEventsListProps {
 	lng: string
 	events: TopicPageEventData[]
 	dateBounds: DateRangeValue | null
+	statusOptions: StatusOption[]
 	labels: EventTimelineLabels & {
 		searchPlaceholder: string
 		empty: string
 		dateRange: string
+		statusLabel: string
 	}
+}
+
+function eventStatusTag(event: TopicPageEventData) {
+	return event.isResearching ? 'RESEARCHING' : event.reliability
 }
 
 const ESTIMATED_ROW_HEIGHT = 92
 const OVERSCAN = 6
 
-export function TopicPageEventsList({ lng, events, dateBounds, labels }: TopicPageEventsListProps) {
+export function TopicPageEventsList({ lng, events, dateBounds, statusOptions, labels }: TopicPageEventsListProps) {
 	const [keyword, setKeyword] = useState('')
 	const [dateRange, setDateRange] = useState<DateRangeValue>(dateBounds ?? { from: '', to: '' })
+	// 空集合代表「不篩選、全部顯示」,不需要另外做一個「全部」選項。
+	const [selectedStatuses, setSelectedStatuses] = useState<Set<string>>(new Set())
 	const deferredKeyword = useDeferredValue(keyword)
 	const scrollContainerRef = useScrollContainerRef()
+
+	function handleToggleStatus(value: string) {
+		setSelectedStatuses((prev) => {
+			const next = new Set(prev)
+			if (next.has(value)) next.delete(value)
+			else next.add(value)
+			return next
+		})
+	}
 
 	// scrollContainerRef 是透過 context 從祖先元件(TabShell)拿到的 ref,不是本元件自己
 	// 掛上去的 ref——react-virtual 內部靠 ResizeObserver 偵測 scroll element 就緒後觸發重繪,
@@ -64,9 +86,10 @@ export function TopicPageEventsList({ lng, events, dateBounds, labels }: TopicPa
 				const day = ev.seenAt.slice(0, 10)
 				if (dateRange.from && day < dateRange.from) return false
 				if (dateRange.to && day > dateRange.to) return false
+				if (selectedStatuses.size > 0 && !selectedStatuses.has(eventStatusTag(ev))) return false
 				return matchesKeyword(deferredKeyword, ev.title)
 			}),
-		[events, deferredKeyword, dateRange],
+		[events, deferredKeyword, dateRange, selectedStatuses],
 	)
 
 	const virtualizer = useVirtualizer({
@@ -93,6 +116,28 @@ export function TopicPageEventsList({ lng, events, dateBounds, labels }: TopicPa
 					/>
 				) : null}
 			</div>
+
+			{statusOptions.length > 0 ? (
+				<div className='flex flex-wrap items-center gap-2'>
+					<span className='text-muted-foreground text-xs'>{labels.statusLabel}</span>
+					{statusOptions.map((opt) => (
+						<button
+							key={opt.value}
+							type='button'
+							onClick={() => handleToggleStatus(opt.value)}
+							aria-pressed={selectedStatuses.has(opt.value)}
+							className={cn(
+								'cursor-pointer rounded-lg px-3 py-1 text-xs whitespace-nowrap transition-all duration-200 hover:scale-[1.03]',
+								selectedStatuses.has(opt.value)
+									? 'bg-secondary text-foreground'
+									: 'bg-secondary/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground',
+							)}
+						>
+							{opt.label}
+						</button>
+					))}
+				</div>
+			) : null}
 
 			{filtered.length === 0 ? (
 				<div className='flex flex-col items-center gap-2 py-8 text-center'>

@@ -110,6 +110,7 @@
 		"searchPlaceholder": "Search events...",
 		"searchEmpty": "No events match the current search",
 		"dateRange": "Date range",
+		"eventStatusLabel": "Status",
 		"digestHeading": "Current state",
 		"whyHeading": "Why it matters",
 		"criteriaHeading": "What counts as part of this topic",

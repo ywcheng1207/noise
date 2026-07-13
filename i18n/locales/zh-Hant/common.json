@@ -110,6 +110,7 @@
 		"searchPlaceholder": "搜尋事件關鍵字...",
 		"searchEmpty": "沒有符合條件的事件",
 		"dateRange": "時間範圍",
+		"eventStatusLabel": "狀態",
 		"digestHeading": "目前態勢",
 		"whyHeading": "為什麼重要",
 		"criteriaHeading": "收錄判準",
