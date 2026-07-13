@@ -179,9 +179,12 @@
 	}
 }
 
-/* 細捲軸樣式:Tailwind 沒有內建 utility,改用主題色取代瀏覽器預設的粗捲軸。 */
+/* 細捲軸樣式:Tailwind 沒有內建 utility,改用主題色取代瀏覽器預設的粗捲軸。
+   scrollbar-gutter: stable 讓捲軸的寬度預先保留,內容筆數少、原本無需捲動時也一樣,
+   避免使用者展開收折內容導致出現捲軸時,可視寬度縮水造成版面位移。 */
 .scrollbar-thin {
 	scrollbar-width: thin;
+	scrollbar-gutter: stable;
 	scrollbar-color: var(--color-border) transparent;
 }
 .scrollbar-thin::-webkit-scrollbar {
