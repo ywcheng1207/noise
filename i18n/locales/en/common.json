@@ -14,7 +14,8 @@
 	"overview": {
 		"heading": "Topics",
 		"introTab": "About",
-		"subtitle": "In an age of information overload, truth and rumor blur together — the same event can spark a dozen conflicting accounts. We gather reporting scattered across the globe, focus it into a coherent timeline, summarize what's known, and rate the credibility of every source we reference. The platform's role is simply to pull that context together, so you can make sense of the timeline and keep track of the topics you care about — for the actual reporting, always turn to the original source.",
+		"subtitle": "In an age of information overload, truth and rumor blur together — the same event can spark a dozen conflicting accounts. We gather reporting scattered across the globe, focus it into a coherent timeline, summarize what's known, and rate the credibility of every source we reference.",
+		"subtitleNote": "(The platform's role is simply to pull that context together, so you can make sense of the timeline and keep track of the topics you care about — for the actual reporting, always turn to the original source.)",
 		"domain": "Domain",
 		"region": "Region",
 		"reliability": "Reliability",

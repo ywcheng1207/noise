@@ -201,7 +201,10 @@ export async function IntroContent({ lng }: { lng: string }) {
 
 	return (
 		<div className='flex h-full flex-col gap-6'>
-			<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('overview.subtitle')}</p>
+			<div className='flex flex-col gap-1.5'>
+				<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('overview.subtitle')}</p>
+				<p className='text-muted-foreground/70 text-xs leading-relaxed'>{t('overview.subtitleNote')}</p>
+			</div>
 			<div className='min-h-0 flex-1'>
 				<IntroStepNavigator steps={steps} stepLabel={t('intro.stepLabel')} />
 			</div>
