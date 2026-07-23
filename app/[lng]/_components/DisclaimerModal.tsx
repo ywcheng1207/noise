@@ -39,7 +39,7 @@ export const DisclaimerModal = ({ lng, labels }: { lng: string; labels: Disclaim
 				<DialogHeader>
 					<DialogTitle>{labels.title}</DialogTitle>
 				</DialogHeader>
-				<p className='text-muted-foreground text-sm leading-relaxed'>{labels.body}</p>
+				<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{labels.body}</p>
 				<Link
 					href={`/${lng}/terms`}
 					className='text-info -mt-3 text-xs underline underline-offset-2 transition-colors hover:text-foreground'

@@ -89,7 +89,7 @@ export default async function LogPage({ params }: { params: Promise<{ lng: strin
 		<div className='mx-auto flex w-full max-w-3xl flex-col gap-5'>
 			<div>
 				<h1 className='text-xl font-medium lg:text-2xl'>{t('log.heading')}</h1>
-				<p className='text-muted-foreground mt-1 text-sm leading-6'>{t('log.pageIntro')}</p>
+				<p className='text-muted-foreground mt-1 text-sm leading-6 sm:text-base'>{t('log.pageIntro')}</p>
 			</div>
 
 			<LogList

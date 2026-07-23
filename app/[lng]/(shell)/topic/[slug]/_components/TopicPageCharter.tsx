@@ -40,7 +40,7 @@ export function TopicPageCharter({
 						<Activity className='size-3.5' />
 						{labels.digestHeading}
 					</h2>
-					<p className='text-[15px] leading-7'>{digest}</p>
+					<p className='text-sm leading-7 sm:text-base'>{digest}</p>
 				</section>
 			) : null}
 
@@ -50,7 +50,7 @@ export function TopicPageCharter({
 						<Lightbulb className='size-3.5' />
 						{labels.whyHeading}
 					</h2>
-					<p className='text-sm leading-6'>{why}</p>
+					<p className='text-sm leading-6 sm:text-base'>{why}</p>
 				</section>
 			) : null}
 
@@ -60,7 +60,7 @@ export function TopicPageCharter({
 						<ListChecks className='size-3.5' />
 						{labels.criteriaHeading}
 					</h2>
-					<p className='text-sm leading-6'>{criteria}</p>
+					<p className='text-sm leading-6 sm:text-base'>{criteria}</p>
 				</section>
 			) : null}
 

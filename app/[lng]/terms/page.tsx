@@ -25,13 +25,13 @@ export default async function TermsPage({ params }: { params: Promise<{ lng: str
 				<p className='text-muted-foreground mt-1 text-xs'>{t('terms.lastUpdated')}</p>
 			</div>
 
-			<p className='text-sm leading-7'>{t('terms.intro')}</p>
+			<p className='text-sm leading-7 sm:text-base'>{t('terms.intro')}</p>
 
 			<div className='flex flex-col gap-5'>
 				{SECTION_KEYS.map((key) => (
 					<section key={key}>
 						<h2 className='mb-2 font-medium'>{t(`terms.${key}Heading`)}</h2>
-						<p className='text-muted-foreground text-sm leading-7'>{t(`terms.${key}Body`)}</p>
+						<p className='text-muted-foreground text-sm leading-7 sm:text-base'>{t(`terms.${key}Body`)}</p>
 					</section>
 				))}
 			</div>

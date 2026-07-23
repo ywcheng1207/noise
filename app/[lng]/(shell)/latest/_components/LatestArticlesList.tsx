@@ -94,7 +94,7 @@ const LatestArticleRow = memo(
 
 		const header = (
 			<div className='flex min-w-0 flex-1 gap-2.5'>
-				<span className='bg-primary/10 text-primary mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold'>
+				<span className='bg-primary/10 text-primary mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-semibold'>
 					{article.rank}
 				</span>
 				<div className='flex min-w-0 flex-1 flex-col gap-1.5'>
@@ -216,7 +216,7 @@ function ArticleDetailContent({
 			{article.why ? (
 				<div className='flex flex-col gap-1'>
 					<span className='text-xs font-medium'>{labels.whyHeading}</span>
-					<p className='text-muted-foreground leading-relaxed'>{article.why}</p>
+					<p className='text-muted-foreground leading-relaxed sm:text-base'>{article.why}</p>
 				</div>
 			) : null}
 			{article.status === 'CLUSTERED' && article.eventTitle ? (

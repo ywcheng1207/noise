@@ -95,7 +95,7 @@ export default async function LatestPage({ params }: { params: Promise<{ lng: st
 		<div className='mx-auto flex w-full max-w-3xl flex-col gap-5'>
 			<div>
 				<h1 className='text-xl font-medium lg:text-2xl'>{t('latest.heading')}</h1>
-				<p className='text-muted-foreground mt-1 text-sm leading-6'>{t('latest.pageIntro')}</p>
+				<p className='text-muted-foreground mt-1 text-sm leading-6 sm:text-base'>{t('latest.pageIntro')}</p>
 			</div>
 			<LatestArticlesList
 				lng={lng}

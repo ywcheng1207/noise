@@ -19,11 +19,11 @@ export default async function CandidatesPage({ params }: { params: Promise<{ lng
 	return (
 		<div className='mx-auto flex w-full max-w-3xl flex-col gap-5'>
 			<div>
-				<h1 className='flex items-center gap-2 text-2xl font-medium'>
+				<h1 className='flex items-center gap-2 text-xl font-medium lg:text-2xl'>
 					<Telescope className='text-primary size-5' />
 					{t('overview.candidatePool')}
 				</h1>
-				<p className='text-muted-foreground mt-2 text-sm leading-relaxed'>{t('candidates.intro')}</p>
+				<p className='text-muted-foreground mt-2 text-sm leading-relaxed sm:text-base'>{t('candidates.intro')}</p>
 			</div>
 
 			{candidates.length === 0 ? (
@@ -43,7 +43,7 @@ export default async function CandidatesPage({ params }: { params: Promise<{ lng
 										{t(`domain.${c.domain}`)}
 									</span>
 								</div>
-								{signal ? <p className='text-muted-foreground text-sm leading-6'>{signal}</p> : null}
+								{signal ? <p className='text-muted-foreground text-sm leading-6 sm:text-base'>{signal}</p> : null}
 								<div className='flex flex-wrap items-center gap-1.5'>
 									{c.regions.map((r) => (
 										<span

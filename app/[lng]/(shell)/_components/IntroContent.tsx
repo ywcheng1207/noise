@@ -32,7 +32,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 						height={189}
 						caption={t('intro.pipelineCaption')}
 					/>
-					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.pipelineBody')}</p>
+					<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('intro.pipelineBody')}</p>
 				</>
 			),
 		},
@@ -48,7 +48,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 						height={latestCardHeight}
 						caption={t('intro.latestCaption')}
 					/>
-					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.latestBody')}</p>
+					<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('intro.latestBody')}</p>
 				</>
 			),
 		},
@@ -64,7 +64,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 						height={charterCardHeight}
 						caption={t('intro.charterCaption')}
 					/>
-					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.charterBody')}</p>
+					<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('intro.charterBody')}</p>
 				</>
 			),
 		},
@@ -74,7 +74,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 			content: (
 				<>
 					<LinkCheckDiagram caption={t('intro.linkCheckCaption')} />
-					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.linkCheckBody')}</p>
+					<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('intro.linkCheckBody')}</p>
 				</>
 			),
 		},
@@ -90,7 +90,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 						height={sourceCardHeight}
 						caption={t('intro.credibilityCaption')}
 					/>
-					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.credibilityIntro')}</p>
+					<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('intro.credibilityIntro')}</p>
 				</>
 			),
 		},
@@ -193,7 +193,7 @@ export async function IntroContent({ lng }: { lng: string }) {
 						height={128}
 						caption={t('intro.candidatesCaption')}
 					/>
-					<p className='text-muted-foreground text-sm leading-relaxed'>{t('intro.candidatesBody')}</p>
+					<p className='text-muted-foreground text-sm leading-relaxed sm:text-base'>{t('intro.candidatesBody')}</p>
 				</>
 			),
 		},

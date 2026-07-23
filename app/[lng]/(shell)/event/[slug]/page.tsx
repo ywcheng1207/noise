@@ -43,7 +43,7 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 	return (
 		<div className='flex flex-col gap-6'>
 			<div>
-				<h1 className='text-2xl font-medium'>{title}</h1>
+				<h1 className='text-xl font-medium lg:text-2xl'>{title}</h1>
 				<div className='mt-2 flex flex-wrap items-center gap-2'>
 					<ReliabilityBadge
 						reliability={event.overallReliability}
@@ -78,7 +78,7 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 								<AlignLeft className='size-3.5' />
 								{t('event.background')}
 							</h2>
-							<p className='text-[15px] leading-7'>{narrative}</p>
+							<p className='text-sm leading-7 sm:text-base'>{narrative}</p>
 						</section>
 					)}
 
@@ -105,7 +105,7 @@ export default async function EventPage({ params }: { params: Promise<{ lng: str
 												)}
 											/>
 											<div className='text-muted-foreground font-mono text-xs'>{occurred ?? ''}</div>
-											<div className='text-sm leading-6'>{isZh ? node.descZh : node.descEn}</div>
+											<div className='text-sm leading-6 sm:text-base'>{isZh ? node.descZh : node.descEn}</div>
 											<div className='mt-1 flex flex-wrap items-center gap-2'>
 												{node.isConflicting && (
 													<Badge variant='warning'>
