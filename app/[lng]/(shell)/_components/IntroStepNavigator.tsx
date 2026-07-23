@@ -47,8 +47,8 @@ export function IntroStepNavigator({ steps, stepLabel }: { steps: IntroStep[]; s
 
 	return (
 		<div className='flex h-full min-h-0 flex-col gap-4 lg:flex-row'>
-			{/* 中小螢幕橫向可捲動的分段圓點導覽;桌機(lg+)才有空間放直向清單,兩者互斥顯示 */}
-			<StepTabsRow steps={steps} activeIndex={selectedIndex} onSelect={scrollTo} className='lg:hidden' />
+			{/* 中小螢幕沒有滑鼠停留空間放直向清單,靠下方箭頭/圓點導覽 + 滑動切換即可,
+			    不需要再疊一排數字列——桌機(lg+)沒有滑動手勢,才需要直向清單當主要導覽 */}
 			<StepRail steps={steps} activeIndex={selectedIndex} onSelect={scrollTo} className='hidden lg:flex' />
 
 			<div className='bg-secondary/30 flex min-h-0 min-w-0 flex-1 flex-col rounded-lg'>
@@ -158,44 +158,6 @@ function StepRail({
 					>
 						<span className='font-mono text-xs tabular-nums'>{String(index + 1).padStart(2, '0')}</span>
 						<span className='min-w-0'>{step.title}</span>
-					</button>
-				)
-			})}
-		</div>
-	)
-}
-
-function StepTabsRow({
-	steps,
-	activeIndex,
-	onSelect,
-	className,
-}: {
-	steps: IntroStep[]
-	activeIndex: number
-	onSelect: (index: number) => void
-	className?: string
-}) {
-	return (
-		<div role='tablist' className={cn('scrollbar-thin flex shrink-0 gap-1.5 overflow-x-auto pb-1', className)}>
-			{steps.map((step, index) => {
-				const isActive = index === activeIndex
-				return (
-					<button
-						key={step.key}
-						type='button'
-						role='tab'
-						aria-selected={isActive}
-						aria-label={step.title}
-						onClick={() => onSelect(index)}
-						className={cn(
-							'flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-xs font-medium transition-colors duration-200',
-							isActive
-								? 'bg-primary text-primary-foreground'
-								: 'bg-secondary text-muted-foreground hover:bg-secondary/70',
-						)}
-					>
-						{index + 1}
 					</button>
 				)
 			})}

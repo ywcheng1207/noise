@@ -10,6 +10,8 @@ export const Dialog = DialogPrimitive.Root
 
 export const DialogPortal = DialogPrimitive.Portal
 
+export const DialogTrigger = DialogPrimitive.Trigger
+
 export const DialogClose = DialogPrimitive.Close
 
 export const DialogOverlay = ({ className, ...props }: ComponentProps<typeof DialogPrimitive.Overlay>) => {

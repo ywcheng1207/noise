@@ -17,9 +17,9 @@ export const FacetGroup = ({
 	onChange: (value: string) => void
 }) => {
 	return (
-		<div className='flex items-center gap-2 lg:flex-col lg:items-start'>
-			<span className='text-muted-foreground w-14 shrink-0 text-xs lg:w-auto'>{label}</span>
-			<div className='flex min-w-0 gap-1.5 overflow-x-auto lg:flex-wrap lg:overflow-visible'>
+		<div className='flex items-start gap-2 lg:flex-col'>
+			<span className='text-muted-foreground w-14 shrink-0 pt-1 text-xs lg:w-auto lg:pt-0'>{label}</span>
+			<div className='flex min-w-0 flex-wrap gap-1.5'>
 				{options.map((opt) => (
 					<button
 						key={opt.value}

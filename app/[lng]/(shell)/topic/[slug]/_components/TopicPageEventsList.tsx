@@ -52,8 +52,11 @@ function eventStatusTag(event: TopicPageEventData) {
 	return event.isResearching ? 'RESEARCHING' : event.reliability
 }
 
-const ESTIMATED_ROW_HEIGHT = 92
-const OVERSCAN = 6
+// 手機窄螢幕標題常換成兩行,實際列高遠高於這個估計值時,大範圍捲動(如快速滑動)
+// 會跳過中間列、來不及量測真實高度,導致虛擬清單算出的位置跟目前捲動位置對不上,
+// 畫面上方出現一大塊空白。估計值越接近真實高度,誤差累積得越慢、空白越不明顯。
+const ESTIMATED_ROW_HEIGHT = 130
+const OVERSCAN = 10
 
 export function TopicPageEventsList({ lng, events, dateBounds, statusOptions, labels }: TopicPageEventsListProps) {
 	const [keyword, setKeyword] = useState('')
