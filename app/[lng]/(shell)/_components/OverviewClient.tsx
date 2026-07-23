@@ -133,13 +133,28 @@ export function OverviewClient({
 					placeholder={labels.searchPlaceholder}
 					className='flex-1'
 				/>
-				<Link
-					href={`/${lng}/candidates`}
-					className='text-muted-foreground hover:bg-secondary hover:text-foreground flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs whitespace-nowrap transition-colors'
-				>
-					<Telescope className='size-3.5' />
-					{labels.candidatePool}
-				</Link>
+				<div className='flex shrink-0 items-center gap-2'>
+					<Link
+						href={`/${lng}/candidates`}
+						className='bg-secondary/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs whitespace-nowrap transition-colors duration-200'
+					>
+						<Telescope className='size-3.5' />
+						{labels.candidatePool}
+					</Link>
+					<button
+						type='button'
+						onClick={() => setShowArchived((prev) => !prev)}
+						className={cn(
+							'flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-xs whitespace-nowrap transition-colors duration-200',
+							showArchived
+								? 'bg-secondary text-foreground'
+								: 'bg-secondary/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground',
+						)}
+					>
+						<Archive className='size-3.5' />
+						{labels.showArchived}
+					</button>
+				</div>
 			</div>
 
 			<div className='flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8'>
@@ -152,19 +167,6 @@ export function OverviewClient({
 						value={reliability}
 						onChange={setReliability}
 					/>
-					<button
-						type='button'
-						onClick={() => setShowArchived((prev) => !prev)}
-						className={cn(
-							'flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1 text-xs transition-all duration-200 hover:scale-[1.03]',
-							showArchived
-								? 'bg-secondary text-foreground'
-								: 'bg-secondary/30 text-muted-foreground hover:bg-secondary/60 hover:text-foreground',
-						)}
-					>
-						<Archive className='size-3.5' />
-						{labels.showArchived}
-					</button>
 				</aside>
 
 				{filtered.length === 0 ? (

@@ -2,7 +2,7 @@
 
 import { memo, useState } from 'react'
 import Link from 'next/link'
-import { ChevronDown, ExternalLink, SearchX } from 'lucide-react'
+import { ChevronDown, ChevronRight, ExternalLink, SearchX } from 'lucide-react'
 
 import { DomainTag } from '@/components/DomainTag'
 import { LinkPendingSpinner } from '@/components/LinkPendingSpinner'
@@ -115,12 +115,12 @@ const LatestArticleRow = memo(
 							className='bg-secondary/40 hover:bg-secondary/60 flex w-full cursor-pointer items-start justify-between gap-3 rounded-lg p-3 text-left transition-colors duration-200'
 						>
 							{header}
-							<ChevronDown className='text-muted-foreground mt-0.5 size-4 shrink-0' />
+							<ChevronRight className='text-muted-foreground mt-0.5 size-4 shrink-0' />
 						</button>
 					</DialogTrigger>
 					<DialogContent
 						showCloseButton
-						className='top-0 left-0 h-full max-h-full w-full max-w-full translate-x-0 translate-y-0 gap-3 overflow-y-auto rounded-none border-0 p-4'
+						className='top-0 left-0 flex h-full max-h-full w-full max-w-full translate-x-0 translate-y-0 flex-col items-stretch justify-start gap-3 overflow-y-auto rounded-none border-0 p-4'
 					>
 						<DialogTitle className='pr-6 text-left text-base font-medium'>{article.title}</DialogTitle>
 						<ArticleTags article={article} labels={labels} />
