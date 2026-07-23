@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import './globals.css'
 
 export const metadata: Metadata = {
-	title: { default: '逆風 — 新聞事件過濾與可信度', template: '%s | 逆風' },
+	title: { default: '噪音 — 新聞事件過濾與可信度', template: '%s | 噪音' },
 	description: '以核心議題與事件為單位，幫讀者篩選與查證新聞：時序、摘要與來源可信度排名。',
 }
 
